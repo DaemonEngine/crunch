@@ -11,7 +11,7 @@
 #include "crn_winhdr.h"
 #endif
 
-#if defined(__APPLE__)
+#if defined(__FreeBSD__) || defined(__APPLE__)
 #include <sys/sysctl.h>
 #elif defined(__GNUC__)
 #include <sys/sysinfo.h>
@@ -29,7 +29,7 @@ void crn_threading_init() {
   SYSTEM_INFO g_system_info;
   GetSystemInfo(&g_system_info);
   g_number_of_processors = math::maximum<uint>(1U, g_system_info.dwNumberOfProcessors);
-#elif defined(__APPLE__)
+#elif defined(__FreeBSD__) || defined(__APPLE__)
   g_number_of_processors = math::maximum<int>(1, sysconf(_SC_NPROCESSORS_ONLN));
 #elif defined(__GNUC__)
   g_number_of_processors = math::maximum<int>(1, get_nprocs());
