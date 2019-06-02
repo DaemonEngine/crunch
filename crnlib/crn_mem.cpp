@@ -3,7 +3,10 @@
 #include "crn_core.h"
 #include "crn_console.h"
 #include "../inc/crnlib.h"
-#if defined(__APPLE__)
+#if defined(__FreeBSD__)
+// <malloc.h> has been replaced by <stdlib.h>
+#include <malloc_np.h> // for malloc_usable_size
+#elif defined(__APPLE__)
 #include <malloc/malloc.h>
 #else
 #include <malloc.h>
