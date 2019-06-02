@@ -12,7 +12,12 @@
 
 #include <stdlib.h>
 #include <string.h>
+#if defined(__FreeBSD__)
+// <malloc.h> has been replaced by <stdlib.h>
+#include <malloc_np.h> // for malloc_usable_size
+#else
 #include <malloc.h>
+#endif
 
 #include "crn_core.h"
 
