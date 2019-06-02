@@ -4,6 +4,10 @@
 #include "crn_timer.h"
 #include <time.h>
 
+#if defined(__FreeBSD__)
+#include "sys/time.h"
+#endif
+
 #include "crn_timer.h"
 
 #if CRNLIB_USE_WIN32_API
