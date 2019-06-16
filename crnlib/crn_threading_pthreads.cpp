@@ -13,6 +13,7 @@
 
 #if defined(__FreeBSD__)
 #include <unistd.h>
+#include <sys/thr.h>
 #elif defined(__GNUC__)
 #include <sys/sysinfo.h>
 #endif
@@ -39,8 +40,14 @@ void crn_threading_init() {
 }
 
 crn_thread_id_t crn_get_current_thread_id() {
+#if defined(__FreeBSD__)
+  long tid;
+  thr_self(&tid);
+  return static_cast<crn_thread_id_t>(tid);
+#else
   // FIXME: Not portable
   return static_cast<crn_thread_id_t>(pthread_self());
+#endif
 }
 
 void crn_sleep(unsigned int milliseconds) {
