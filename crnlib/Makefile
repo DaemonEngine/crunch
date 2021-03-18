@@ -1,7 +1,11 @@
 .DEFAULT_GOAL := all
 .PHONY: all clean
 
-COMPILE_OPTIONS = -O3 -fomit-frame-pointer -ffast-math -fno-math-errno -g -fno-strict-aliasing -Wall -Wno-unused-value -Wno-unused -march=core2
+COMPILE_OPTIONS = $(COMPILE_CPU_OPTIONS) $(COMPILE_DEBUG_OPTIONS) $(COMPILE_OPTIMIZATION_OPTIONS) $(COMPILE_WARN_OPTIONS)
+COMPILE_CPU_OPTIONS = -march=core2
+COMPILE_DEBUG_OPTIONS = -g
+COMPILE_OPTIMIZATION_OPTIONS = -O3 -fomit-frame-pointer -ffast-math -fno-math-errno -fno-strict-aliasing
+COMPILE_WARN_OPTIONS = -Wall -Wno-unused-value -Wno-unused
 LINKER_OPTIONS = -lpthread -g
 
 OBJECTS = \
