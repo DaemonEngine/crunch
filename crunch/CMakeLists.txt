@@ -15,6 +15,7 @@ set(CRUNCH_SRCS
 )
 
 add_executable(${CRUNCH_EXE_NAME} ${CRUNCH_SRCS})
+
 target_link_libraries(${CRUNCH_EXE_NAME} ${CRUNCH_LIBRARY_NAME} ${CMAKE_THREAD_LIBS_INIT})
 
 install(TARGETS ${CRUNCH_EXE_NAME}
