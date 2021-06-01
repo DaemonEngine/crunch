@@ -11,7 +11,10 @@
 #include "crn_winhdr.h"
 #endif
 
-#ifdef __GNUC__
+#if defined(__FreeBSD__)
+#include <unistd.h>
+#include <sys/thr.h>
+#elif defined(__GNUC__)
 #include <sys/sysinfo.h>
 #endif
 
@@ -27,6 +30,8 @@ void crn_threading_init() {
   SYSTEM_INFO g_system_info;
   GetSystemInfo(&g_system_info);
   g_number_of_processors = math::maximum<uint>(1U, g_system_info.dwNumberOfProcessors);
+#elif defined(__FreeBSD__)
+  g_number_of_processors = math::maximum<int>(1, sysconf(_SC_NPROCESSORS_ONLN));
 #elif defined(__GNUC__)
   g_number_of_processors = math::maximum<int>(1, get_nprocs());
 #else
@@ -35,8 +40,14 @@ void crn_threading_init() {
 }
 
 crn_thread_id_t crn_get_current_thread_id() {
+#if defined(__FreeBSD__)
+  long tid;
+  thr_self(&tid);
+  return static_cast<crn_thread_id_t>(tid);
+#else
   // FIXME: Not portable
   return static_cast<crn_thread_id_t>(pthread_self());
+#endif
 }
 
 void crn_sleep(unsigned int milliseconds) {

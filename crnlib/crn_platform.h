@@ -18,7 +18,11 @@ const bool c_crnlib_little_endian_platform = false;
 
 const bool c_crnlib_big_endian_platform = !c_crnlib_little_endian_platform;
 
-#ifdef __GNUC__
+#if defined(__FreeBSD__)
+#define crn_fopen(pDstFile, f, m) *(pDstFile) = fopen(f, m)
+#define crn_fseek fseeko
+#define crn_ftell ftello
+#elif defined(__GNUC__)
 #define crn_fopen(pDstFile, f, m) *(pDstFile) = fopen64(f, m)
 #define crn_fseek fseeko64
 #define crn_ftell ftello64

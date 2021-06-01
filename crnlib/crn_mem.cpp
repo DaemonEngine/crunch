@@ -3,7 +3,12 @@
 #include "crn_core.h"
 #include "crn_console.h"
 #include "../inc/crnlib.h"
+#if defined(__FreeBSD__)
+// <malloc.h> has been replaced by <stdlib.h>
+#include <malloc_np.h> // for malloc_usable_size
+#else
 #include <malloc.h>
+#endif
 #if CRNLIB_USE_WIN32_API
 #include "crn_winhdr.h"
 #endif
