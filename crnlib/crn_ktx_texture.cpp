@@ -799,7 +799,7 @@ const uint8_vec* ktx_texture::find_key(const char* pKey) const {
       return &v;
   }
 
-  return NULL;
+  return nullptr;
 }
 
 bool ktx_texture::get_key_value_as_string(const char* pKey, dynamic_string& str) const {

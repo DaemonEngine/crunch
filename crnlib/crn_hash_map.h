@@ -199,7 +199,7 @@ class hash_map {
 
    public:
     inline iterator()
-        : m_pTable(NULL), m_index(0) {}
+        : m_pTable(nullptr), m_index(0) {}
     inline iterator(hash_map_type& table, uint index)
         : m_pTable(&table), m_index(index) {}
     inline iterator(const iterator& other)
@@ -255,7 +255,7 @@ class hash_map {
 
    public:
     inline const_iterator()
-        : m_pTable(NULL), m_index(0) {}
+        : m_pTable(nullptr), m_index(0) {}
     inline const_iterator(const hash_map_type& table, uint index)
         : m_pTable(&table), m_index(index) {}
     inline const_iterator(const iterator& other)

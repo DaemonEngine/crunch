@@ -30,7 +30,7 @@ class crnlib_global_initializer {
     crnlib_enable_fail_exceptions(true);
 
     // Redirect crn_decomp.h's memory allocations into crnlib, which may be further redirected by the outside caller.
-    crnd::crnd_set_memory_callbacks(realloc_func, msize_func, NULL);
+    crnd::crnd_set_memory_callbacks(realloc_func, msize_func, nullptr);
 
     ryg_dxt::sInitDXT();
 
@@ -178,11 +178,11 @@ void* crn_compress(const crn_comp_params& comp_params, crn_uint32& compressed_si
     *pActual_bitrate = 0.0f;
 
   if (!comp_params.check())
-    return NULL;
+    return nullptr;
 
   crnlib::vector<uint8> crn_file_data;
   if (!create_compressed_texture(comp_params, crn_file_data, pActual_quality_level, pActual_bitrate))
-    return NULL;
+    return nullptr;
 
   compressed_size = crn_file_data.size();
   return crn_file_data.assume_ownership();
@@ -196,11 +196,11 @@ void* crn_compress(const crn_comp_params& comp_params, const crn_mipmap_params& 
     *pActual_bitrate = 0.0f;
 
   if ((!comp_params.check()) || (!mip_params.check()))
-    return NULL;
+    return nullptr;
 
   crnlib::vector<uint8> crn_file_data;
   if (!create_compressed_texture(comp_params, mip_params, crn_file_data, pActual_quality_level, pActual_bitrate))
-    return NULL;
+    return nullptr;
 
   compressed_size = crn_file_data.size();
   return crn_file_data.assume_ownership();
@@ -210,7 +210,7 @@ void* crn_decompress_crn_to_dds(const void* pCRN_file_data, crn_uint32& file_siz
   mipmapped_texture tex;
   if (!tex.read_crn_from_memory(pCRN_file_data, file_size, "from_memory.crn")) {
     file_size = 0;
-    return NULL;
+    return nullptr;
   }
 
   file_size = 0;
@@ -219,7 +219,7 @@ void* crn_decompress_crn_to_dds(const void* pCRN_file_data, crn_uint32& file_siz
   dds_file_data.reserve(128 * 1024);
   data_stream_serializer serializer(dds_file_data);
   if (!tex.write_dds(serializer))
-    return NULL;
+    return nullptr;
   dds_file_data.reserve(0);
 
   file_size = static_cast<crn_uint32>(dds_file_data.get_size());
@@ -313,7 +313,7 @@ crn_block_compressor_context_t crn_create_block_compressor(const crn_comp_params
   crn_block_compressor* pComp = crnlib_new<crn_block_compressor>();
   if (!pComp->init(params)) {
     crnlib_delete(pComp);
-    return NULL;
+    return nullptr;
   }
   return pComp;
 }

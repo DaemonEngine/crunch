@@ -7,7 +7,7 @@ enum { cMaxDynamicStringLen = cUINT16_MAX - 1 };
 class dynamic_string {
  public:
   inline dynamic_string()
-      : m_buf_size(0), m_len(0), m_pStr(NULL) {}
+      : m_buf_size(0), m_len(0), m_pStr(nullptr) {}
   dynamic_string(eVarArg dummy, const char* p, ...);
   dynamic_string(const char* p);
   dynamic_string(const char* p, uint len);
@@ -26,7 +26,7 @@ class dynamic_string {
   void empty();
   inline const char* assume_ownership() {
     const char* p = m_pStr;
-    m_pStr = NULL;
+    m_pStr = nullptr;
     m_len = 0;
     m_buf_size = 0;
     return p;
@@ -177,7 +177,7 @@ inline void swap(dynamic_string& a, dynamic_string& b) {
 inline char* dynamic_string::create_raw_buffer(uint& buf_size_in_chars) {
   if (buf_size_in_chars > cUINT16_MAX) {
     CRNLIB_ASSERT(0);
-    return NULL;
+    return nullptr;
   }
   buf_size_in_chars = math::minimum<uint>(cUINT16_MAX, math::next_pow2(buf_size_in_chars));
   return crnlib_new_array<char>(buf_size_in_chars);

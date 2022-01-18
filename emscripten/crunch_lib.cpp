@@ -22,7 +22,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 #define PLATFORM_NACL  // This disables use of 64 bit integers, among other things.
 
-#include <stddef.h>  // For NULL, size_t
+#include <stddef.h>  // For nullptr, size_t
 #include <cstring>   // for malloc etc
 
 #include "crn_decomp.h"

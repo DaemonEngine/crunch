@@ -12,8 +12,8 @@ class threaded_clusterizer {
  public:
   threaded_clusterizer(task_pool& tp)
       : m_pTask_pool(&tp),
-        m_pProgress_callback(NULL),
-        m_pProgress_callback_data(NULL),
+        m_pProgress_callback(nullptr),
+        m_pProgress_callback_data(nullptr),
         m_canceled(false) {
   }
 
@@ -128,7 +128,7 @@ class threaded_clusterizer {
 
   struct create_clusters_task_state {
     create_clusters_task_state()
-        : m_pWeighted_vecs(NULL), m_pIndices(NULL), m_max_clusters(0) {
+        : m_pWeighted_vecs(nullptr), m_pIndices(nullptr), m_max_clusters(0) {
     }
 
     const weighted_vec_array* m_pWeighted_vecs;

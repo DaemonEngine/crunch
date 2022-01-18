@@ -91,7 +91,7 @@ class jpeg_encoder {
 
   // Call this method with each source scanline.
   // width * src_channels bytes per scanline is expected (RGB or Y format).
-  // You must call with NULL after all scanlines are processed to finish compression.
+  // You must call with nullptr after all scanlines are processed to finish compression.
   // Returns false on out of memory or if a stream write fails.
   bool process_scanline(const void* pScanline);
 

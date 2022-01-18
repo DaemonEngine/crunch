@@ -319,7 +319,7 @@ class crunch {
     bool status = convert();
 
     if (m_log_stream.is_opened()) {
-      console::set_log_stream(NULL);
+      console::set_log_stream(nullptr);
 
       m_log_stream.close();
     }
@@ -530,7 +530,7 @@ class crunch {
           if (file_utils::full_path(out_filename)) {
             if ((!compare_mode) && (!info_mode)) {
               dynamic_string out_drive, out_path;
-              file_utils::split_path(out_filename.get_ptr(), &out_drive, &out_path, NULL, NULL);
+              file_utils::split_path(out_filename.get_ptr(), &out_drive, &out_path, nullptr, nullptr);
               out_drive += out_path;
               file_utils::create_path(out_drive.get_ptr());
             }
@@ -963,9 +963,9 @@ class crunch {
 
   void print_stats(texture_conversion::convert_stats& stats, bool force_image_stats = false) {
     dynamic_string csv_filename;
-    const char* pCSVStatsFilename = m_params.get_value_as_string("csvfile", 0, csv_filename) ? csv_filename.get_ptr() : NULL;
+    const char* pCSVStatsFilename = m_params.get_value_as_string("csvfile", 0, csv_filename) ? csv_filename.get_ptr() : nullptr;
 
-    bool image_stats = force_image_stats || m_params.get_value_as_bool("imagestats") || m_params.get_value_as_bool("mipstats") || (pCSVStatsFilename != NULL);
+    bool image_stats = force_image_stats || m_params.get_value_as_bool("imagestats") || m_params.get_value_as_bool("mipstats") || (pCSVStatsFilename != nullptr);
     bool mip_stats = m_params.get_value_as_bool("mipstats");
     bool grayscale_sampling = m_params.get_value_as_bool("grayscalesampling");
     if (!stats.print(image_stats, mip_stats, grayscale_sampling, pCSVStatsFilename)) {

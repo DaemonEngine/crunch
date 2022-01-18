@@ -844,13 +844,13 @@ struct R_S {
 
 // Unconditionally frees all allocated m_blocks.
 void jpeg_decoder::free_all_blocks() {
-  m_pStream = NULL;
+  m_pStream = nullptr;
   for (mem_block* b = m_pMem_blocks; b;) {
     mem_block* n = b->m_pNext;
     jpgd_free(b);
     b = n;
   }
-  m_pMem_blocks = NULL;
+  m_pMem_blocks = nullptr;
 }
 
 // This method handles all errors. It will never return.
@@ -863,7 +863,7 @@ JPGD_NORETURN void jpeg_decoder::stop_decoding(jpgd_status status) {
 
 void* jpeg_decoder::alloc(size_t nSize, bool zero) {
   nSize = (JPGD_MAX(nSize, 1) + 3) & ~3;
-  char* rv = NULL;
+  char* rv = nullptr;
   for (mem_block* b = m_pMem_blocks; b; b = b->m_pNext) {
     if ((b->m_used_count + nSize) <= b->m_size) {
       rv = b->m_data + b->m_used_count;
@@ -1315,7 +1315,7 @@ int jpeg_decoder::locate_sos_marker() {
 
 // Reset everything to default/uninitialized state.
 void jpeg_decoder::init(jpeg_decoder_stream* pStream) {
-  m_pMem_blocks = NULL;
+  m_pMem_blocks = nullptr;
   m_error_code = JPGD_SUCCESS;
   m_ready_flag = false;
   m_image_x_size = m_image_y_size = 0;
@@ -1393,13 +1393,13 @@ void jpeg_decoder::init(jpeg_decoder_stream* pStream) {
   m_max_mcus_per_col = 0;
 
   memset(m_last_dc_val, 0, sizeof(m_last_dc_val));
-  m_pMCU_coefficients = NULL;
-  m_pSample_buf = NULL;
+  m_pMCU_coefficients = nullptr;
+  m_pSample_buf = nullptr;
 
   m_total_bytes_read = 0;
 
-  m_pScan_line_0 = NULL;
-  m_pScan_line_1 = NULL;
+  m_pScan_line_0 = nullptr;
+  m_pScan_line_1 = nullptr;
 
   // Ready the input buffer.
   prep_in_buffer();
@@ -2234,17 +2234,17 @@ void jpeg_decoder::make_huff_table(int index, huff_tables* pH) {
 // Verifies the quantization tables needed for this scan are available.
 void jpeg_decoder::check_quant_tables() {
   for (int i = 0; i < m_comps_in_scan; i++)
-    if (m_quant[m_comp_quant[m_comp_list[i]]] == NULL)
+    if (m_quant[m_comp_quant[m_comp_list[i]]] == nullptr)
       stop_decoding(JPGD_UNDEFINED_QUANT_TABLE);
 }
 
 // Verifies that all the Huffman tables needed for this scan are available.
 void jpeg_decoder::check_huff_tables() {
   for (int i = 0; i < m_comps_in_scan; i++) {
-    if ((m_spectral_start == 0) && (m_huff_num[m_comp_dc_tab[m_comp_list[i]]] == NULL))
+    if ((m_spectral_start == 0) && (m_huff_num[m_comp_dc_tab[m_comp_list[i]]] == nullptr))
       stop_decoding(JPGD_UNDEFINED_HUFF_TABLE);
 
-    if ((m_spectral_end > 0) && (m_huff_num[m_comp_ac_tab[m_comp_list[i]]] == NULL))
+    if ((m_spectral_end > 0) && (m_huff_num[m_comp_ac_tab[m_comp_list[i]]] == nullptr))
       stop_decoding(JPGD_UNDEFINED_HUFF_TABLE);
   }
 
@@ -2754,7 +2754,7 @@ jpeg_decoder::~jpeg_decoder() {
 }
 
 jpeg_decoder_file_stream::jpeg_decoder_file_stream() {
-  m_pFile = NULL;
+  m_pFile = nullptr;
   m_eof_flag = false;
   m_error_flag = false;
 }
@@ -2762,7 +2762,7 @@ jpeg_decoder_file_stream::jpeg_decoder_file_stream() {
 void jpeg_decoder_file_stream::close() {
   if (m_pFile) {
     fclose(m_pFile);
-    m_pFile = NULL;
+    m_pFile = nullptr;
   }
 
   m_eof_flag = false;
@@ -2780,12 +2780,12 @@ bool jpeg_decoder_file_stream::open(const char* Pfilename) {
   m_error_flag = false;
 
 #if defined(_MSC_VER)
-  m_pFile = NULL;
+  m_pFile = nullptr;
   fopen_s(&m_pFile, Pfilename, "rb");
 #else
   m_pFile = fopen(Pfilename, "rb");
 #endif
-  return m_pFile != NULL;
+  return m_pFile != nullptr;
 }
 
 int jpeg_decoder_file_stream::read(uint8* pBuf, int max_bytes_to_read, bool* pEOF_flag) {
@@ -2842,18 +2842,18 @@ int jpeg_decoder_mem_stream::read(uint8* pBuf, int max_bytes_to_read, bool* pEOF
 
 unsigned char* decompress_jpeg_image_from_stream(jpeg_decoder_stream* pStream, int* width, int* height, int* actual_comps, int req_comps) {
   if (!actual_comps)
-    return NULL;
+    return nullptr;
   *actual_comps = 0;
 
   if ((!pStream) || (!width) || (!height) || (!req_comps))
-    return NULL;
+    return nullptr;
 
   if ((req_comps != 1) && (req_comps != 3) && (req_comps != 4))
-    return NULL;
+    return nullptr;
 
   jpeg_decoder decoder(pStream);
   if (decoder.get_error_code() != JPGD_SUCCESS)
-    return NULL;
+    return nullptr;
 
   const int image_width = decoder.get_width(), image_height = decoder.get_height();
   *width = image_width;
@@ -2861,20 +2861,20 @@ unsigned char* decompress_jpeg_image_from_stream(jpeg_decoder_stream* pStream, i
   *actual_comps = decoder.get_num_components();
 
   if (decoder.begin_decoding() != JPGD_SUCCESS)
-    return NULL;
+    return nullptr;
 
   const int dst_bpl = image_width * req_comps;
 
   uint8* pImage_data = (uint8*)jpgd_malloc(dst_bpl * image_height);
   if (!pImage_data)
-    return NULL;
+    return nullptr;
 
   for (int y = 0; y < image_height; y++) {
     const uint8* pScan_line;
     uint scan_line_len;
     if (decoder.decode((const void**)&pScan_line, &scan_line_len) != JPGD_SUCCESS) {
       jpgd_free(pImage_data);
-      return NULL;
+      return nullptr;
     }
 
     uint8* pDst = pImage_data + y * dst_bpl;
@@ -2931,7 +2931,7 @@ unsigned char* decompress_jpeg_image_from_memory(const unsigned char* pSrc_data,
 unsigned char* decompress_jpeg_image_from_file(const char* pSrc_filename, int* width, int* height, int* actual_comps, int req_comps) {
   jpgd::jpeg_decoder_file_stream file_stream;
   if (!file_stream.open(pSrc_filename))
-    return NULL;
+    return nullptr;
   return decompress_jpeg_image_from_stream(&file_stream, width, height, actual_comps, req_comps);
 }
 

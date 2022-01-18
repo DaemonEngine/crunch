@@ -18,8 +18,8 @@ struct qdxt5_params {
     m_quality_level = cMaxQuality;
     m_dxt_quality = cCRNDXTQualityUber;
 
-    m_pProgress_func = NULL;
-    m_pProgress_data = NULL;
+    m_pProgress_func = nullptr;
+    m_pProgress_data = nullptr;
     m_num_mips = 0;
     m_hierarchical = true;
     utils::zero_object(m_mip_desc);

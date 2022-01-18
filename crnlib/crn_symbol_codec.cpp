@@ -54,7 +54,7 @@ adaptive_huffman_data_model::adaptive_huffman_data_model(bool encoding, uint tot
       m_update_cycle(0),
       m_symbols_until_update(0),
       m_total_count(0),
-      m_pDecode_tables(NULL),
+      m_pDecode_tables(nullptr),
       m_decoder_table_bits(0),
       m_encoding(encoding) {
   if (total_syms)
@@ -66,7 +66,7 @@ adaptive_huffman_data_model::adaptive_huffman_data_model(const adaptive_huffman_
       m_update_cycle(0),
       m_symbols_until_update(0),
       m_total_count(0),
-      m_pDecode_tables(NULL),
+      m_pDecode_tables(nullptr),
       m_decoder_table_bits(0),
       m_encoding(false) {
   *this = other;
@@ -100,7 +100,7 @@ adaptive_huffman_data_model& adaptive_huffman_data_model::operator=(const adapti
       m_pDecode_tables = crnlib_new<prefix_coding::decoder_tables>(*rhs.m_pDecode_tables);
   } else {
     crnlib_delete(m_pDecode_tables);
-    m_pDecode_tables = NULL;
+    m_pDecode_tables = nullptr;
   }
 
   m_decoder_table_bits = rhs.m_decoder_table_bits;
@@ -122,7 +122,7 @@ void adaptive_huffman_data_model::clear() {
 
   if (m_pDecode_tables) {
     crnlib_delete(m_pDecode_tables);
-    m_pDecode_tables = NULL;
+    m_pDecode_tables = nullptr;
   }
 }
 
@@ -213,13 +213,13 @@ void adaptive_huffman_data_model::update() {
 
 static_huffman_data_model::static_huffman_data_model()
     : m_total_syms(0),
-      m_pDecode_tables(NULL),
+      m_pDecode_tables(nullptr),
       m_encoding(false) {
 }
 
 static_huffman_data_model::static_huffman_data_model(const static_huffman_data_model& other)
     : m_total_syms(0),
-      m_pDecode_tables(NULL),
+      m_pDecode_tables(nullptr),
       m_encoding(false) {
   *this = other;
 }
@@ -244,7 +244,7 @@ static_huffman_data_model& static_huffman_data_model::operator=(const static_huf
       m_pDecode_tables = crnlib_new<prefix_coding::decoder_tables>(*rhs.m_pDecode_tables);
   } else {
     crnlib_delete(m_pDecode_tables);
-    m_pDecode_tables = NULL;
+    m_pDecode_tables = nullptr;
   }
 
   m_encoding = rhs.m_encoding;
@@ -258,7 +258,7 @@ void static_huffman_data_model::clear() {
   m_code_sizes.clear();
   if (m_pDecode_tables) {
     crnlib_delete(m_pDecode_tables);
-    m_pDecode_tables = NULL;
+    m_pDecode_tables = nullptr;
   }
   m_encoding = false;
 }
@@ -294,7 +294,7 @@ bool static_huffman_data_model::init(bool encoding, uint total_syms, const uint1
 
     if (m_pDecode_tables) {
       crnlib_delete(m_pDecode_tables);
-      m_pDecode_tables = NULL;
+      m_pDecode_tables = nullptr;
     }
 
     if (!prefix_coding::generate_codes(m_total_syms, &m_code_sizes[0], &m_codes[0]))
@@ -381,7 +381,7 @@ bool static_huffman_data_model::init(bool encoding, uint total_syms, const uint8
 
     if (m_pDecode_tables) {
       crnlib_delete(m_pDecode_tables);
-      m_pDecode_tables = NULL;
+      m_pDecode_tables = nullptr;
     }
 
     if (!prefix_coding::generate_codes(m_total_syms, &m_code_sizes[0], &m_codes[0]))
@@ -530,9 +530,9 @@ symbol_codec::symbol_codec() {
 }
 
 void symbol_codec::clear() {
-  m_pDecode_buf = NULL;
-  m_pDecode_buf_next = NULL;
-  m_pDecode_buf_end = NULL;
+  m_pDecode_buf = nullptr;
+  m_pDecode_buf_next = nullptr;
+  m_pDecode_buf_end = nullptr;
   m_decode_buf_size = 0;
 
   m_bit_buf = 0;

@@ -28,7 +28,7 @@ inline void query_counter_frequency(timer_ticks* pTicks) {
 #include <sys/timex.h>
 inline void query_counter(timer_ticks* pTicks) {
   struct timeval cur_time;
-  gettimeofday(&cur_time, NULL);
+  gettimeofday(&cur_time, nullptr);
   *pTicks = static_cast<unsigned long long>(cur_time.tv_sec) * 1000000ULL + static_cast<unsigned long long>(cur_time.tv_usec);
 }
 inline void query_counter_frequency(timer_ticks* pTicks) {

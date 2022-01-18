@@ -29,7 +29,7 @@ class crn_comp : public itexture_comp {
   virtual crnlib::vector<uint8>& get_comp_data() { return m_comp_data; }
 
   uint get_comp_data_size() const { return m_comp_data.size(); }
-  const uint8* get_comp_data_ptr() const { return m_comp_data.size() ? &m_comp_data[0] : NULL; }
+  const uint8* get_comp_data_ptr() const { return m_comp_data.size() ? &m_comp_data[0] : nullptr; }
 
  private:
   task_pool m_task_pool;

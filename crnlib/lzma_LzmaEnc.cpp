@@ -486,17 +486,17 @@ static const int kShortRepNextStates[kNumStates] = {9, 9, 9, 9, 9, 9, 9, 11, 11,
 #define kInfinityPrice (1 << 30)
 
 static void RangeEnc_Construct(CRangeEnc* p) {
-  p->outStream = 0;
-  p->bufBase = 0;
+  p->outStream = nullptr;
+  p->bufBase = nullptr;
 }
 
 #define RangeEnc_GetProcessed(p) ((p)->processed + ((p)->buf - (p)->bufBase) + (p)->cacheSize)
 
 #define RC_BUF_SIZE (1 << 16)
 static int RangeEnc_Alloc(CRangeEnc* p, ISzAlloc* alloc) {
-  if (p->bufBase == 0) {
+  if (p->bufBase == nullptr) {
     p->bufBase = (Byte*)alloc->Alloc(alloc, RC_BUF_SIZE);
-    if (p->bufBase == 0)
+    if (p->bufBase == nullptr)
       return 0;
     p->bufLim = p->bufBase + RC_BUF_SIZE;
   }
@@ -505,7 +505,7 @@ static int RangeEnc_Alloc(CRangeEnc* p, ISzAlloc* alloc) {
 
 static void RangeEnc_Free(CRangeEnc* p, ISzAlloc* alloc) {
   alloc->Free(alloc, p->bufBase);
-  p->bufBase = 0;
+  p->bufBase = nullptr;
 }
 
 static void RangeEnc_Init(CRangeEnc* p) {
@@ -1577,14 +1577,14 @@ void LzmaEnc_Construct(CLzmaEnc* p) {
 #endif
 
   LzmaEnc_InitPriceTables(p->ProbPrices);
-  p->litProbs = 0;
-  p->saveState.litProbs = 0;
+  p->litProbs = nullptr;
+  p->saveState.litProbs = nullptr;
 }
 
 CLzmaEncHandle LzmaEnc_Create(ISzAlloc* alloc) {
   void* p;
   p = alloc->Alloc(alloc, sizeof(CLzmaEnc));
-  if (p != 0)
+  if (p != nullptr)
     LzmaEnc_Construct((CLzmaEnc*)p);
   return p;
 }
@@ -1592,8 +1592,8 @@ CLzmaEncHandle LzmaEnc_Create(ISzAlloc* alloc) {
 void LzmaEnc_FreeLits(CLzmaEnc* p, ISzAlloc* alloc) {
   alloc->Free(alloc, p->litProbs);
   alloc->Free(alloc, p->saveState.litProbs);
-  p->litProbs = 0;
-  p->saveState.litProbs = 0;
+  p->litProbs = nullptr;
+  p->saveState.litProbs = nullptr;
 }
 
 void LzmaEnc_Destruct(CLzmaEnc* p, ISzAlloc* alloc, ISzAlloc* allocBig) {
@@ -1612,10 +1612,10 @@ void LzmaEnc_Destroy(CLzmaEncHandle p, ISzAlloc* alloc, ISzAlloc* allocBig) {
 
 static SRes LzmaEnc_CodeOneBlock(CLzmaEnc* p, Bool useLimits, UInt32 maxPackSize, UInt32 maxUnpackSize) {
   UInt32 nowPos32, startPos32;
-  if (p->inStream != 0) {
+  if (p->inStream != nullptr) {
     p->matchFinderBase.stream = p->inStream;
     p->matchFinder.Init(p->matchFinderObj);
-    p->inStream = 0;
+    p->inStream = nullptr;
   }
 
   if (p->finished)
@@ -1765,11 +1765,11 @@ static SRes LzmaEnc_Alloc(CLzmaEnc* p, UInt32 keepWindowSize, ISzAlloc* alloc, I
 
   {
     unsigned lclp = p->lc + p->lp;
-    if (p->litProbs == 0 || p->saveState.litProbs == 0 || p->lclp != lclp) {
+    if (p->litProbs == nullptr || p->saveState.litProbs == nullptr || p->lclp != lclp) {
       LzmaEnc_FreeLits(p, alloc);
       p->litProbs = (CLzmaProb*)alloc->Alloc(alloc, (0x300 << lclp) * sizeof(CLzmaProb));
       p->saveState.litProbs = (CLzmaProb*)alloc->Alloc(alloc, (0x300 << lclp) * sizeof(CLzmaProb));
-      if (p->litProbs == 0 || p->saveState.litProbs == 0) {
+      if (p->litProbs == nullptr || p->saveState.litProbs == nullptr) {
         LzmaEnc_FreeLits(p, alloc);
         return SZ_ERROR_MEM;
       }
@@ -1999,7 +1999,7 @@ SRes LzmaEnc_Encode(CLzmaEncHandle pp, ISeqOutStream* outStream, ISeqInStream* i
     res = LzmaEnc_CodeOneBlock(p, False, 0, 0);
     if (res != SZ_OK || p->finished != 0)
       break;
-    if (progress != 0) {
+    if (progress != nullptr) {
       res = progress->Progress(progress, p->nowPos64, RangeEnc_GetProcessed(&p->rc));
       if (res != SZ_OK) {
         res = SZ_ERROR_PROGRESS;
@@ -2065,7 +2065,7 @@ SRes LzmaEncode(Byte* dest, SizeT* destLen, const Byte* src, SizeT srcLen,
                 ICompressProgress* progress, ISzAlloc* alloc, ISzAlloc* allocBig) {
   CLzmaEnc* p = (CLzmaEnc*)LzmaEnc_Create(alloc);
   SRes res;
-  if (p == 0)
+  if (p == nullptr)
     return SZ_ERROR_MEM;
 
   res = LzmaEnc_SetProps(p, props);

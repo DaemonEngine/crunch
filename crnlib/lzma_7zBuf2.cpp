@@ -8,7 +8,7 @@
 namespace crnlib {
 
 void DynBuf_Construct(CDynBuf* p) {
-  p->data = 0;
+  p->data = nullptr;
   p->size = 0;
   p->pos = 0;
 }
@@ -23,7 +23,7 @@ int DynBuf_Write(CDynBuf* p, const Byte* buf, size_t size, ISzAlloc* alloc) {
     Byte* data;
     newSize += newSize / 4;
     data = (Byte*)alloc->Alloc(alloc, newSize);
-    if (data == 0)
+    if (data == nullptr)
       return 0;
     p->size = newSize;
     memcpy(data, p->data, p->pos);
@@ -37,7 +37,7 @@ int DynBuf_Write(CDynBuf* p, const Byte* buf, size_t size, ISzAlloc* alloc) {
 
 void DynBuf_Free(CDynBuf* p, ISzAlloc* alloc) {
   alloc->Free(alloc, p->data);
-  p->data = 0;
+  p->data = nullptr;
   p->size = 0;
   p->pos = 0;
 }

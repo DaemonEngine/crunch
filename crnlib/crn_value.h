@@ -187,7 +187,7 @@ class value {
       }
     }
 
-    if (strchr(p, ',') != NULL) {
+    if (strchr(p, ',') != nullptr) {
       float fx = 0, fy = 0, fz = 0;
 #ifdef _MSC_VER
       if (sscanf_s(p, "%f,%f,%f", &fx, &fy, &fz) == 3)
@@ -838,17 +838,17 @@ class value {
   void clear_dynamic() {
     if (m_type == cDTVec3F) {
       crnlib_delete(m_pVec3F);
-      m_pVec3F = NULL;
+      m_pVec3F = nullptr;
 
       m_type = cDTInvalid;
     } else if (m_type == cDTVec3I) {
       crnlib_delete(m_pVec3I);
-      m_pVec3I = NULL;
+      m_pVec3I = nullptr;
 
       m_type = cDTInvalid;
     } else if (m_type == cDTString) {
       crnlib_delete(m_pStr);
-      m_pStr = NULL;
+      m_pStr = nullptr;
 
       m_type = cDTInvalid;
     }

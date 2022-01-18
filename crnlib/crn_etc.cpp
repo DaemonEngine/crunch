@@ -1408,7 +1408,7 @@ uint64 pack_etc1_block(etc1_block& dst_block, const color_quad_u8* pSrc_pixels, 
             if ((subblock_pixels[r].r != subblock_pixel0.r) || (subblock_pixels[r].g != subblock_pixel0.g) || (subblock_pixels[r].b != subblock_pixel0.b))
               break;
           if (!r) {
-            pack_etc1_block_solid_color_constrained(results[2], 8, &subblock_pixel0.r, pack_params, context, !use_color4, (subblock && !use_color4) ? &results[0].m_block_color_unscaled : NULL);
+            pack_etc1_block_solid_color_constrained(results[2], 8, &subblock_pixel0.r, pack_params, context, !use_color4, (subblock && !use_color4) ? &results[0].m_block_color_unscaled : nullptr);
           }
         }
 

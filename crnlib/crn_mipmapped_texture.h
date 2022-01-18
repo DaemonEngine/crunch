@@ -55,9 +55,9 @@ class mip_level {
 
   image_u8* get_unpacked_image(image_u8& tmp, uint unpack_flags) const;
 
-  inline bool is_packed() const { return m_pDXTImage != NULL; }
+  inline bool is_packed() const { return m_pDXTImage != nullptr; }
 
-  inline bool is_valid() const { return (m_pImage != NULL) || (m_pDXTImage != NULL); }
+  inline bool is_valid() const { return (m_pImage != nullptr) || (m_pDXTImage != nullptr); }
 
   inline pixel_format_helpers::component_flags get_comp_flags() const { return m_comp_flags; }
   inline void set_comp_flags(pixel_format_helpers::component_flags comp_flags) { m_comp_flags = comp_flags; }
@@ -162,7 +162,7 @@ class mipmapped_texture {
 
   inline bool is_unpacked() const {
     if (get_num_faces()) {
-      return get_level(0, 0)->get_image() != NULL;
+      return get_level(0, 0)->get_image() != nullptr;
     }
     return false;
   }
@@ -199,8 +199,8 @@ class mipmapped_texture {
   bool write_to_file(
       const char* pFilename,
       texture_file_types::format file_format = texture_file_types::cFormatInvalid,
-      crn_comp_params* pComp_params = NULL,
-      uint32* pActual_quality_level = NULL, float* pActual_bitrate = NULL,
+      crn_comp_params* pComp_params = nullptr,
+      uint32* pActual_quality_level = nullptr, float* pActual_bitrate = nullptr,
       uint32 image_write_flags = 0);
 
   // Conversion

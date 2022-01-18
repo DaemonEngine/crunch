@@ -65,8 +65,8 @@ typedef struct
 
 #define LzmaDec_Construct(p) \
   {                          \
-    (p)->dic = 0;            \
-    (p)->probs = 0;          \
+    (p)->dic = nullptr;      \
+    (p)->probs = nullptr;    \
   }
 
 void LzmaDec_Init(CLzmaDec* p);

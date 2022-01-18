@@ -22,7 +22,7 @@ class data_stream {
 
   virtual ~data_stream() {}
 
-  virtual data_stream* get_parent() { return NULL; }
+  virtual data_stream* get_parent() { return nullptr; }
 
   virtual bool close() {
     m_opened = false;
@@ -60,7 +60,7 @@ class data_stream {
   virtual uint64 get_ofs() = 0;
   virtual bool seek(int64 ofs, bool relative) = 0;
 
-  virtual const void* get_ptr() const { return NULL; }
+  virtual const void* get_ptr() const { return nullptr; }
 
   inline int read_byte() {
     uint8 c;

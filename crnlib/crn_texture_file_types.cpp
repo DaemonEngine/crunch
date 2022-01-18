@@ -8,7 +8,7 @@ namespace crnlib {
 const char* texture_file_types::get_extension(format fmt) {
   CRNLIB_ASSERT(fmt < cNumFileFormats);
   if (fmt >= cNumFileFormats)
-    return NULL;
+    return nullptr;
 
   static const char* extensions[cNumFileFormats] =
       {
@@ -36,7 +36,7 @@ const char* texture_file_types::get_extension(format fmt) {
 
 texture_file_types::format texture_file_types::determine_file_format(const char* pFilename) {
   dynamic_string ext;
-  if (!file_utils::split_path(pFilename, NULL, NULL, NULL, &ext))
+  if (!file_utils::split_path(pFilename, nullptr, nullptr, nullptr, &ext))
     return cFormatInvalid;
 
   if (ext.is_empty())

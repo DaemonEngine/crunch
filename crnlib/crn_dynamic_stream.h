@@ -86,7 +86,7 @@ class dynamic_stream : public data_stream {
     }
   }
 
-  virtual const void* get_ptr() const { return m_buf.empty() ? NULL : &m_buf[0]; }
+  virtual const void* get_ptr() const { return m_buf.empty() ? nullptr : &m_buf[0]; }
 
   virtual uint read(void* pBuf, uint len) {
     CRNLIB_ASSERT(pBuf && (len <= 0x7FFFFFFF));

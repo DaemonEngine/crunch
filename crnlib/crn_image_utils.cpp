@@ -163,7 +163,7 @@ bool write_to_file(const char* pFilename, const image_u8& img, uint write_flags,
 
   crnlib::vector<uint8> temp;
   uint num_src_chans = 0;
-  const void* pSrc_img = NULL;
+  const void* pSrc_img = nullptr;
 
   if (is_jpeg) {
     write_flags |= cWriteFlagIgnoreAlpha;
@@ -398,7 +398,7 @@ bool resample_single_thread(const image_u8& src, image_u8& dst, const resample_p
 
   resamplers[0] = crnlib_new<Resampler>(src_width, src_height, dst_width, dst_height,
                                         params.m_wrapping ? Resampler::BOUNDARY_WRAP : Resampler::BOUNDARY_CLAMP, 0.0f, 1.0f,
-                                        params.m_pFilter, (Resampler::Contrib_List*)NULL, (Resampler::Contrib_List*)NULL, params.m_filter_scale, params.m_filter_scale);
+                                        params.m_pFilter, (Resampler::Contrib_List*)nullptr, (Resampler::Contrib_List*)nullptr, params.m_filter_scale, params.m_filter_scale);
   samples[0].resize(src_width);
 
   for (uint i = 1; i < params.m_num_comps; i++) {
@@ -1160,7 +1160,7 @@ uint8* read_image_from_memory(const uint8* pImage, int nSize, int* pWidth, int* 
   *pActualComps = 0;
 
   if ((req_comps < 1) || (req_comps > 4))
-    return NULL;
+    return nullptr;
 
   mipmapped_texture tex;
 
@@ -1169,17 +1169,17 @@ uint8* read_image_from_memory(const uint8* pImage, int nSize, int* pWidth, int* 
   data_stream_serializer serializer(buf_stream);
 
   if (!tex.read_from_stream(serializer))
-    return NULL;
+    return nullptr;
 
   if (tex.is_packed()) {
     if (!tex.unpack_from_dxt(true))
-      return NULL;
+      return nullptr;
   }
 
   image_u8 img;
   image_u8* pImg = tex.get_level_image(0, 0, img);
   if (!pImg)
-    return NULL;
+    return nullptr;
 
   *pWidth = tex.get_width();
   *pHeight = tex.get_height();
@@ -1191,7 +1191,7 @@ uint8* read_image_from_memory(const uint8* pImage, int nSize, int* pWidth, int* 
   else
     *pActualComps = 3;
 
-  uint8* pDst = NULL;
+  uint8* pDst = nullptr;
   if (req_comps == 4) {
     pDst = (uint8*)malloc(tex.get_total_pixels() * sizeof(uint32));
     uint8* pSrc = (uint8*)pImg->get_ptr();

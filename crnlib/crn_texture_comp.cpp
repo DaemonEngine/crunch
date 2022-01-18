@@ -13,7 +13,7 @@ static itexture_comp* create_texture_comp(crn_file_type file_type) {
   else if (file_type == cCRNFileTypeDDS)
     return crnlib_new<dds_comp>();
   else
-    return NULL;
+    return nullptr;
 }
 
 bool create_compressed_texture(const crn_comp_params& params, crnlib::vector<uint8>& comp_data, uint32* pActual_quality_level, float* pActual_bitrate) {
@@ -192,7 +192,7 @@ bool create_compressed_texture(const crn_comp_params& params, crnlib::vector<uin
   }
 
   crnlib_delete(pTexture_comp);
-  pTexture_comp = NULL;
+  pTexture_comp = nullptr;
 
   if (best_quality_level < 0)
     return false;

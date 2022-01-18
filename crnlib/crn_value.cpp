@@ -15,7 +15,7 @@ const char* gValueDataTypeStrings[cDTTotal + 1] =
         "vec3f",
         "vec3i",
 
-        NULL,
+        nullptr,
 };
 
 }  // namespace crnlib

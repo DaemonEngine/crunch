@@ -89,8 +89,8 @@ class dxt_hc {
           m_adaptive_tile_alpha_psnr_derating(2.0f),
           m_adaptive_tile_color_alpha_weighting_ratio(3.0f),
           m_debugging(false),
-          m_pProgress_func(0),
-          m_pProgress_func_data(0) {
+          m_pProgress_func(nullptr),
+          m_pProgress_func_data(nullptr) {
       m_alpha_component_indices[0] = 3;
       m_alpha_component_indices[1] = 0;
       for (uint i = 0; i < cCRNMaxLevels; i++) {

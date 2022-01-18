@@ -50,7 +50,7 @@ void corpus_tester::print_comparative_metric_stats(const command_line_params& cm
     indices[0].resize(worse_blocks.size());
     indices[1].resize(worse_blocks.size());
 
-    uint* pSorted_indices = NULL;
+    uint* pSorted_indices = nullptr;
     if (worse_blocks.size()) {
       pSorted_indices = indirect_radix_sort(worse_blocks.size(), &indices[0][0], &indices[1][0], &delta_psnr[0], 0, sizeof(float), true);
 

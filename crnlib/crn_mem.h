@@ -15,8 +15,8 @@ const uint32 CRNLIB_MAX_POSSIBLE_BLOCK_SIZE = 0x7FFF0000U;
 
 void* crnlib_malloc(size_t size);
 void* crnlib_malloc(size_t size, size_t* pActual_size);
-void* crnlib_realloc(void* p, size_t size, size_t* pActual_size = NULL, bool movable = true);
-void* crnlib_calloc(size_t count, size_t size, size_t* pActual_size = NULL);
+void* crnlib_realloc(void* p, size_t size, size_t* pActual_size = nullptr, bool movable = true);
+void* crnlib_calloc(size_t count, size_t size, size_t* pActual_size = nullptr);
 void crnlib_free(void* p);
 size_t crnlib_msize(void* p);
 void crnlib_print_mem_stats();
@@ -118,7 +118,7 @@ inline T* crnlib_new_array(uint32 num) {
   uint64 total = CRNLIB_MIN_ALLOC_ALIGNMENT + sizeof(T) * num;
   if (total > CRNLIB_MAX_POSSIBLE_BLOCK_SIZE) {
     crnlib_mem_error("crnlib_new_array: Array too large!");
-    return NULL;
+    return nullptr;
   }
   uint8* q = static_cast<uint8*>(crnlib_malloc(static_cast<size_t>(total)));
 

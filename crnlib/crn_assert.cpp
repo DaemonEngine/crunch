@@ -39,7 +39,7 @@ void crnlib_fail(const char* pExp, const char* pFile, unsigned line) {
 
 #if CRNLIB_USE_WIN32_API
   if (g_fail_exceptions)
-    RaiseException(CRNLIB_FAIL_EXCEPTION_CODE, 0, 0, NULL);
+    RaiseException(CRNLIB_FAIL_EXCEPTION_CODE, 0, 0, nullptr);
   else
 #endif
       if (g_exit_on_failure)

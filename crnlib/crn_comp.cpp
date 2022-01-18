@@ -11,7 +11,7 @@
 namespace crnlib {
 
 crn_comp::crn_comp()
-    : m_pParams(NULL) {
+    : m_pParams(nullptr) {
 }
 
 crn_comp::~crn_comp() {
@@ -346,7 +346,7 @@ bool crn_comp::alias_images() {
 }
 
 void crn_comp::clear() {
-  m_pParams = NULL;
+  m_pParams = nullptr;
 
   for (uint f = 0; f < cCRNMaxFaces; f++)
     for (uint l = 0; l < cCRNMaxLevels; l++)
@@ -1244,9 +1244,9 @@ bool crn_comp::compress_internal() {
 
       if (!pack_blocks(
           level,
-          !pass && !level, pass ? &codec : NULL,
-          m_has_comp[cColor] ? &m_endpoint_remaping[cColor] : NULL, m_has_comp[cColor] ? &m_selector_remaping[cColor] : NULL,
-          m_has_comp[cAlpha0] ? &m_endpoint_remaping[cAlpha0] : NULL, m_has_comp[cAlpha0] ? &m_selector_remaping[cAlpha0] : NULL)) {
+          !pass && !level, pass ? &codec : nullptr,
+          m_has_comp[cColor] ? &m_endpoint_remaping[cColor] : nullptr, m_has_comp[cColor] ? &m_selector_remaping[cColor] : nullptr,
+          m_has_comp[cAlpha0] ? &m_endpoint_remaping[cAlpha0] : nullptr, m_has_comp[cAlpha0] ? &m_selector_remaping[cAlpha0] : nullptr)) {
         return false;
       }
 

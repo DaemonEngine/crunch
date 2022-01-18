@@ -39,7 +39,7 @@ class symbol_histogram {
 
   inline void resize(uint new_size) { m_hist.resize(new_size); }
 
-  inline const uint* get_ptr() const { return m_hist.empty() ? NULL : &m_hist.front(); }
+  inline const uint* get_ptr() const { return m_hist.empty() ? nullptr : &m_hist.front(); }
 
   double calc_entropy() const;
 
@@ -111,7 +111,7 @@ class static_huffman_data_model {
   uint get_total_syms() const { return m_total_syms; }
   uint get_cost(uint sym) const { return m_code_sizes[sym]; }
 
-  const uint8* get_code_sizes() const { return m_code_sizes.empty() ? NULL : &m_code_sizes[0]; }
+  const uint8* get_code_sizes() const { return m_code_sizes.empty() ? nullptr : &m_code_sizes[0]; }
 
  private:
   uint m_total_syms;
@@ -188,7 +188,7 @@ class symbol_codec {
 
   // Encoding
   void start_encoding(uint expected_file_size);
-  uint encode_transmit_static_huffman_data_model(static_huffman_data_model& model, bool simulate, static_huffman_data_model* pDelta_model = NULL);
+  uint encode_transmit_static_huffman_data_model(static_huffman_data_model& model, bool simulate, static_huffman_data_model* pDelta_model = nullptr);
   void encode_bits(uint bits, uint num_bits);
   void encode_align_to_byte();
   void encode(uint sym, adaptive_huffman_data_model& model);
@@ -214,7 +214,7 @@ class symbol_codec {
 
   typedef void (*need_bytes_func_ptr)(size_t num_bytes_consumed, void* pPrivate_data, const uint8*& pBuf, size_t& buf_size, bool& eof_flag);
 
-  bool start_decoding(const uint8* pBuf, size_t buf_size, bool eof_flag = true, need_bytes_func_ptr pNeed_bytes_func = NULL, void* pPrivate_data = NULL);
+  bool start_decoding(const uint8* pBuf, size_t buf_size, bool eof_flag = true, need_bytes_func_ptr pNeed_bytes_func = nullptr, void* pPrivate_data = nullptr);
   void decode_set_input_buffer(const uint8* pBuf, size_t buf_size, const uint8* pBuf_next, bool eof_flag = true);
   inline uint64 decode_get_bytes_consumed() const { return m_pDecode_buf_next - m_pDecode_buf; }
   inline uint64 decode_get_bits_remaining() const { return ((m_pDecode_buf_end - m_pDecode_buf_next) << 3) + m_bit_count; }

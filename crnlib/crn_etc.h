@@ -412,10 +412,10 @@ class etc1_optimizer {
   }
 
   void clear() {
-    m_pParams = NULL;
-    m_pResult = NULL;
-    m_pSorted_luma = NULL;
-    m_pSorted_luma_indices = NULL;
+    m_pParams = nullptr;
+    m_pResult = nullptr;
+    m_pSorted_luma = nullptr;
+    m_pSorted_luma_indices = nullptr;
   }
 
   struct params : crn_etc1_pack_params {
@@ -435,7 +435,7 @@ class etc1_optimizer {
 
     void clear_optimizer_params() {
       m_num_src_pixels = 0;
-      m_pSrc_pixels = 0;
+      m_pSrc_pixels = nullptr;
 
       m_use_color4 = false;
       static const int s_default_scan_delta[] = {0};

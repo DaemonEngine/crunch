@@ -46,7 +46,7 @@ inline uint create_jpeg_write_flags(uint base_flags, uint quality_level) {
 bool write_to_file(const char* pFilename, const image_u8& img, uint write_flags = 0, int grayscale_comp_index = cLumaComponentIndex);
 
 bool has_alpha(const image_u8& img);
-bool is_normal_map(const image_u8& img, const char* pFilename = NULL);
+bool is_normal_map(const image_u8& img, const char* pFilename = nullptr);
 void renorm_normal_map(image_u8& img);
 
 struct resample_params {
@@ -88,7 +88,7 @@ class error_metrics {
   void print(const char* pName) const;
 
   // If num_channels==0, luma error is computed.
-  // If pHist != NULL, it must point to a 256 entry array.
+  // If pHist != nullptr, it must point to a 256 entry array.
   bool compute(const image_u8& a, const image_u8& b, uint first_channel, uint num_channels, bool average_component_error = true);
 
   uint mMax;
@@ -150,7 +150,7 @@ inline uint8* pack_image(const image_type& img, const pixel_packer& packer, uint
   n = 0;
 
   if (!packer.is_valid())
-    return NULL;
+    return nullptr;
 
   const uint width = img.get_width(), height = img.get_height();
   uint dst_pixel_stride = packer.get_pixel_stride();

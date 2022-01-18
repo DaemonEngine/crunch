@@ -8,7 +8,7 @@ namespace crnlib {
 class data_stream_serializer {
  public:
   data_stream_serializer()
-      : m_pStream(NULL), m_little_endian(true) {}
+      : m_pStream(nullptr), m_little_endian(true) {}
   data_stream_serializer(data_stream* pStream)
       : m_pStream(pStream), m_little_endian(true) {}
   data_stream_serializer(data_stream& stream)
@@ -207,7 +207,7 @@ class data_stream_serializer {
       if (!read_chars(str.get_ptr_raw(), len))
         return false;
 
-      if (memchr(str.get_ptr(), 0, len) != NULL) {
+      if (memchr(str.get_ptr(), 0, len) != nullptr) {
         str.truncate(0);
         return false;
       }

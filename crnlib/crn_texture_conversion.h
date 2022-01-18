@@ -19,7 +19,7 @@ class convert_stats {
       texture_file_types::format dst_file_type,
       bool lzma_stats);
 
-  bool print(bool psnr_metrics, bool mip_stats, bool grayscale_sampling, const char* pCSVStatsFile = NULL) const;
+  bool print(bool psnr_metrics, bool mip_stats, bool grayscale_sampling, const char* pCSVStatsFile = nullptr) const;
 
   void clear();
 
@@ -42,13 +42,13 @@ class convert_stats {
 class convert_params {
  public:
   convert_params()
-      : m_pInput_texture(NULL),
+      : m_pInput_texture(nullptr),
         m_texture_type(cTextureTypeUnknown),
         m_dst_file_type(texture_file_types::cFormatInvalid),
         m_dst_format(PIXEL_FMT_INVALID),
-        m_pProgress_func(NULL),
-        m_pProgress_user_data(NULL),
-        m_pIntermediate_texture(NULL),
+        m_pProgress_func(nullptr),
+        m_pProgress_user_data(nullptr),
+        m_pIntermediate_texture(nullptr),
         m_y_flip(false),
         m_unflip(false),
         m_always_use_source_pixel_format(false),

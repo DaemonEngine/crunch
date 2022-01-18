@@ -115,7 +115,7 @@ class jpeg_decoder_mem_stream : public jpeg_decoder_stream {
 
  public:
   jpeg_decoder_mem_stream()
-      : m_pSrc_data(NULL), m_ofs(0), m_size(0) {}
+      : m_pSrc_data(nullptr), m_ofs(0), m_size(0) {}
   jpeg_decoder_mem_stream(const uint8* pSrc_data, uint size)
       : m_pSrc_data(pSrc_data), m_ofs(0), m_size(size) {}
 
@@ -123,7 +123,7 @@ class jpeg_decoder_mem_stream : public jpeg_decoder_stream {
 
   bool open(const uint8* pSrc_data, uint size);
   void close() {
-    m_pSrc_data = NULL;
+    m_pSrc_data = nullptr;
     m_ofs = 0;
     m_size = 0;
   }

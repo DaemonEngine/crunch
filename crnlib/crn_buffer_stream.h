@@ -8,14 +8,14 @@ class buffer_stream : public data_stream {
  public:
   buffer_stream()
       : data_stream(),
-        m_pBuf(NULL),
+        m_pBuf(nullptr),
         m_size(0),
         m_ofs(0) {
   }
 
   buffer_stream(void* p, uint size)
       : data_stream(),
-        m_pBuf(NULL),
+        m_pBuf(nullptr),
         m_size(0),
         m_ofs(0) {
     open(p, size);
@@ -23,7 +23,7 @@ class buffer_stream : public data_stream {
 
   buffer_stream(const void* p, uint size)
       : data_stream(),
-        m_pBuf(NULL),
+        m_pBuf(nullptr),
         m_size(0),
         m_ofs(0) {
     open(p, size);
@@ -67,7 +67,7 @@ class buffer_stream : public data_stream {
   virtual bool close() {
     if (m_opened) {
       m_opened = false;
-      m_pBuf = NULL;
+      m_pBuf = nullptr;
       m_size = 0;
       m_ofs = 0;
       return true;

@@ -88,14 +88,14 @@ class semaphore {
   CRNLIB_NO_COPY_OR_ASSIGNMENT_OP(semaphore);
 
  public:
-  semaphore(int32 initialCount = 0, int32 maximumCount = 1, const char* pName = NULL);
+  semaphore(int32 initialCount = 0, int32 maximumCount = 1, const char* pName = nullptr);
 
   ~semaphore();
 
   inline HANDLE get_handle(void) const { return m_handle; }
 
-  void release(int32 releaseCount = 1, int32* pPreviousCount = NULL);
-  bool try_release(int32 releaseCount = 1, int32* pPreviousCount = NULL);
+  void release(int32 releaseCount = 1, int32* pPreviousCount = nullptr);
+  bool try_release(int32 releaseCount = 1, int32* pPreviousCount = nullptr);
 
   bool wait(uint32 milliseconds = cUINT32_MAX);
 
@@ -192,7 +192,7 @@ class tsstack {
   bool m_use_freelist;
 
   inline node* alloc_node() {
-    node* pNode = m_use_freelist ? (node*)InterlockedPopEntrySList(&m_freelist_head) : NULL;
+    node* pNode = m_use_freelist ? (node*)InterlockedPopEntrySList(&m_freelist_head) : nullptr;
 
     if (!pNode)
       pNode = (node*)crnlib_malloc(sizeof(node));
@@ -226,7 +226,7 @@ class task_pool {
 
   // C-style task callback
   typedef void (*task_callback_func)(uint64 data, void* pData_ptr);
-  bool queue_task(task_callback_func pFunc, uint64 data = 0, void* pData_ptr = NULL);
+  bool queue_task(task_callback_func pFunc, uint64 data = 0, void* pData_ptr = nullptr);
 
   class executable_task {
    public:
@@ -234,13 +234,13 @@ class task_pool {
   };
 
   // It's the caller's responsibility to delete pObj within the execute_task() method, if needed!
-  bool queue_task(executable_task* pObj, uint64 data = 0, void* pData_ptr = NULL);
+  bool queue_task(executable_task* pObj, uint64 data = 0, void* pData_ptr = nullptr);
 
   template <typename S, typename T>
-  inline bool queue_object_task(S* pObject, T pObject_method, uint64 data = 0, void* pData_ptr = NULL);
+  inline bool queue_object_task(S* pObject, T pObject_method, uint64 data = 0, void* pData_ptr = nullptr);
 
   template <typename S, typename T>
-  inline bool queue_multiple_object_tasks(S* pObject, T pObject_method, uint64 first_data, uint num_tasks, void* pData_ptr = NULL);
+  inline bool queue_multiple_object_tasks(S* pObject, T pObject_method, uint64 first_data, uint num_tasks, void* pData_ptr = nullptr);
 
   // Waits for all outstanding tasks (if any) to complete.
   // The calling thread will steal any outstanding tasks from worker threads, if possible.
@@ -248,7 +248,7 @@ class task_pool {
 
  private:
   struct task {
-    //inline task() : m_data(0), m_pData_ptr(NULL), m_pObj(NULL), m_flags(0) { }
+    //inline task() : m_data(0), m_pData_ptr(nullptr), m_pObj(nullptr), m_flags(0) { }
 
     uint64 m_data;
     void* m_pData_ptr;
@@ -295,8 +295,8 @@ template <typename T>
 class object_task : public task_pool::executable_task {
  public:
   object_task(uint flags = cObjectTaskFlagDefault)
-      : m_pObject(NULL),
-        m_pMethod(NULL),
+      : m_pObject(nullptr),
+        m_pMethod(nullptr),
         m_flags(flags) {
   }
 

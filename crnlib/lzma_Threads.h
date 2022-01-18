@@ -12,8 +12,8 @@ typedef struct _CThread {
   HANDLE handle;
 } CThread;
 
-#define Thread_Construct(thread) (thread)->handle = NULL
-#define Thread_WasCreated(thread) ((thread)->handle != NULL)
+#define Thread_Construct(thread) (thread)->handle = nullptr
+#define Thread_WasCreated(thread) ((thread)->handle != nullptr)
 
 typedef unsigned THREAD_FUNC_RET_TYPE;
 #define THREAD_FUNC_CALL_TYPE MY_STD_CALL
@@ -30,8 +30,8 @@ typedef struct _CEvent {
 typedef CEvent CAutoResetEvent;
 typedef CEvent CManualResetEvent;
 
-#define Event_Construct(event) (event)->handle = NULL
-#define Event_IsCreated(event) ((event)->handle != NULL)
+#define Event_Construct(event) (event)->handle = nullptr
+#define Event_IsCreated(event) ((event)->handle != nullptr)
 
 WRes ManualResetEvent_Create(CManualResetEvent* event, int initialSignaled);
 WRes ManualResetEvent_CreateNotSignaled(CManualResetEvent* event);
@@ -46,7 +46,7 @@ typedef struct _CSemaphore {
   HANDLE handle;
 } CSemaphore;
 
-#define Semaphore_Construct(p) (p)->handle = NULL
+#define Semaphore_Construct(p) (p)->handle = nullptr
 
 WRes Semaphore_Create(CSemaphore* p, UInt32 initiallyCount, UInt32 maxCount);
 WRes Semaphore_ReleaseN(CSemaphore* p, UInt32 num);

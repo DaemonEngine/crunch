@@ -25,7 +25,7 @@
 
 namespace crnlib {
 dxt_image::dxt_image()
-    : m_pElements(NULL),
+    : m_pElements(nullptr),
       m_width(0),
       m_height(0),
       m_blocks_x(0),
@@ -40,7 +40,7 @@ dxt_image::dxt_image()
 }
 
 dxt_image::dxt_image(const dxt_image& other)
-    : m_pElements(NULL) {
+    : m_pElements(nullptr) {
   *this = other;
 }
 
@@ -59,7 +59,7 @@ dxt_image& dxt_image::operator=(const dxt_image& rhs) {
   m_format = rhs.m_format;
   m_total_blocks = rhs.m_total_blocks;
   m_total_elements = rhs.m_total_elements;
-  m_pElements = NULL;
+  m_pElements = nullptr;
   memcpy(m_element_type, rhs.m_element_type, sizeof(m_element_type));
   memcpy(m_element_component_index, rhs.m_element_component_index, sizeof(m_element_component_index));
 
@@ -85,7 +85,7 @@ void dxt_image::clear() {
   utils::zero_object(m_element_component_index);
   m_total_blocks = 0;
   m_total_elements = 0;
-  m_pElements = NULL;
+  m_pElements = nullptr;
 }
 
 bool dxt_image::init_internal(dxt_format fmt, uint width, uint height) {
@@ -361,7 +361,7 @@ bool dxt_image::init_ati_compress(dxt_format fmt, const image_u8& img, const pac
     options.fWeightingBlue = .072169f;
   }
 
-  ATI_TC_ERROR err = ATI_TC_ConvertTexture(&src_tex, &dst_tex, &options, NULL, NULL, NULL);
+  ATI_TC_ERROR err = ATI_TC_ConvertTexture(&src_tex, &dst_tex, &options, nullptr, nullptr, nullptr);
   return err == ATI_TC_OK;
 }
 #endif

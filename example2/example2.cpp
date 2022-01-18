@@ -44,10 +44,10 @@ static int error(const char* pMsg, ...) {
 static crn_uint8* read_file_into_buffer(const char* pFilename, crn_uint32& size) {
   size = 0;
 
-  FILE* pFile = NULL;
+  FILE* pFile = nullptr;
   fopen_s(&pFile, pFilename, "rb");
   if (!pFile)
-    return NULL;
+    return nullptr;
 
   fseek(pFile, 0, SEEK_END);
   size = ftell(pFile);
@@ -58,7 +58,7 @@ static crn_uint8* read_file_into_buffer(const char* pFilename, crn_uint32& size)
     fclose(pFile);
     free(pSrc_file_data);
     size = 0;
-    return NULL;
+    return nullptr;
   }
 
   fclose(pFile);

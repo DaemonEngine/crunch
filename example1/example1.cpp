@@ -75,10 +75,10 @@ static int error(const char* pMsg, ...) {
 static crn_uint8* read_file_into_buffer(const char* pFilename, crn_uint32& size) {
   size = 0;
 
-  FILE* pFile = NULL;
+  FILE* pFile = nullptr;
   fopen_s(&pFile, pFilename, "rb");
   if (!pFile)
-    return NULL;
+    return nullptr;
 
   fseek(pFile, 0, SEEK_END);
   size = ftell(pFile);
@@ -89,7 +89,7 @@ static crn_uint8* read_file_into_buffer(const char* pFilename, crn_uint32& size)
     fclose(pFile);
     free(pSrc_file_data);
     size = 0;
-    return NULL;
+    return nullptr;
   }
 
   fclose(pFile);
@@ -143,8 +143,8 @@ static bool print_dds_info(const void* pData, crn_uint32 data_size) {
   const char* pDDSDFlagNames[] =
       {
           "DDSD_CAPS", "DDSD_HEIGHT", "DDSD_WIDTH", "DDSD_PITCH",
-          NULL, "DDSD_BACKBUFFERCOUNT", "DDSD_ZBUFFERBITDEPTH", "DDSD_ALPHABITDEPTH",
-          NULL, NULL, NULL, "DDSD_LPSURFACE",
+          nullptr, "DDSD_BACKBUFFERCOUNT", "DDSD_ZBUFFERBITDEPTH", "DDSD_ALPHABITDEPTH",
+          nullptr, nullptr, nullptr, "DDSD_LPSURFACE",
           "DDSD_PIXELFORMAT", "DDSD_CKDESTOVERLAY", "DDSD_CKDESTBLT", "DDSD_CKSRCOVERLAY",
           "DDSD_CKSRCBLT", "DDSD_MIPMAPCOUNT", "DDSD_REFRESHRATE", "DDSD_LINEARSIZE",
           "DDSD_TEXTURESTAGE", "DDSD_FVF", "DDSD_SRCVBHANDLE", "DDSD_DEPTH"};
@@ -202,11 +202,11 @@ static bool print_dds_info(const void* pData, crn_uint32 data_size) {
   printf("ddsCaps.dwCaps2: 0x%08X ", desc.ddsCaps.dwCaps2);
   const char* pDDCAPS2FlagNames[] =
       {
-          NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-          NULL, "DDSCAPS2_CUBEMAP", "DDSCAPS2_CUBEMAP_POSITIVEX", "DDSCAPS2_CUBEMAP_NEGATIVEX",
+          nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+          nullptr, "DDSCAPS2_CUBEMAP", "DDSCAPS2_CUBEMAP_POSITIVEX", "DDSCAPS2_CUBEMAP_NEGATIVEX",
           "DDSCAPS2_CUBEMAP_POSITIVEY", "DDSCAPS2_CUBEMAP_NEGATIVEY", "DDSCAPS2_CUBEMAP_POSITIVEZ", "DDSCAPS2_CUBEMAP_NEGATIVEZ",
-          NULL, NULL, NULL, NULL,
-          NULL, "DDSCAPS2_VOLUME"};
+          nullptr, nullptr, nullptr, nullptr,
+          nullptr, "DDSCAPS2_VOLUME"};
   for (int i = 0; i < sizeof(pDDCAPS2FlagNames) / sizeof(pDDCAPS2FlagNames[0]); i++)
     if ((pDDCAPS2FlagNames[i]) && (desc.ddsCaps.dwCaps2 & (1 << i)))
       printf("%s ", pDDCAPS2FlagNames[i]);
@@ -348,7 +348,7 @@ int main(int argc, char* argv[]) {
     // If the user has explicitly specified an output file, check the output file's extension to ensure we write the expected format.
     if (out_filename[0]) {
       char out_fname_buf[_MAX_FNAME], out_ext_buf[_MAX_EXT];
-      _splitpath_s(out_filename, NULL, 0, NULL, 0, out_fname_buf, _MAX_FNAME, out_ext_buf, _MAX_EXT);
+      _splitpath_s(out_filename, nullptr, 0, nullptr, 0, out_fname_buf, _MAX_FNAME, out_ext_buf, _MAX_EXT);
       if (!_stricmp(out_ext_buf, ".crn"))
         output_crn = true;
       else if (!_stricmp(out_ext_buf, ".dds"))

@@ -111,7 +111,7 @@ class dxt1_endpoint_optimizer {
   struct params {
     params()
         : m_block_index(0),
-          m_pPixels(NULL),
+          m_pPixels(nullptr),
           m_num_pixels(0),
           m_dxt1a_alpha_threshold(128U),
           m_quality(cCRNDXTQualityUber),
@@ -143,7 +143,7 @@ class dxt1_endpoint_optimizer {
 
   struct results {
     inline results()
-        : m_pSelectors(NULL) {}
+        : m_pSelectors(nullptr) {}
 
     uint64 m_error;
 

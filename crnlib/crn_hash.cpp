@@ -20,7 +20,7 @@ uint32 fast_hash(const void* p, int len) {
   uint32 hash = len, tmp;
   int rem;
 
-  if (len <= 0 || data == NULL)
+  if (len <= 0 || data == nullptr)
     return 0;
 
   rem = len & 3;
