@@ -1953,11 +1953,13 @@ static uint8* load_jpeg_image(jpeg* z, int* out_x, int* out_y, int* comp, int re
       } else {
         uint8* y = coutput[0];
         if (n == 1)
-          for (i = 0; i < z->s.img_x; ++i)
+          for (i = 0; i < z->s.img_x; ++i) {
             out[i] = y[i];
+					}
         else
-          for (i = 0; i < z->s.img_x; ++i)
-            *out++ = y[i], *out++ = 255;
+          for (i = 0; i < z->s.img_x; ++i) {
+            *out++ = y[i]; *out++ = 255;
+					}
       }
     }
     cleanup_jpeg(z);
@@ -3087,16 +3089,21 @@ static int high_bit(unsigned int z) {
   int n = 0;
   if (z == 0)
     return -1;
-  if (z >= 0x10000)
-    n += 16, z >>= 16;
-  if (z >= 0x00100)
-    n += 8, z >>= 8;
-  if (z >= 0x00010)
-    n += 4, z >>= 4;
-  if (z >= 0x00004)
-    n += 2, z >>= 2;
-  if (z >= 0x00002)
-    n += 1, z >>= 1;
+  if (z >= 0x10000) {
+    n += 16; z >>= 16;
+	}
+  if (z >= 0x00100) {
+    n += 8; z >>= 8;
+	}
+  if (z >= 0x00010) {
+    n += 4; z >>= 4;
+	}
+  if (z >= 0x00004) {
+    n += 2; z >>= 2;
+	}
+  if (z >= 0x00002) {
+    n += 1; z >>= 1;
+	}
   return n;
 }
 
@@ -3335,7 +3342,7 @@ static stbi_uc* bmp_load(stbi* s, int* x, int* y, int* comp, int req_comp) {
       stbi_uc* p1 = out + j * s->img_x * target;
       stbi_uc* p2 = out + (s->img_y - 1 - j) * s->img_x * target;
       for (i = 0; i < (int)s->img_x * target; ++i) {
-        t = p1[i], p1[i] = p2[i], p2[i] = t;
+        t = p1[i]; p1[i] = p2[i]; p2[i] = t;
       }
     }
   }
@@ -3757,8 +3764,9 @@ static stbi_uc* psd_load(stbi* s, int* x, int* y, int* comp, int req_comp) {
       p = out + channel;
       if (channel >= channelCount) {
         // Fill this channel with default data.
-        for (i = 0; i < pixelCount; i++)
-          *p = (channel == 3 ? 255 : 0), p += 4;
+        for (i = 0; i < pixelCount; i++) {
+          *p = (channel == 3 ? 255 : 0); p += 4;
+				}
       } else {
         // Read the RLE data.
         count = 0;
@@ -3804,13 +3812,15 @@ static stbi_uc* psd_load(stbi* s, int* x, int* y, int* comp, int req_comp) {
       p = out + channel;
       if (channel > channelCount) {
         // Fill this channel with default data.
-        for (i = 0; i < pixelCount; i++)
-          *p = channel == 3 ? 255 : 0, p += 4;
+        for (i = 0; i < pixelCount; i++) {
+          *p = channel == 3 ? 255 : 0; p += 4;
+				}
       } else {
         // Read the data.
         count = 0;
-        for (i = 0; i < pixelCount; i++)
-          *p = get8(s), p += 4;
+        for (i = 0; i < pixelCount; i++) {
+          *p = get8(s); p += 4;
+				}
       }
     }
   }
@@ -4125,10 +4135,12 @@ static void write_pixels(FILE* f, int rgb_dir, int vdir, int x, int y, int comp,
   uint32 zero = 0;
   int i, j, k, j_end;
 
-  if (vdir < 0)
-    j_end = -1, j = y - 1;
-  else
-    j_end = y, j = 0;
+  if (vdir < 0) {
+    j_end = -1; j = y - 1;
+	}
+  else {
+    j_end = y; j = 0;
+	}
 
   for (; j != j_end; j += vdir) {
     for (i = 0; i < x; ++i) {

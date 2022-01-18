@@ -95,7 +95,7 @@ void mutex::set_spin_count(unsigned int count) {
 }
 
 semaphore::semaphore(long initialCount, long maximumCount, const char* pName) {
-  maximumCount, pName;
+  maximumCount; pName; // prevent warning
   CRNLIB_ASSERT(maximumCount >= initialCount);
   if (sem_init(&m_sem, 0, initialCount)) {
     CRNLIB_FAIL("semaphore: sem_init() failed");

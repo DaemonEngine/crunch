@@ -67,7 +67,7 @@ inline uint32 ranctx::next() {
 }
 
 void ranctx::seed(uint32 seed) {
-  a = 0xf1ea5eed, b = c = d = seed;
+  a = 0xf1ea5eed; b = c = d = seed;
   for (uint32 i = 0; i < 20; ++i)
     next();
 }

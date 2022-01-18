@@ -110,7 +110,7 @@ bool file_utils::disable_read_only(const char* pFilename) {
 }
 
 bool file_utils::is_older_than(const char* pSrcFilename, const char* pDstFilename) {
-  pSrcFilename, pDstFilename;
+  pSrcFilename; pDstFilename;
   // TODO
   return false;
 }

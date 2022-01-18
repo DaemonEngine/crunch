@@ -1100,7 +1100,7 @@ bool mipmapped_texture::write_dds(data_stream_serializer& serializer) const {
         const uint num_blocks_y = (height + 3) >> 2;
 
         CRNLIB_ASSERT(num_blocks_x * num_blocks_y * p->get_elements_per_block() == p->get_total_elements());
-        width, height, num_blocks_x, num_blocks_y;
+        width; height; num_blocks_x; num_blocks_y; // guess: prevent warnings when in release mode, because ASSERT.
 
         const uint size_in_bytes = p->get_total_elements() * sizeof(dxt_image::element);
         if (size_in_bytes > write_buf.size())
