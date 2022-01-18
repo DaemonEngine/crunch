@@ -217,21 +217,30 @@ struct crn_packed_uint {
     return *this;
   }
 
-  inline operator unsigned int() const {
-    switch (N) {
-      case 1:
-        return m_buf[0];
-      case 2:
-        return (m_buf[0] << 8U) | m_buf[1];
-      case 3:
-        return (m_buf[0] << 16U) | (m_buf[1] << 8U) | (m_buf[2]);
-      default:
-        return (m_buf[0] << 24U) | (m_buf[1] << 16U) | (m_buf[2] << 8U) | (m_buf[3]);
-    }
-  }
+  inline operator unsigned int() const;
 
   unsigned char m_buf[N];
 };
+
+template <>
+inline crn_packed_uint<1>::operator unsigned int() const {
+  return m_buf[0];
+}
+
+template <>
+inline crn_packed_uint<2>::operator unsigned int() const {
+  return (m_buf[0] << 8U) | m_buf[1];
+}
+
+template <>
+inline crn_packed_uint<3>::operator unsigned int() const {
+  return (m_buf[0] << 16U) | (m_buf[1] << 8U) | (m_buf[2]);
+}
+
+template <>
+inline crn_packed_uint<4>::operator unsigned int() const {
+  return (m_buf[0] << 24U) | (m_buf[1] << 16U) | (m_buf[2] << 8U) | (m_buf[3]);
+}
 
 #pragma pack(push)
 #pragma pack(1)
