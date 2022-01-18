@@ -1198,8 +1198,7 @@ int jpeg_decoder::process_markers() {
       }
       // No arithmitic support - dumb patents!
       case M_DAC: {
-        stop_decoding(JPGD_NO_ARITHMITIC_SUPPORT);
-        break;
+        stop_decoding(JPGD_NO_ARITHMITIC_SUPPORT); // this exits
       }
       case M_DQT: {
         read_dqt_marker();
@@ -1221,8 +1220,7 @@ int jpeg_decoder::process_markers() {
       case M_RST6:
       case M_RST7:
       case M_TEM: {
-        stop_decoding(JPGD_UNEXPECTED_MARKER);
-        break;
+        stop_decoding(JPGD_UNEXPECTED_MARKER); // this exists
       }
       default: /* must be DNL, DHP, EXP, APPn, JPGn, COM, or RESn or APP0 */
       {
@@ -1291,12 +1289,10 @@ void jpeg_decoder::locate_sof_marker() {
     }
     case M_SOF9: /* Arithmitic coding */
     {
-      stop_decoding(JPGD_NO_ARITHMITIC_SUPPORT);
-      break;
+      stop_decoding(JPGD_NO_ARITHMITIC_SUPPORT); // this exits
     }
     default: {
-      stop_decoding(JPGD_UNSUPPORTED_MARKER);
-      break;
+      stop_decoding(JPGD_UNSUPPORTED_MARKER); // this exits
     }
   }
 }
