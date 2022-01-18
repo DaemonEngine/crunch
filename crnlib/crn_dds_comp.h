@@ -11,16 +11,16 @@ class dds_comp : public itexture_comp {
 
  public:
   dds_comp();
-  virtual ~dds_comp();
+  ~dds_comp() override;
 
-  virtual const char* get_ext() const { return "DDS"; }
+  const char* get_ext() const override { return "DDS"; }
 
-  virtual bool compress_init(const crn_comp_params& params);
-  virtual bool compress_pass(const crn_comp_params& params, float* pEffective_bitrate);
-  virtual void compress_deinit();
+  bool compress_init(const crn_comp_params& params) override;
+  bool compress_pass(const crn_comp_params& params, float* pEffective_bitrate) override;
+  void compress_deinit() override;
 
-  virtual const crnlib::vector<uint8>& get_comp_data() const { return m_comp_data; }
-  virtual crnlib::vector<uint8>& get_comp_data() { return m_comp_data; }
+  const crnlib::vector<uint8>& get_comp_data() const override { return m_comp_data; }
+  crnlib::vector<uint8>& get_comp_data() override { return m_comp_data; }
 
  private:
   mipmapped_texture m_src_tex;

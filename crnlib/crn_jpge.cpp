@@ -1002,7 +1002,7 @@ class cfile_stream : public output_stream {
   cfile_stream()
       : m_pFile(nullptr), m_bStatus(false) {}
 
-  virtual ~cfile_stream() {
+  ~cfile_stream() override {
     close();
   }
 
@@ -1027,7 +1027,7 @@ class cfile_stream : public output_stream {
     return m_bStatus;
   }
 
-  virtual bool put_buf(const void* pBuf, int len) {
+  bool put_buf(const void* pBuf, int len) override {
     m_bStatus = m_bStatus && (fwrite(pBuf, len, 1, m_pFile) == 1);
     return m_bStatus;
   }
@@ -1073,9 +1073,9 @@ class memory_stream : public output_stream {
   memory_stream(void* pBuf, uint buf_size)
       : m_pBuf(static_cast<uint8*>(pBuf)), m_buf_size(buf_size), m_buf_ofs(0) {}
 
-  virtual ~memory_stream() {}
+  ~memory_stream() override {}
 
-  virtual bool put_buf(const void* pBuf, int len) {
+  bool put_buf(const void* pBuf, int len) override {
     uint buf_remaining = m_buf_size - m_buf_ofs;
     if ((uint)len > buf_remaining)
       return false;

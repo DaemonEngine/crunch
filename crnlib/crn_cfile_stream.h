@@ -20,11 +20,11 @@ class cfile_stream : public data_stream {
     open(pFilename, attribs, open_existing);
   }
 
-  virtual ~cfile_stream() {
+  ~cfile_stream() override {
     close();
   }
 
-  virtual bool close() {
+  bool close() override {
     clear_error();
 
     if (m_opened) {
@@ -102,7 +102,7 @@ class cfile_stream : public data_stream {
 
   FILE* get_file() const { return m_pFile; }
 
-  virtual uint read(void* pBuf, uint len) {
+  uint read(void* pBuf, uint len) override {
     CRNLIB_ASSERT(pBuf && (len <= 0x7FFFFFFF));
 
     if (!m_opened || (!is_readable()) || (!len))
@@ -119,7 +119,7 @@ class cfile_stream : public data_stream {
     return len;
   }
 
-  virtual uint write(const void* pBuf, uint len) {
+  uint write(const void* pBuf, uint len) override {
     CRNLIB_ASSERT(pBuf && (len <= 0x7FFFFFFF));
 
     if (!m_opened || (!is_writable()) || (!len))
@@ -136,7 +136,7 @@ class cfile_stream : public data_stream {
     return len;
   }
 
-  virtual bool flush() {
+  bool flush() override {
     if ((!m_opened) || (!is_writable()))
       return false;
 
@@ -148,14 +148,14 @@ class cfile_stream : public data_stream {
     return true;
   }
 
-  virtual uint64 get_size() {
+  uint64 get_size() override {
     if (!m_opened)
       return 0;
 
     return m_size;
   }
 
-  virtual uint64 get_remaining() {
+  uint64 get_remaining() override {
     if (!m_opened)
       return 0;
 
@@ -163,14 +163,14 @@ class cfile_stream : public data_stream {
     return m_size - m_ofs;
   }
 
-  virtual uint64 get_ofs() {
+  uint64 get_ofs() override {
     if (!m_opened)
       return 0;
 
     return m_ofs;
   }
 
-  virtual bool seek(int64 ofs, bool relative) {
+  bool seek(int64 ofs, bool relative) override {
     if ((!m_opened) || (!is_seekable()))
       return false;
 

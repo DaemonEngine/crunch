@@ -100,12 +100,12 @@ class jpeg_decoder_file_stream : public jpeg_decoder_stream {
 
  public:
   jpeg_decoder_file_stream();
-  virtual ~jpeg_decoder_file_stream();
+  ~jpeg_decoder_file_stream() override;
 
   bool open(const char* Pfilename);
   void close();
 
-  virtual int read(uint8* pBuf, int max_bytes_to_read, bool* pEOF_flag);
+  int read(uint8* pBuf, int max_bytes_to_read, bool* pEOF_flag) override;
 };
 
 // Memory stream class.
@@ -119,7 +119,7 @@ class jpeg_decoder_mem_stream : public jpeg_decoder_stream {
   jpeg_decoder_mem_stream(const uint8* pSrc_data, uint size)
       : m_pSrc_data(pSrc_data), m_ofs(0), m_size(size) {}
 
-  virtual ~jpeg_decoder_mem_stream() {}
+  ~jpeg_decoder_mem_stream() override {}
 
   bool open(const uint8* pSrc_data, uint size);
   void close() {
@@ -128,7 +128,7 @@ class jpeg_decoder_mem_stream : public jpeg_decoder_stream {
     m_size = 0;
   }
 
-  virtual int read(uint8* pBuf, int max_bytes_to_read, bool* pEOF_flag);
+  int read(uint8* pBuf, int max_bytes_to_read, bool* pEOF_flag) override;
 };
 
 // Loads JPEG file from a jpeg_decoder_stream.

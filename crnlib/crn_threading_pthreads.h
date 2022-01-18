@@ -239,7 +239,7 @@ class object_task : public task_pool::executable_task {
         m_flags(flags) {
     CRNLIB_ASSERT(pObject && pMethod);
   }
-  virtual ~object_task( void ) = default;
+  ~object_task( void ) override = default;
 
   void init(T* pObject, object_method_ptr pMethod, uint flags = cObjectTaskFlagDefault) {
     CRNLIB_ASSERT(pObject && pMethod);
@@ -252,7 +252,7 @@ class object_task : public task_pool::executable_task {
   T* get_object() const { return m_pObject; }
   object_method_ptr get_method() const { return m_pMethod; }
 
-  virtual void execute_task(uint64 data, void* pData_ptr) {
+  void execute_task(uint64 data, void* pData_ptr) override {
     (m_pObject->*m_pMethod)(data, pData_ptr);
 
     if (m_flags & cObjectTaskFlagDeleteAfterExecution)

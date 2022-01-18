@@ -29,7 +29,7 @@ class buffer_stream : public data_stream {
     open(p, size);
   }
 
-  virtual ~buffer_stream() {
+  ~buffer_stream() override {
   }
 
   bool open(const void* p, uint size) {
@@ -64,7 +64,7 @@ class buffer_stream : public data_stream {
     return true;
   }
 
-  virtual bool close() {
+  bool close() override {
     if (m_opened) {
       m_opened = false;
       m_pBuf = nullptr;
@@ -79,9 +79,9 @@ class buffer_stream : public data_stream {
   const void* get_buf() const { return m_pBuf; }
   void* get_buf() { return m_pBuf; }
 
-  virtual const void* get_ptr() const { return m_pBuf; }
+  const void* get_ptr() const override { return m_pBuf; }
 
-  virtual uint read(void* pBuf, uint len) {
+  uint read(void* pBuf, uint len) override {
     CRNLIB_ASSERT(pBuf && (len <= 0x7FFFFFFF));
 
     if ((!m_opened) || (!is_readable()) || (!len))
@@ -101,7 +101,7 @@ class buffer_stream : public data_stream {
     return len;
   }
 
-  virtual uint write(const void* pBuf, uint len) {
+  uint write(const void* pBuf, uint len) override {
     CRNLIB_ASSERT(pBuf && (len <= 0x7FFFFFFF));
 
     if ((!m_opened) || (!is_writable()) || (!len))
@@ -121,21 +121,21 @@ class buffer_stream : public data_stream {
     return len;
   }
 
-  virtual bool flush() {
+  bool flush() override {
     if (!m_opened)
       return false;
 
     return true;
   }
 
-  virtual uint64 get_size() {
+  uint64 get_size() override {
     if (!m_opened)
       return 0;
 
     return m_size;
   }
 
-  virtual uint64 get_remaining() {
+  uint64 get_remaining() override {
     if (!m_opened)
       return 0;
 
@@ -144,14 +144,14 @@ class buffer_stream : public data_stream {
     return m_size - m_ofs;
   }
 
-  virtual uint64 get_ofs() {
+  uint64 get_ofs() override {
     if (!m_opened)
       return 0;
 
     return m_ofs;
   }
 
-  virtual bool seek(int64 ofs, bool relative) {
+  bool seek(int64 ofs, bool relative) override {
     if ((!m_opened) || (!is_seekable()))
       return false;
 
