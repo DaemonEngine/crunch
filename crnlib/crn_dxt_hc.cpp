@@ -25,10 +25,10 @@ static uint8 g_tile_map[8][2][2] = {
 
 dxt_hc::dxt_hc()
   : m_num_blocks(0),
+    m_num_alpha_blocks(0),
     m_has_color_blocks(false),
     m_has_etc_color_blocks(false),
     m_has_subblocks(false),
-    m_num_alpha_blocks(0),
     m_main_thread_id(crn_get_current_thread_id()),
     m_canceled(false),
     m_pTask_pool(NULL),
