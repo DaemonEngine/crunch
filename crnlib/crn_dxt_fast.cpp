@@ -29,6 +29,7 @@ static inline uint pack_color(const color_quad_u8& c) {
   return (mul_8bit(c.r, 31) << 11) + (mul_8bit(c.g, 63) << 5) + mul_8bit(c.b, 31);
 }
 
+#if 0
 static inline void lerp_color(color_quad_u8& result, const color_quad_u8& p1, const color_quad_u8& p2, uint f) {
   CRNLIB_ASSERT(f <= 255);
 
@@ -36,6 +37,7 @@ static inline void lerp_color(color_quad_u8& result, const color_quad_u8& p1, co
   result.g = static_cast<uint8>(p1.g + mul_8bit(p2.g - p1.g, f));
   result.b = static_cast<uint8>(p1.b + mul_8bit(p2.b - p1.b, f));
 }
+#endif
 
 static inline void eval_colors(color_quad_u8* pColors, uint c0, uint c1) {
   unpack_color(pColors[0], c0);
