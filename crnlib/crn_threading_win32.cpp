@@ -154,8 +154,8 @@ void spinlock::unlock() {
 }
 
 semaphore::semaphore(int32 initialCount, int32 maximumCount, const char* pName) {
-  m_handle = CreateSemaphoreA(NULL, initialCount, maximumCount, pName);
-  if (NULL == m_handle) {
+  m_handle = CreateSemaphoreA(nullptr, initialCount, maximumCount, pName);
+  if (nullptr == m_handle) {
     CRNLIB_FAIL("semaphore: CreateSemaphore() failed");
   }
 }
@@ -163,7 +163,7 @@ semaphore::semaphore(int32 initialCount, int32 maximumCount, const char* pName) 
 semaphore::~semaphore() {
   if (m_handle) {
     CloseHandle(m_handle);
-    m_handle = NULL;
+    m_handle = nullptr;
   }
 }
 
@@ -229,7 +229,7 @@ bool task_pool::init(uint num_threads) {
 
   m_num_threads = 0;
   while (m_num_threads < num_threads) {
-    m_threads[m_num_threads] = (HANDLE)_beginthreadex(NULL, 32768, thread_func, this, 0, NULL);
+    m_threads[m_num_threads] = (HANDLE)_beginthreadex(nullptr, 32768, thread_func, this, 0, nullptr);
     CRNLIB_ASSERT(m_threads[m_num_threads] != 0);
 
     if (!m_threads[m_num_threads]) {
@@ -268,7 +268,7 @@ void task_pool::deinit() {
         }
 
         CloseHandle(m_threads[i]);
-        m_threads[i] = NULL;
+        m_threads[i] = nullptr;
       }
     }
 

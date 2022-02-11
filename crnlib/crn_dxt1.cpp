@@ -41,8 +41,8 @@ static struct {
 //-----------------------------------------------------------------------------------------------------------------------------------------
 
 dxt1_endpoint_optimizer::dxt1_endpoint_optimizer()
-    : m_pParams(NULL),
-      m_pResults(NULL),
+    : m_pParams(nullptr),
+      m_pResults(nullptr),
       m_perceptual(false),
       m_num_prev_results(0) {
   m_low_coords.reserve(512);

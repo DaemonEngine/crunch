@@ -71,7 +71,7 @@ static void* crnlib_default_realloc(void* p, size_t size, size_t* pActual_size, 
       *pActual_size = p_new ? ::_msize(p_new) : 0;
   } else if (!size) {
     ::free(p);
-    p_new = NULL;
+    p_new = nullptr;
 
     if (pActual_size)
       *pActual_size = 0;
@@ -80,7 +80,7 @@ static void* crnlib_default_realloc(void* p, size_t size, size_t* pActual_size, 
 #ifdef WIN32
     p_new = ::_expand(p, size);
 #else
-    p_new = NULL;
+    p_new = nullptr;
 #endif
 
     if (p_new) {
@@ -116,7 +116,7 @@ void crnlib_mem_error(const char* p_msg) {
   crnlib_assert(p_msg, __FILE__, __LINE__);
 }
 void* crnlib_malloc(size_t size) {
-  return crnlib_malloc(size, NULL);
+  return crnlib_malloc(size, nullptr);
 }
 
 void* crnlib_malloc(size_t size, size_t* pActual_size) {
@@ -126,18 +126,18 @@ void* crnlib_malloc(size_t size, size_t* pActual_size) {
 
   if (size > CRNLIB_MAX_POSSIBLE_BLOCK_SIZE) {
     crnlib_mem_error("crnlib_malloc: size too big");
-    return NULL;
+    return nullptr;
   }
 
   size_t actual_size = size;
-  uint8* p_new = static_cast<uint8*>((*g_pRealloc)(NULL, size, &actual_size, true, g_pUser_data));
+  uint8* p_new = static_cast<uint8*>((*g_pRealloc)(nullptr, size, &actual_size, true, g_pUser_data));
 
   if (pActual_size)
     *pActual_size = actual_size;
 
   if ((!p_new) || (actual_size < size)) {
     crnlib_mem_error("crnlib_malloc: out of memory");
-    return NULL;
+    return nullptr;
   }
 
   CRNLIB_ASSERT((reinterpret_cast<ptr_bits_t>(p_new) & (CRNLIB_MIN_ALLOC_ALIGNMENT - 1)) == 0);
@@ -153,12 +153,12 @@ void* crnlib_malloc(size_t size, size_t* pActual_size) {
 void* crnlib_realloc(void* p, size_t size, size_t* pActual_size, bool movable) {
   if ((ptr_bits_t)p & (CRNLIB_MIN_ALLOC_ALIGNMENT - 1)) {
     crnlib_mem_error("crnlib_realloc: bad ptr");
-    return NULL;
+    return nullptr;
   }
 
   if (size > CRNLIB_MAX_POSSIBLE_BLOCK_SIZE) {
     crnlib_mem_error("crnlib_malloc: size too big");
-    return NULL;
+    return nullptr;
   }
 
 #if CRNLIB_MEM_STATS
@@ -215,7 +215,7 @@ void crnlib_free(void* p) {
   update_total_allocated(-1, -static_cast<mem_stat_t>(cur_size));
 #endif
 
-  (*g_pRealloc)(p, 0, NULL, true, g_pUser_data);
+  (*g_pRealloc)(p, 0, nullptr, true, g_pUser_data);
 }
 
 size_t crnlib_msize(void* p) {
@@ -248,7 +248,7 @@ void crn_set_memory_callbacks(crn_realloc_func pRealloc, crn_msize_func pMSize, 
   if ((!pRealloc) || (!pMSize)) {
     crnlib::g_pRealloc = crnlib::crnlib_default_realloc;
     crnlib::g_pMSize = crnlib::crnlib_default_msize;
-    crnlib::g_pUser_data = NULL;
+    crnlib::g_pUser_data = nullptr;
   } else {
     crnlib::g_pRealloc = pRealloc;
     crnlib::g_pMSize = pMSize;

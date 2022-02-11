@@ -174,7 +174,7 @@ bool convert_stats::print(bool psnr_metrics, bool mip_stats, bool grayscale_samp
               if (!bCSVStatsFileExists)
                 fprintf(pFile, "name,width,height,miplevels,rgb_rms,luma_rms,effective_output_size,effective_bitrate\n");
               dynamic_string filename;
-              file_utils::split_path(m_src_filename.get_ptr(), NULL, NULL, &filename, NULL);
+              file_utils::split_path(m_src_filename.get_ptr(), nullptr, nullptr, &filename, nullptr);
 
               uint64 effective_output_size = m_output_comp_file_size ? m_output_comp_file_size : m_output_file_size;
               float bitrate = (effective_output_size * 8.0f) / m_total_output_pixels;
@@ -199,7 +199,7 @@ void convert_stats::clear() {
   m_dst_filename.clear();
   m_dst_file_type = texture_file_types::cFormatInvalid;
 
-  m_pInput_tex = NULL;
+  m_pInput_tex = nullptr;
   m_output_tex.clear();
 
   m_input_file_size = 0;
@@ -469,14 +469,14 @@ static bool convert_and_write_normal_texture(mipmapped_texture& work_tex, conver
 
         console::info("Writing texture face %u mip level %u to file %s", f, l, filename.get_ptr());
 
-        if (!new_tex.write_to_file(filename.get_ptr(), params.m_dst_file_type, NULL, NULL, NULL))
+        if (!new_tex.write_to_file(filename.get_ptr(), params.m_dst_file_type, nullptr, nullptr, nullptr))
           return convert_error(params, "Failed writing output file!");
       }
     }
   } else {
     console::message("Writing texture to file: \"%s\"", params.m_dst_filename.get_ptr());
 
-    if (!work_tex.write_to_file(params.m_dst_filename.get_ptr(), params.m_dst_file_type, NULL, NULL, NULL))
+    if (!work_tex.write_to_file(params.m_dst_filename.get_ptr(), params.m_dst_file_type, nullptr, nullptr, nullptr))
       return convert_error(params, "Failed writing output file!");
 
     if (!params.m_no_stats) {
@@ -505,7 +505,7 @@ bool process(convert_params& params, convert_stats& stats) {
 
   if (params.m_pIntermediate_texture) {
     crnlib_delete(params.m_pIntermediate_texture);
-    params.m_pIntermediate_texture = NULL;
+    params.m_pIntermediate_texture = nullptr;
   }
 
   params.m_pIntermediate_texture = crnlib_new<mipmapped_texture>(*params.m_pInput_texture);

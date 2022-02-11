@@ -25,13 +25,13 @@ class vector : public helpers::rel_ops<vector<T> > {
   typedef const T* const_pointer;
 
   inline vector()
-      : m_p(NULL),
+      : m_p(nullptr),
         m_size(0),
         m_capacity(0) {
   }
 
   inline vector(uint n, const T& init)
-      : m_p(NULL),
+      : m_p(nullptr),
         m_size(0),
         m_capacity(0) {
     increase_capacity(n, false);
@@ -40,7 +40,7 @@ class vector : public helpers::rel_ops<vector<T> > {
   }
 
   inline vector(const vector& other)
-      : m_p(NULL),
+      : m_p(nullptr),
         m_size(0),
         m_capacity(0) {
     increase_capacity(other.m_size, false);
@@ -58,7 +58,7 @@ class vector : public helpers::rel_ops<vector<T> > {
   }
 
   inline explicit vector(uint size)
-      : m_p(NULL),
+      : m_p(nullptr),
         m_size(0),
         m_capacity(0) {
     resize(size);
@@ -154,7 +154,7 @@ class vector : public helpers::rel_ops<vector<T> > {
     if (m_p) {
       scalar_type<T>::destruct_array(m_p, m_size);
       crnlib_free(m_p);
-      m_p = NULL;
+      m_p = nullptr;
       m_size = 0;
       m_capacity = 0;
     }
@@ -163,7 +163,7 @@ class vector : public helpers::rel_ops<vector<T> > {
   inline void clear_no_destruction() {
     if (m_p) {
       crnlib_free(m_p);
-      m_p = NULL;
+      m_p = nullptr;
       m_size = 0;
       m_capacity = 0;
     }
@@ -239,7 +239,7 @@ class vector : public helpers::rel_ops<vector<T> > {
   inline T* try_enlarge(uint i) {
     uint cur_size = m_size;
     if (!try_resize(cur_size + i, true))
-      return NULL;
+      return nullptr;
     return get_ptr() + cur_size;
   }
 
@@ -568,7 +568,7 @@ class vector : public helpers::rel_ops<vector<T> > {
   // Caller assumes ownership of the heap block associated with the container. Container is cleared.
   inline void* assume_ownership() {
     T* p = m_p;
-    m_p = NULL;
+    m_p = nullptr;
     m_size = 0;
     m_capacity = 0;
     return p;
@@ -637,7 +637,7 @@ class vector : public helpers::rel_ops<vector<T> > {
   inline bool increase_capacity(uint min_new_capacity, bool grow_hint, bool nofail = false) {
     return reinterpret_cast<elemental_vector*>(this)->increase_capacity(
         min_new_capacity, grow_hint, sizeof(T),
-        (CRNLIB_IS_BITWISE_COPYABLE_OR_MOVABLE(T) || (is_vector<T>::cFlag)) ? NULL : object_mover, nofail);
+        (CRNLIB_IS_BITWISE_COPYABLE_OR_MOVABLE(T) || (is_vector<T>::cFlag)) ? nullptr : object_mover, nofail);
   }
 };
 

@@ -112,14 +112,14 @@ class dxt_image {
       m_use_both_block_types = true;
       m_endpoint_caching = true;
       m_compressor = cCRNDXTCompressorCRN;
-      m_pProgress_callback = NULL;
-      m_pProgress_callback_user_data_ptr = NULL;
+      m_pProgress_callback = nullptr;
+      m_pProgress_callback_user_data_ptr = nullptr;
       m_dxt1a_alpha_threshold = 128;
       m_num_helper_threads = 0;
       m_progress_start = 0;
       m_progress_range = 100;
       m_use_transparent_indices_for_black = false;
-      m_pTask_pool = NULL;
+      m_pTask_pool = nullptr;
     }
 
     void init(const crn_comp_params& params) {

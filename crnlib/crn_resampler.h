@@ -50,8 +50,8 @@ class Resampler {
       Boundary_Op boundary_op = BOUNDARY_CLAMP,
       Resample_Real sample_low = 0.0f, Resample_Real sample_high = 0.0f,
       const char* Pfilter_name = CRNLIB_RESAMPLER_DEFAULT_FILTER,
-      Contrib_List* Pclist_x = NULL,
-      Contrib_List* Pclist_y = NULL,
+      Contrib_List* Pclist_x = nullptr,
+      Contrib_List* Pclist_y = nullptr,
       Resample_Real filter_x_scale = 1.0f,
       Resample_Real filter_y_scale = 1.0f,
       Resample_Real src_x_ofs = 0.0f,
@@ -65,7 +65,7 @@ class Resampler {
   // false on out of memory.
   bool put_line(const Sample* Psrc);
 
-  // NULL if no scanlines are currently available (give the resampler more scanlines!)
+  // nullptr if no scanlines are currently available (give the resampler more scanlines!)
   const Sample* get_line();
 
   Status status() const { return m_status; }

@@ -18,8 +18,8 @@ mip_level::mip_level()
       m_height(0),
       m_comp_flags(pixel_format_helpers::cDefaultCompFlags),
       m_format(PIXEL_FMT_INVALID),
-      m_pImage(NULL),
-      m_pDXTImage(NULL),
+      m_pImage(nullptr),
+      m_pDXTImage(nullptr),
       m_orient_flags(cDefaultOrientationFlags) {
 }
 
@@ -28,8 +28,8 @@ mip_level::mip_level(const mip_level& other)
       m_height(0),
       m_comp_flags(pixel_format_helpers::cDefaultCompFlags),
       m_format(PIXEL_FMT_INVALID),
-      m_pImage(NULL),
-      m_pDXTImage(NULL),
+      m_pImage(nullptr),
+      m_pDXTImage(nullptr),
       m_orient_flags(cDefaultOrientationFlags) {
   *this = other;
 }
@@ -66,12 +66,12 @@ void mip_level::clear() {
 
   if (m_pImage) {
     crnlib_delete(m_pImage);
-    m_pImage = NULL;
+    m_pImage = nullptr;
   }
 
   if (m_pDXTImage) {
     crnlib_delete(m_pDXTImage);
-    m_pDXTImage = NULL;
+    m_pDXTImage = nullptr;
   }
 }
 
@@ -336,7 +336,7 @@ void mip_level::uncook_image(image_u8& img) const {
 
 image_u8* mip_level::get_unpacked_image(image_u8& tmp, uint unpack_flags) const {
   if (!is_valid())
-    return NULL;
+    return nullptr;
 
   if (m_pDXTImage) {
     m_pDXTImage->unpack(tmp);
@@ -1100,7 +1100,7 @@ bool mipmapped_texture::write_dds(data_stream_serializer& serializer) const {
         const uint num_blocks_y = (height + 3) >> 2;
 
         CRNLIB_ASSERT(num_blocks_x * num_blocks_y * p->get_elements_per_block() == p->get_total_elements());
-        width, height, num_blocks_x, num_blocks_y;
+        width; height; num_blocks_x; num_blocks_y; // guess: prevent warnings when in release mode, because ASSERT.
 
         const uint size_in_bytes = p->get_total_elements() * sizeof(dxt_image::element);
         if (size_in_bytes > write_buf.size())
@@ -1748,7 +1748,7 @@ void mipmapped_texture::set(texture_file_types::format source_file_type, const m
 
 image_u8* mipmapped_texture::get_level_image(uint face, uint level, image_u8& img, uint unpack_flags) const {
   if (!is_valid())
-    return NULL;
+    return nullptr;
 
   const mip_level* pLevel = get_level(face, level);
 
@@ -2726,7 +2726,7 @@ bool mipmapped_texture::read_crn_from_memory(const void* pData, uint data_size, 
 
   void* pFaces[cCRNMaxFaces];
   for (uint f = tex_info.m_faces; f < cCRNMaxFaces; f++)
-    pFaces[f] = NULL;
+    pFaces[f] = nullptr;
 
   for (uint l = 0; l < tex_info.m_levels; l++) {
     const uint level_width = math::maximum<uint>(1U, tex_info.m_width >> l);

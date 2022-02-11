@@ -57,7 +57,7 @@ void crn_sleep(unsigned int milliseconds) {
 mutex::mutex(unsigned int spin_count) {
   spin_count;
 
-  if (pthread_mutex_init(&m_mutex, NULL))
+  if (pthread_mutex_init(&m_mutex, nullptr))
     crnlib_fail("mutex::mutex: pthread_mutex_init() failed", __FILE__, __LINE__);
 
 #ifdef CRNLIB_BUILD_DEBUG
@@ -95,7 +95,7 @@ void mutex::set_spin_count(unsigned int count) {
 }
 
 semaphore::semaphore(long initialCount, long maximumCount, const char* pName) {
-  maximumCount, pName;
+  maximumCount; pName; // prevent warning
   CRNLIB_ASSERT(maximumCount >= initialCount);
   if (sem_init(&m_sem, 0, initialCount)) {
     CRNLIB_FAIL("semaphore: sem_init() failed");
@@ -225,7 +225,7 @@ bool task_pool::init(uint num_threads) {
 
   m_num_threads = 0;
   while (m_num_threads < num_threads) {
-    int status = pthread_create(&m_threads[m_num_threads], NULL, thread_func, this);
+    int status = pthread_create(&m_threads[m_num_threads], nullptr, thread_func, this);
     if (status) {
       succeeded = false;
       break;
@@ -251,7 +251,7 @@ void task_pool::deinit() {
     m_tasks_available.release(m_num_threads);
 
     for (uint i = 0; i < m_num_threads; i++)
-      pthread_join(m_threads[i], NULL);
+      pthread_join(m_threads[i], nullptr);
 
     m_num_threads = 0;
 
@@ -349,7 +349,7 @@ void* task_pool::thread_func(void* pContext) {
     }
   }
 
-  return NULL;
+  return nullptr;
 }
 
 }  // namespace crnlib

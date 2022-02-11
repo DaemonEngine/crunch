@@ -229,7 +229,7 @@ bool find_files::find_internal(const char* pBasepath, const char* pRelpath, cons
   }
 
   closedir(dp);
-  dp = NULL;
+  dp = nullptr;
 
   if (flags & cFlagRecursive) {
     for (uint i = 0; i < paths.size(); i++) {

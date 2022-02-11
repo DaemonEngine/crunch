@@ -31,7 +31,7 @@ class console {
   static void init();
   static void deinit();
 
-  static bool is_initialized() { return m_pMutex != NULL; }
+  static bool is_initialized() { return m_pMutex != nullptr; }
 
   static void set_default_category(eConsoleMessageType category);
   static eConsoleMessageType get_default_category();
@@ -75,7 +75,7 @@ class console {
   static eConsoleMessageType m_default_category;
 
   struct console_func {
-    console_func(console_output_func func = NULL, void* pData = NULL)
+    console_func(console_output_func func = nullptr, void* pData = nullptr)
         : m_func(func), m_pData(pData) {}
 
     console_output_func m_func;

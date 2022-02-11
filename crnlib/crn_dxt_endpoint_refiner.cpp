@@ -6,8 +6,8 @@
 
 namespace crnlib {
 dxt_endpoint_refiner::dxt_endpoint_refiner()
-    : m_pParams(NULL),
-      m_pResults(NULL) {
+    : m_pParams(nullptr),
+      m_pResults(nullptr) {
 }
 
 bool dxt_endpoint_refiner::refine(const params& p, results& r) {

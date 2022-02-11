@@ -17,19 +17,19 @@ class crn_comp : public itexture_comp {
 
  public:
   crn_comp();
-  virtual ~crn_comp();
+  ~crn_comp() override;
 
-  virtual const char* get_ext() const { return "CRN"; }
+  const char* get_ext() const override { return "CRN"; }
 
-  virtual bool compress_init(const crn_comp_params&) { return true; };
-  virtual bool compress_pass(const crn_comp_params& params, float* pEffective_bitrate);
-  virtual void compress_deinit();
+  bool compress_init(const crn_comp_params&) override { return true; };
+  bool compress_pass(const crn_comp_params& params, float* pEffective_bitrate) override;
+  void compress_deinit() override;
 
-  virtual const crnlib::vector<uint8>& get_comp_data() const { return m_comp_data; }
-  virtual crnlib::vector<uint8>& get_comp_data() { return m_comp_data; }
+  const crnlib::vector<uint8>& get_comp_data() const override { return m_comp_data; }
+  crnlib::vector<uint8>& get_comp_data() override { return m_comp_data; }
 
   uint get_comp_data_size() const { return m_comp_data.size(); }
-  const uint8* get_comp_data_ptr() const { return m_comp_data.size() ? &m_comp_data[0] : NULL; }
+  const uint8* get_comp_data_ptr() const { return m_comp_data.size() ? &m_comp_data[0] : nullptr; }
 
  private:
   task_pool m_task_pool;

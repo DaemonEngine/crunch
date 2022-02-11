@@ -24,7 +24,7 @@ class dynamic_stream : public data_stream {
     open();
   }
 
-  virtual ~dynamic_stream() {
+  ~dynamic_stream() override {
   }
 
   bool open(uint initial_size = 0, const char* pName = "dynamic_stream", uint attribs = cDataStreamSeekable | cDataStreamWritable | cDataStreamReadable) {
@@ -66,7 +66,7 @@ class dynamic_stream : public data_stream {
     return false;
   }
 
-  virtual bool close() {
+  bool close() override {
     if (m_opened) {
       m_opened = false;
       m_buf.clear();
@@ -86,9 +86,9 @@ class dynamic_stream : public data_stream {
     }
   }
 
-  virtual const void* get_ptr() const { return m_buf.empty() ? NULL : &m_buf[0]; }
+  const void* get_ptr() const override { return m_buf.empty() ? nullptr : &m_buf[0]; }
 
-  virtual uint read(void* pBuf, uint len) {
+  uint read(void* pBuf, uint len) override {
     CRNLIB_ASSERT(pBuf && (len <= 0x7FFFFFFF));
 
     if ((!m_opened) || (!is_readable()) || (!len))
@@ -108,7 +108,7 @@ class dynamic_stream : public data_stream {
     return len;
   }
 
-  virtual uint write(const void* pBuf, uint len) {
+  uint write(const void* pBuf, uint len) override {
     CRNLIB_ASSERT(pBuf && (len <= 0x7FFFFFFF));
 
     if ((!m_opened) || (!is_writable()) || (!len))
@@ -126,21 +126,21 @@ class dynamic_stream : public data_stream {
     return len;
   }
 
-  virtual bool flush() {
+  bool flush() override {
     if (!m_opened)
       return false;
 
     return true;
   }
 
-  virtual uint64 get_size() {
+  uint64 get_size() override {
     if (!m_opened)
       return 0;
 
     return m_buf.size();
   }
 
-  virtual uint64 get_remaining() {
+  uint64 get_remaining() override {
     if (!m_opened)
       return 0;
 
@@ -149,14 +149,14 @@ class dynamic_stream : public data_stream {
     return m_buf.size() - m_ofs;
   }
 
-  virtual uint64 get_ofs() {
+  uint64 get_ofs() override {
     if (!m_opened)
       return 0;
 
     return m_ofs;
   }
 
-  virtual bool seek(int64 ofs, bool relative) {
+  bool seek(int64 ofs, bool relative) override {
     if ((!m_opened) || (!is_seekable()))
       return false;
 

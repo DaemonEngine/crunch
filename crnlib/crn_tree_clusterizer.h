@@ -49,7 +49,7 @@ class tree_clusterizer {
   }
 
 
-  void generate_codebook(VectorType* vectors, uint* weights, uint size, uint max_splits, bool generate_node_index_map = false, task_pool* pTask_pool = 0) {
+  void generate_codebook(VectorType* vectors, uint* weights, uint size, uint max_splits, bool generate_node_index_map = false, task_pool* pTask_pool = nullptr) {
     m_vectors = vectors;
     m_vectorsInfo.resize(size);
     m_weightedVectors.resize(size);
@@ -193,7 +193,7 @@ class tree_clusterizer {
     }
   }
 
-  bool split_node(std::priority_queue<NodeInfo>& node_queue, uint& end_node, task_pool* pTask_pool = 0) {
+  bool split_node(std::priority_queue<NodeInfo>& node_queue, uint& end_node, task_pool* pTask_pool = nullptr) {
     if (node_queue.empty())
       return false;
 

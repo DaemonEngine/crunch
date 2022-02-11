@@ -8,9 +8,9 @@
 namespace crnlib {
 threaded_resampler::threaded_resampler(task_pool& tp)
     : m_pTask_pool(&tp),
-      m_pParams(NULL),
-      m_pX_contribs(NULL),
-      m_pY_contribs(NULL),
+      m_pParams(nullptr),
+      m_pX_contribs(nullptr),
+      m_pY_contribs(nullptr),
       m_bytes_per_pixel(0) {
 }
 
@@ -21,18 +21,18 @@ threaded_resampler::~threaded_resampler() {
 void threaded_resampler::free_contrib_lists() {
   if (m_pX_contribs) {
     crnlib_free(m_pX_contribs->p);
-    m_pX_contribs->p = NULL;
+    m_pX_contribs->p = nullptr;
 
     crnlib_free(m_pX_contribs);
-    m_pX_contribs = NULL;
+    m_pX_contribs = nullptr;
   }
 
   if (m_pY_contribs) {
     crnlib_free(m_pY_contribs->p);
-    m_pY_contribs->p = NULL;
+    m_pY_contribs->p = nullptr;
 
     crnlib_free(m_pY_contribs);
-    m_pY_contribs = NULL;
+    m_pY_contribs = nullptr;
   }
 }
 
@@ -266,11 +266,11 @@ bool threaded_resampler::resample(const params& p) {
     return false;
 
   for (uint i = 0; i <= m_pTask_pool->get_num_threads(); i++)
-    m_pTask_pool->queue_object_task(this, &threaded_resampler::resample_x_task, i, NULL);
+    m_pTask_pool->queue_object_task(this, &threaded_resampler::resample_x_task, i, nullptr);
   m_pTask_pool->join();
 
   for (uint i = 0; i <= m_pTask_pool->get_num_threads(); i++)
-    m_pTask_pool->queue_object_task(this, &threaded_resampler::resample_y_task, i, NULL);
+    m_pTask_pool->queue_object_task(this, &threaded_resampler::resample_y_task, i, nullptr);
   m_pTask_pool->join();
 
   m_tmp_img.clear();

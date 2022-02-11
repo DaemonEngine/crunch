@@ -91,7 +91,7 @@ class sparse_array : public Traits<T, Log2N> {
         copy_group(q, p);
       } else if (q) {
         free_group(q);
-        m_groups[i] = NULL;
+        m_groups[i] = nullptr;
       }
     }
 
@@ -182,18 +182,18 @@ class sparse_array : public Traits<T, Log2N> {
   inline const T* get(uint i) const {
     CRNLIB_ASSERT(i < m_size);
     const T* p = m_groups[i >> Log2N];
-    return p ? &p[i & (N - 1)] : NULL;
+    return p ? &p[i & (N - 1)] : nullptr;
   }
 
   inline T* get(uint i) {
     CRNLIB_ASSERT(i < m_size);
     T* p = m_groups[i >> Log2N];
-    return p ? &p[i & (N - 1)] : NULL;
+    return p ? &p[i & (N - 1)] : nullptr;
   }
 
   inline bool is_present(uint i) const {
     CRNLIB_ASSERT(i < m_size);
-    return m_groups[i >> Log2N] != NULL;
+    return m_groups[i >> Log2N] != nullptr;
   }
 
   inline uint get_num_groups() const { return m_groups.size(); }
@@ -218,11 +218,11 @@ class sparse_array : public Traits<T, Log2N> {
     if (group_index >= m_groups.size()) {
       T* p = alloc_group(true);
       if (!p)
-        return NULL;
+        return nullptr;
 
       if (!m_groups.try_push_back(p)) {
         free_group(p);
-        return NULL;
+        return nullptr;
       }
     }
 
@@ -230,7 +230,7 @@ class sparse_array : public Traits<T, Log2N> {
     if (!p) {
       p = alloc_group(true);
       if (!p)
-        return NULL;
+        return nullptr;
 
       m_groups[group_index] = p;
     }
@@ -282,7 +282,7 @@ class sparse_array : public Traits<T, Log2N> {
       T* p = m_groups[first_group + i];
       if (p) {
         free_group(p);
-        m_groups[i] = NULL;
+        m_groups[i] = nullptr;
       }
     }
   }
@@ -310,7 +310,7 @@ class sparse_array : public Traits<T, Log2N> {
 
     if (!p) {
       if (nofail)
-        return NULL;
+        return nullptr;
 
       CRNLIB_FAIL("Out of memory");
     }

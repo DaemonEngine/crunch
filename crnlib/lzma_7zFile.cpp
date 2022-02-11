@@ -31,7 +31,7 @@ void File_Construct(CSzFile* p) {
 #ifdef USE_WINDOWS_FILE
   p->handle = INVALID_HANDLE_VALUE;
 #else
-  p->file = NULL;
+  p->file = nullptr;
 #endif
 }
 
@@ -39,13 +39,13 @@ static WRes File_Open(CSzFile* p, const char* name, int writeMode) {
 #ifdef USE_WINDOWS_FILE
   p->handle = CreateFileA(name,
                           writeMode ? GENERIC_WRITE : GENERIC_READ,
-                          FILE_SHARE_READ, NULL,
+                          FILE_SHARE_READ, nullptr,
                           writeMode ? CREATE_ALWAYS : OPEN_EXISTING,
-                          FILE_ATTRIBUTE_NORMAL, NULL);
+                          FILE_ATTRIBUTE_NORMAL, nullptr);
   return (p->handle != INVALID_HANDLE_VALUE) ? 0 : GetLastError();
 #else
   p->file = fopen(name, writeMode ? "wb+" : "rb");
-  return (p->file != 0) ? 0 : errno;
+  return (p->file != nullptr) ? 0 : errno;
 #endif
 }
 
@@ -64,11 +64,11 @@ WRes File_Close(CSzFile* p) {
     p->handle = INVALID_HANDLE_VALUE;
   }
 #else
-  if (p->file != NULL) {
+  if (p->file != nullptr) {
     int res = fclose(p->file);
     if (res != 0)
       return res;
-    p->file = NULL;
+    p->file = nullptr;
   }
 #endif
   return 0;
@@ -85,7 +85,7 @@ WRes File_Read(CSzFile* p, void* data, size_t* size) {
   do {
     DWORD curSize = (originalSize > kChunkSizeMax) ? kChunkSizeMax : (DWORD)originalSize;
     DWORD processed = 0;
-    BOOL res = ReadFile(p->handle, data, curSize, &processed, NULL);
+    BOOL res = ReadFile(p->handle, data, curSize, &processed, nullptr);
     data = (void*)((Byte*)data + processed);
     originalSize -= processed;
     *size += processed;
@@ -117,7 +117,7 @@ WRes File_Write(CSzFile* p, const void* data, size_t* size) {
   do {
     DWORD curSize = (originalSize > kChunkSizeMax) ? kChunkSizeMax : (DWORD)originalSize;
     DWORD processed = 0;
-    BOOL res = WriteFile(p->handle, data, curSize, &processed, NULL);
+    BOOL res = WriteFile(p->handle, data, curSize, &processed, nullptr);
     data = (void*)((Byte*)data + processed);
     originalSize -= processed;
     *size += processed;

@@ -8,8 +8,8 @@
 
 namespace crnlib {
 dxt5_endpoint_optimizer::dxt5_endpoint_optimizer()
-    : m_pParams(NULL),
-      m_pResults(NULL) {
+    : m_pParams(nullptr),
+      m_pResults(nullptr) {
   m_unique_values.reserve(16);
   m_unique_value_weights.reserve(16);
 }

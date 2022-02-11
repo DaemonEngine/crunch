@@ -20,7 +20,7 @@ class image {
         m_pitch(0),
         m_total(0),
         m_comp_flags(pixel_format_helpers::cDefaultCompFlags),
-        m_pPixels(NULL) {
+        m_pPixels(nullptr) {
   }
 
   // pitch is in PIXELS, not bytes.
@@ -63,7 +63,7 @@ class image {
         m_pPixels = &m_pixel_buf.front();
       } else {
         m_pixel_buf.clear();
-        m_pPixels = NULL;
+        m_pPixels = nullptr;
       }
     } else {
       m_pixel_buf = other.m_pixel_buf;
@@ -80,7 +80,7 @@ class image {
   }
 
   image(const image& other)
-      : m_width(0), m_height(0), m_pitch(0), m_total(0), m_comp_flags(pixel_format_helpers::cDefaultCompFlags), m_pPixels(NULL) {
+      : m_width(0), m_height(0), m_pitch(0), m_total(0), m_comp_flags(pixel_format_helpers::cDefaultCompFlags), m_pPixels(nullptr) {
     *this = other;
   }
 
@@ -129,7 +129,7 @@ class image {
   }
 
   void clear() {
-    m_pPixels = NULL;
+    m_pPixels = nullptr;
     m_pixel_buf.clear();
     m_width = 0;
     m_height = 0;

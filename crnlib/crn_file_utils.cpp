@@ -110,7 +110,7 @@ bool file_utils::disable_read_only(const char* pFilename) {
 }
 
 bool file_utils::is_older_than(const char* pSrcFilename, const char* pDstFilename) {
-  pSrcFilename, pDstFilename;
+  pSrcFilename; pDstFilename;
   // TODO
   return false;
 }
@@ -237,19 +237,19 @@ bool file_utils::split_path(const char* p, dynamic_string* pDrive, dynamic_strin
 #ifdef _MSC_VER
   // Compiling with MSVC
   errno_t error = _splitpath_s(p,
-                               pDrive ? drive_buf : NULL, pDrive ? _MAX_DRIVE : 0,
-                               pDir ? dir_buf : NULL, pDir ? _MAX_DIR : 0,
-                               pFilename ? fname_buf : NULL, pFilename ? _MAX_FNAME : 0,
-                               pExt ? ext_buf : NULL, pExt ? _MAX_EXT : 0);
+                               pDrive ? drive_buf : nullptr, pDrive ? _MAX_DRIVE : 0,
+                               pDir ? dir_buf : nullptr, pDir ? _MAX_DIR : 0,
+                               pFilename ? fname_buf : nullptr, pFilename ? _MAX_FNAME : 0,
+                               pExt ? ext_buf : nullptr, pExt ? _MAX_EXT : 0);
   if (error != 0)
     return false;
 #else
   // Compiling with MinGW
   _splitpath(p,
-             pDrive ? drive_buf : NULL,
-             pDir ? dir_buf : NULL,
-             pFilename ? fname_buf : NULL,
-             pExt ? ext_buf : NULL);
+             pDrive ? drive_buf : nullptr,
+             pDir ? dir_buf : nullptr,
+             pFilename ? fname_buf : nullptr,
+             pExt ? ext_buf : nullptr);
 #endif
 
   if (pDrive)
@@ -311,7 +311,7 @@ bool file_utils::split_path(const char* p, dynamic_string& path, dynamic_string&
 
 bool file_utils::get_pathname(const char* p, dynamic_string& path) {
   dynamic_string temp_drive, temp_path;
-  if (!split_path(p, &temp_drive, &temp_path, NULL, NULL))
+  if (!split_path(p, &temp_drive, &temp_path, nullptr, nullptr))
     return false;
 
   combine_path(path, temp_drive.get_ptr(), temp_path.get_ptr());
@@ -320,7 +320,7 @@ bool file_utils::get_pathname(const char* p, dynamic_string& path) {
 
 bool file_utils::get_filename(const char* p, dynamic_string& filename) {
   dynamic_string temp_ext;
-  if (!split_path(p, NULL, NULL, &filename, &temp_ext))
+  if (!split_path(p, nullptr, nullptr, &filename, &temp_ext))
     return false;
 
   filename += temp_ext;
@@ -471,7 +471,7 @@ void file_utils::trim_trailing_seperator(dynamic_string& path) {
 
 // See http://www.codeproject.com/KB/string/wildcmp.aspx
 int file_utils::wildcmp(const char* pWild, const char* pString) {
-  const char *cp = NULL, *mp = NULL;
+  const char *cp = nullptr, *mp = nullptr;
 
   while ((*pString) && (*pWild != '*')) {
     if ((*pWild != *pString) && (*pWild != '?'))
@@ -504,7 +504,7 @@ int file_utils::wildcmp(const char* pWild, const char* pString) {
 }
 
 bool file_utils::write_buf_to_file(const char* pPath, const void* pData, size_t data_size) {
-  FILE* pFile = NULL;
+  FILE* pFile = nullptr;
 
 #ifdef _MSC_VER
   // Compiling with MSVC

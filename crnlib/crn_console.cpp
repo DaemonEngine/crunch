@@ -27,7 +27,7 @@ void console::init() {
 void console::deinit() {
   if (m_pMutex) {
     crnlib_delete(m_pMutex);
-    m_pMutex = NULL;
+    m_pMutex = nullptr;
   }
 }
 
@@ -61,7 +61,7 @@ void console::vprintf(eConsoleMessageType type, const char* p, va_list args) {
         handled = true;
   }
 
-  const char* pPrefix = NULL;
+  const char* pPrefix = nullptr;
   if ((m_prefixes) && (m_at_beginning_of_line)) {
     switch (type) {
       case cDebugConsoleMessage:

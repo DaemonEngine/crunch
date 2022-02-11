@@ -12,9 +12,9 @@ class dxt_endpoint_refiner {
   struct params {
     params()
         : m_block_index(0),
-          m_pPixels(NULL),
+          m_pPixels(nullptr),
           m_num_pixels(0),
-          m_pSelectors(NULL),
+          m_pSelectors(nullptr),
           m_alpha_comp_index(0),
           m_error_to_beat(cUINT64_MAX),
           m_dxt1_selectors(true),

@@ -5,11 +5,11 @@
 
 namespace crnlib {
 sparse_bit_array::sparse_bit_array()
-    : m_num_groups(0), m_ppGroups(NULL) {
+    : m_num_groups(0), m_ppGroups(nullptr) {
 }
 
 sparse_bit_array::sparse_bit_array(uint size)
-    : m_num_groups(0), m_ppGroups(NULL) {
+    : m_num_groups(0), m_ppGroups(nullptr) {
   resize(size);
 }
 
@@ -23,7 +23,7 @@ sparse_bit_array::sparse_bit_array(sparse_bit_array& other) {
       m_ppGroups[i] = alloc_group(false);
       memcpy(m_ppGroups[i], other.m_ppGroups[i], cBytesPerGroup);
     } else
-      m_ppGroups[i] = NULL;
+      m_ppGroups[i] = nullptr;
   }
 }
 
@@ -50,7 +50,7 @@ sparse_bit_array& sparse_bit_array::operator=(sparse_bit_array& other) {
       memcpy(m_ppGroups[i], other.m_ppGroups[i], cBytesPerGroup);
     } else if (m_ppGroups[i]) {
       free_group(m_ppGroups[i]);
-      m_ppGroups[i] = NULL;
+      m_ppGroups[i] = nullptr;
     }
   }
 
@@ -65,7 +65,7 @@ void sparse_bit_array::clear() {
     free_group(m_ppGroups[i]);
 
   crnlib_free(m_ppGroups);
-  m_ppGroups = NULL;
+  m_ppGroups = nullptr;
 
   m_num_groups = 0;
 }
@@ -85,7 +85,7 @@ void sparse_bit_array::optimize() {
           break;
       if (j == cDWORDsPerGroup) {
         free_group(s);
-        m_ppGroups[i] = NULL;
+        m_ppGroups[i] = nullptr;
       }
     }
   }
@@ -216,7 +216,7 @@ void sparse_bit_array::clear_bit_range(uint index, uint num) {
     uint32* pGroup = m_ppGroups[group_index];
     if (pGroup) {
       free_group(pGroup);
-      m_ppGroups[group_index] = NULL;
+      m_ppGroups[group_index] = nullptr;
     }
 
     num -= cBitsPerGroup;
@@ -265,7 +265,7 @@ void sparse_bit_array::resize(uint size) {
     uint32* p = temp.m_ppGroups[i];
     if (p) {
       m_ppGroups[i] = temp.m_ppGroups[i];
-      temp.m_ppGroups[i] = NULL;
+      temp.m_ppGroups[i] = nullptr;
     }
   }
 }
@@ -284,7 +284,7 @@ sparse_bit_array& sparse_bit_array::operator&=(const sparse_bit_array& other) {
 
     if (!s) {
       free_group(d);
-      m_ppGroups[i] = NULL;
+      m_ppGroups[i] = nullptr;
     } else {
       uint32 oc = 0;
       for (uint j = 0; j < cDWORDsPerGroup; j++) {
@@ -294,7 +294,7 @@ sparse_bit_array& sparse_bit_array::operator&=(const sparse_bit_array& other) {
       }
       if (!oc) {
         free_group(d);
-        m_ppGroups[i] = NULL;
+        m_ppGroups[i] = nullptr;
       }
     }
   }
@@ -327,7 +327,7 @@ sparse_bit_array& sparse_bit_array::operator|=(const sparse_bit_array& other) {
       }
       if (!oc) {
         free_group(d);
-        m_ppGroups[i] = NULL;
+        m_ppGroups[i] = nullptr;
       }
     }
   }
@@ -357,7 +357,7 @@ sparse_bit_array& sparse_bit_array::and_not(const sparse_bit_array& other) {
     }
     if (!oc) {
       free_group(d);
-      m_ppGroups[i] = NULL;
+      m_ppGroups[i] = nullptr;
     }
   }
 

@@ -41,7 +41,7 @@ bool task_pool::init(uint num_threads) {
 
   m_num_threads = 0;
   while (m_num_threads < num_threads) {
-    m_threads[m_num_threads] = (HANDLE)_beginthreadex(NULL, 32768, thread_func, this, 0, NULL);
+    m_threads[m_num_threads] = (HANDLE)_beginthreadex(nullptr, 32768, thread_func, this, 0, nullptr);
     LZHAM_ASSERT(m_threads[m_num_threads] != 0);
 
     if (!m_threads[m_num_threads]) {
@@ -77,7 +77,7 @@ void task_pool::deinit() {
         }
 
         CloseHandle(m_threads[i]);
-        m_threads[i] = NULL;
+        m_threads[i] = nullptr;
       }
     }
 

@@ -24,7 +24,7 @@ int g_allocCountBig = 0;
 
 void* MyAlloc(size_t size) {
   if (size == 0)
-    return 0;
+    return nullptr;
 #ifdef _SZ_ALLOC_DEBUG
   {
     void* p = crnlib::crnlib_malloc(size);

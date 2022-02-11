@@ -209,7 +209,7 @@ struct crn_comp_params {
 
     for (crn_uint32 f = 0; f < cCRNMaxFaces; f++)
       for (crn_uint32 l = 0; l < cCRNMaxLevels; l++)
-        m_pImages[f][l] = NULL;
+        m_pImages[f][l] = nullptr;
 
     m_target_bitrate = 0.0f;
     m_quality_level = cCRNMaxQualityLevel;
@@ -228,8 +228,8 @@ struct crn_comp_params {
     m_num_helper_threads = 0;
     m_userdata0 = 0;
     m_userdata1 = 0;
-    m_pProgress_func = NULL;
-    m_pProgress_func_data = NULL;
+    m_pProgress_func = nullptr;
+    m_pProgress_func_data = nullptr;
   }
 
   inline bool operator==(const crn_comp_params& rhs) const {
@@ -519,10 +519,10 @@ void crn_free_block(void* pBlock);
 //  comp_params is the compression parameters struct, defined above.
 //  compressed_size will be set to the size of the returned memory block containing the output file.
 //  The returned block must be freed by calling crn_free_block().
-//  *pActual_quality_level will be set to the actual quality level used to compress the image. May be NULL.
-//  *pActual_bitrate will be set to the output file's effective bitrate, possibly taking into account LZMA compression. May be NULL.
+//  *pActual_quality_level will be set to the actual quality level used to compress the image. May be nullptr.
+//  *pActual_bitrate will be set to the output file's effective bitrate, possibly taking into account LZMA compression. May be nullptr.
 // Return value:
-//  The compressed file data, or NULL on failure.
+//  The compressed file data, or nullptr on failure.
 //  compressed_size will be set to the size of the returned memory buffer.
 // Notes:
 //  A "regular" DDS file is compressed using normal DXTn compression at the specified DXT quality level.
@@ -532,12 +532,12 @@ void crn_free_block(void* pBlock);
 //  Mipmap levels are simple 32-bit 2D images with a pitch of width*sizeof(uint32), arranged in the usual raster order (top scanline first).
 //  The image pixels may be grayscale (YYYX bytes in memory), grayscale/alpha (YYYA in memory), 24-bit (RGBX in memory), or 32-bit (RGBA) colors (where "X"=don't care).
 //  RGB color data is generally assumed to be in the sRGB colorspace. If not, be sure to clear the "cCRNCompFlagPerceptual" in the crn_comp_params struct!
-void* crn_compress(const crn_comp_params& comp_params, crn_uint32& compressed_size, crn_uint32* pActual_quality_level = NULL, float* pActual_bitrate = NULL);
+void* crn_compress(const crn_comp_params& comp_params, crn_uint32& compressed_size, crn_uint32* pActual_quality_level = nullptr, float* pActual_bitrate = nullptr);
 
 // Like the above function, except this function can also do things like generate mipmaps, and resize or crop the input texture before compression.
 // The actual operations performed are controlled by the crn_mipmap_params struct members.
 // Be sure to set the "m_gamma_filtering" member of crn_mipmap_params to false if the input texture is not sRGB.
-void* crn_compress(const crn_comp_params& comp_params, const crn_mipmap_params& mip_params, crn_uint32& compressed_size, crn_uint32* pActual_quality_level = NULL, float* pActual_bitrate = NULL);
+void* crn_compress(const crn_comp_params& comp_params, const crn_mipmap_params& mip_params, crn_uint32& compressed_size, crn_uint32* pActual_quality_level = nullptr, float* pActual_bitrate = nullptr);
 
 // Transcodes an entire CRN file to DDS using the crn_decomp.h header file library to do most of the heavy lifting.
 // The output DDS file's format is guaranteed to be one of the DXTn formats in the crn_format enum.

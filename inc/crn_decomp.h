@@ -299,8 +299,8 @@ struct is_pointer<T*> {
 
 // File: crnd_mem.h
 namespace crnd {
-void* crnd_malloc(size_t size, size_t* pActual_size = NULL);
-void* crnd_realloc(void* p, size_t size, size_t* pActual_size = NULL, bool movable = true);
+void* crnd_malloc(size_t size, size_t* pActual_size = nullptr);
+void* crnd_realloc(void* p, size_t size, size_t* pActual_size = nullptr, bool movable = true);
 void crnd_free(void* p);
 size_t crnd_msize(void* p);
 
@@ -308,7 +308,7 @@ template <typename T>
 inline T* crnd_new() {
   T* p = static_cast<T*>(crnd_malloc(sizeof(T)));
   if (!p)
-    return NULL;
+    return nullptr;
 
   return helpers::construct(p);
 }
@@ -317,7 +317,7 @@ template <typename T>
 inline T* crnd_new(const T& init) {
   T* p = static_cast<T*>(crnd_malloc(sizeof(T)));
   if (!p)
-    return NULL;
+    return nullptr;
 
   return helpers::construct(p, init);
 }
@@ -329,7 +329,7 @@ inline T* crnd_new_array(uint32 num) {
 
   uint8* q = static_cast<uint8*>(crnd_malloc(CRND_MIN_ALLOC_ALIGNMENT + sizeof(T) * num));
   if (!q)
-    return NULL;
+    return nullptr;
 
   T* p = reinterpret_cast<T*>(q + CRND_MIN_ALLOC_ALIGNMENT);
 
@@ -518,14 +518,14 @@ class vector : public helpers::rel_ops<vector<T> > {
   typedef const T* const_pointer;
 
   inline vector()
-      : m_p(NULL),
+      : m_p(nullptr),
         m_size(0),
         m_capacity(0),
         m_alloc_failed(false) {
   }
 
   inline vector(const vector& other)
-      : m_p(NULL),
+      : m_p(nullptr),
         m_size(0),
         m_capacity(0),
         m_alloc_failed(false) {
@@ -533,7 +533,7 @@ class vector : public helpers::rel_ops<vector<T> > {
   }
 
   inline vector(uint32 size)
-      : m_p(NULL),
+      : m_p(nullptr),
         m_size(0),
         m_capacity(0),
         m_alloc_failed(false) {
@@ -621,7 +621,7 @@ class vector : public helpers::rel_ops<vector<T> > {
     if (m_p) {
       scalar_type<T>::destruct_array(m_p, m_size);
       crnd_free(m_p);
-      m_p = NULL;
+      m_p = nullptr;
       m_size = 0;
       m_capacity = 0;
     }
@@ -807,7 +807,7 @@ class vector : public helpers::rel_ops<vector<T> > {
   inline bool increase_capacity(uint32 min_new_capacity, bool grow_hint) {
     if (!reinterpret_cast<elemental_vector*>(this)->increase_capacity(
             min_new_capacity, grow_hint, sizeof(T),
-            ((scalar_type<T>::cFlag) || (is_vector<T>::cFlag) || (bitwise_movable<T>::cFlag) || CRND_IS_POD(T)) ? NULL : object_mover)) {
+            ((scalar_type<T>::cFlag) || (is_vector<T>::cFlag) || (bitwise_movable<T>::cFlag) || CRND_IS_POD(T)) ? nullptr : object_mover)) {
       m_alloc_failed = true;
       return false;
     }
@@ -1442,11 +1442,11 @@ const uint32 cMaxTableBits = 11;
 class decoder_tables {
  public:
   inline decoder_tables()
-      : m_cur_lookup_size(0), m_lookup(NULL), m_cur_sorted_symbol_order_size(0), m_sorted_symbol_order(NULL) {
+      : m_cur_lookup_size(0), m_lookup(nullptr), m_cur_sorted_symbol_order_size(0), m_sorted_symbol_order(nullptr) {
   }
 
   inline decoder_tables(const decoder_tables& other)
-      : m_cur_lookup_size(0), m_lookup(NULL), m_cur_sorted_symbol_order_size(0), m_sorted_symbol_order(NULL) {
+      : m_cur_lookup_size(0), m_lookup(nullptr), m_cur_sorted_symbol_order_size(0), m_sorted_symbol_order(nullptr) {
     *this = other;
   }
 
@@ -1476,13 +1476,13 @@ class decoder_tables {
   inline void clear() {
     if (m_lookup) {
       crnd_delete_array(m_lookup);
-      m_lookup = 0;
+      m_lookup = nullptr;
       m_cur_lookup_size = 0;
     }
 
     if (m_sorted_symbol_order) {
       crnd_delete_array(m_sorted_symbol_order);
-      m_sorted_symbol_order = NULL;
+      m_sorted_symbol_order = nullptr;
       m_cur_sorted_symbol_order_size = 0;
     }
   }
@@ -1544,13 +1544,13 @@ class static_huffman_data_model {
   bool init(uint32 total_syms, const uint8* pCode_sizes, uint32 code_size_limit);
   void clear();
 
-  inline bool is_valid() const { return m_pDecode_tables != NULL; }
+  inline bool is_valid() const { return m_pDecode_tables != nullptr; }
 
   inline uint32 get_total_syms() const { return m_total_syms; }
 
   inline uint32 get_code_size(uint32 sym) const { return m_code_sizes[sym]; }
 
-  inline const uint8* get_code_sizes() const { return m_code_sizes.empty() ? NULL : &m_code_sizes[0]; }
+  inline const uint8* get_code_sizes() const { return m_code_sizes.empty() ? nullptr : &m_code_sizes[0]; }
 
  public:
   uint32 m_total_syms;
@@ -1941,7 +1941,7 @@ static void* crnd_default_realloc(void* p, size_t size, size_t* pActual_size, bo
     }
   } else if (!size) {
     ::free(p);
-    p_new = NULL;
+    p_new = nullptr;
 
     if (pActual_size)
       *pActual_size = 0;
@@ -1950,7 +1950,7 @@ static void* crnd_default_realloc(void* p, size_t size, size_t* pActual_size, bo
 #ifdef WIN32
     p_new = ::_expand(p, size);
 #else
-    p_new = NULL;
+    p_new = nullptr;
 #endif
 
     if (p_new)
@@ -1995,7 +1995,7 @@ void crnd_set_memory_callbacks(crnd_realloc_func pRealloc, crnd_msize_func pMSiz
   if ((!pRealloc) || (!pMSize)) {
     g_pRealloc = crnd_default_realloc;
     g_pMSize = crnd_default_msize;
-    g_pUser_data = NULL;
+    g_pUser_data = nullptr;
   } else {
     g_pRealloc = pRealloc;
     g_pMSize = pMSize;
@@ -2014,18 +2014,18 @@ void* crnd_malloc(size_t size, size_t* pActual_size) {
 
   if (size > MAX_POSSIBLE_BLOCK_SIZE) {
     crnd_mem_error("crnd_malloc: size too big");
-    return NULL;
+    return nullptr;
   }
 
   size_t actual_size = size;
-  uint8* p_new = static_cast<uint8*>((*g_pRealloc)(NULL, size, &actual_size, true, g_pUser_data));
+  uint8* p_new = static_cast<uint8*>((*g_pRealloc)(nullptr, size, &actual_size, true, g_pUser_data));
 
   if (pActual_size)
     *pActual_size = actual_size;
 
   if ((!p_new) || (actual_size < size)) {
     crnd_mem_error("crnd_malloc: out of memory");
-    return NULL;
+    return nullptr;
   }
 
   CRND_ASSERT(((uint32) reinterpret_cast<uintptr_t>(p_new) & (CRND_MIN_ALLOC_ALIGNMENT - 1)) == 0);
@@ -2036,12 +2036,12 @@ void* crnd_malloc(size_t size, size_t* pActual_size) {
 void* crnd_realloc(void* p, size_t size, size_t* pActual_size, bool movable) {
   if ((uint32) reinterpret_cast<uintptr_t>(p) & (CRND_MIN_ALLOC_ALIGNMENT - 1)) {
     crnd_mem_error("crnd_realloc: bad ptr");
-    return NULL;
+    return nullptr;
   }
 
   if (size > MAX_POSSIBLE_BLOCK_SIZE) {
     crnd_mem_error("crnd_malloc: size too big");
-    return NULL;
+    return nullptr;
   }
 
   size_t actual_size = size;
@@ -2064,7 +2064,7 @@ void crnd_free(void* p) {
     return;
   }
 
-  (*g_pRealloc)(p, 0, NULL, true, g_pUser_data);
+  (*g_pRealloc)(p, 0, nullptr, true, g_pUser_data);
 }
 
 size_t crnd_msize(void* p) {
@@ -2187,14 +2187,14 @@ uint32 crnd_get_bytes_per_dxt_block(crn_format fmt) {
 // TODO: tmp_header isn't used/This function is a helper to support old headers.
 const crn_header* crnd_get_header(const void* pData, uint32 data_size) {
   if ((!pData) || (data_size < sizeof(crn_header)))
-    return NULL;
+    return nullptr;
 
   const crn_header& file_header = *static_cast<const crn_header*>(pData);
   if (file_header.m_sig != crn_header::cCRNSigValue)
-    return NULL;
+    return nullptr;
 
   if ((file_header.m_header_size < sizeof(crn_header)) || (data_size < file_header.m_data_size))
-    return NULL;
+    return nullptr;
 
   return &file_header;
 }
@@ -2319,14 +2319,14 @@ const void* crnd_get_level_data(const void* pData, uint32 data_size, uint32 leve
     *pSize = 0;
 
   if ((!pData) || (data_size < cCRNHeaderMinSize))
-    return NULL;
+    return nullptr;
 
   const crn_header* pHeader = crnd_get_header(pData, data_size);
   if (!pHeader)
-    return NULL;
+    return nullptr;
 
   if (level_index >= pHeader->m_levels)
-    return NULL;
+    return nullptr;
 
   uint32 cur_level_ofs = pHeader->m_level_ofs[level_index];
 
@@ -2385,7 +2385,7 @@ bool crnd_create_segmented_file(const void* pData, uint32 data_size, void* pBase
 
   new_header.m_header_crc16 = crc16(&new_header.m_data_size, new_header.m_header_size - (uint32)((const uint8*)&new_header.m_data_size - (const uint8*)&new_header));
 
-  CRND_ASSERT(crnd_validate_file(&new_header, actual_base_data_size, NULL));
+  CRND_ASSERT(crnd_validate_file(&new_header, actual_base_data_size, nullptr));
 
   return true;
 }
@@ -2396,12 +2396,12 @@ bool crnd_create_segmented_file(const void* pData, uint32 data_size, void* pBase
 namespace crnd {
 static_huffman_data_model::static_huffman_data_model()
     : m_total_syms(0),
-      m_pDecode_tables(NULL) {
+      m_pDecode_tables(nullptr) {
 }
 
 static_huffman_data_model::static_huffman_data_model(const static_huffman_data_model& other)
     : m_total_syms(0),
-      m_pDecode_tables(NULL) {
+      m_pDecode_tables(nullptr) {
   *this = other;
 }
 
@@ -2428,7 +2428,7 @@ static_huffman_data_model& static_huffman_data_model::operator=(const static_huf
       m_pDecode_tables = crnd_new<prefix_coding::decoder_tables>(*rhs.m_pDecode_tables);
   } else {
     crnd_delete(m_pDecode_tables);
-    m_pDecode_tables = NULL;
+    m_pDecode_tables = nullptr;
   }
 
   return *this;
@@ -2439,7 +2439,7 @@ void static_huffman_data_model::clear() {
   m_code_sizes.clear();
   if (m_pDecode_tables) {
     crnd_delete(m_pDecode_tables);
-    m_pDecode_tables = NULL;
+    m_pDecode_tables = nullptr;
   }
 }
 
@@ -2501,9 +2501,9 @@ uint static_huffman_data_model::compute_decoder_table_bits() const {
 }
 
 symbol_codec::symbol_codec()
-    : m_pDecode_buf(NULL),
-      m_pDecode_buf_next(NULL),
-      m_pDecode_buf_end(NULL),
+    : m_pDecode_buf(nullptr),
+      m_pDecode_buf_next(nullptr),
+      m_pDecode_buf_end(nullptr),
       m_decode_buf_size(0),
       m_bit_buf(0),
       m_bit_count(0) {
@@ -2956,9 +2956,9 @@ class crn_unpacker {
  public:
   inline crn_unpacker()
       : m_magic(cMagicValue),
-        m_pData(NULL),
+        m_pData(nullptr),
         m_data_size(0),
-        m_pHeader(NULL) {
+        m_pHeader(nullptr) {
   }
 
   inline ~crn_unpacker() {
@@ -3726,15 +3726,15 @@ class crn_unpacker {
 
 crnd_unpack_context crnd_unpack_begin(const void* pData, uint32 data_size) {
   if ((!pData) || (data_size < cCRNHeaderMinSize))
-    return NULL;
+    return nullptr;
 
   crn_unpacker* p = crnd_new<crn_unpacker>();
   if (!p)
-    return NULL;
+    return nullptr;
 
   if (!p->init(pData, data_size)) {
     crnd_delete(p);
-    return NULL;
+    return nullptr;
   }
 
   return p;

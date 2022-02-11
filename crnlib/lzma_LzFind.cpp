@@ -31,12 +31,12 @@ static int LzInWindow_Create(CMatchFinder* p, UInt32 keepSizeReserv, ISzAlloc* a
     p->blockSize = blockSize;
     return 1;
   }
-  if (p->bufferBase == 0 || p->blockSize != blockSize) {
+  if (p->bufferBase == nullptr || p->blockSize != blockSize) {
     LzInWindow_Free(p, alloc);
     p->blockSize = blockSize;
     p->bufferBase = (Byte*)alloc->Alloc(alloc, (size_t)blockSize);
   }
-  return (p->bufferBase != 0);
+  return (p->bufferBase != nullptr);
 }
 
 Byte* MatchFinder_GetPointerToCurrentPos(CMatchFinder* p) {
@@ -115,9 +115,9 @@ static void MatchFinder_SetDefaultSettings(CMatchFinder* p) {
 
 void MatchFinder_Construct(CMatchFinder* p) {
   UInt32 i;
-  p->bufferBase = 0;
+  p->bufferBase = nullptr;
   p->directInput = 0;
-  p->hash = 0;
+  p->hash = nullptr;
   MatchFinder_SetDefaultSettings(p);
 
   for (i = 0; i < 256; i++) {
@@ -131,7 +131,7 @@ void MatchFinder_Construct(CMatchFinder* p) {
 
 static void MatchFinder_FreeThisClassMemory(CMatchFinder* p, ISzAlloc* alloc) {
   alloc->Free(alloc, p->hash);
-  p->hash = 0;
+  p->hash = nullptr;
 }
 
 void MatchFinder_Free(CMatchFinder* p, ISzAlloc* alloc) {
@@ -142,7 +142,7 @@ void MatchFinder_Free(CMatchFinder* p, ISzAlloc* alloc) {
 static CLzRef* AllocRefs(UInt32 num, ISzAlloc* alloc) {
   size_t sizeInBytes = (size_t)num * sizeof(CLzRef);
   if (sizeInBytes / sizeof(CLzRef) != num)
-    return 0;
+    return nullptr;
   return (CLzRef*)alloc->Alloc(alloc, sizeInBytes);
 }
 
@@ -205,11 +205,11 @@ int MatchFinder_Create(CMatchFinder* p, UInt32 historySize,
       p->cyclicBufferSize = newCyclicBufferSize;
       p->numSons = (p->btMode ? newCyclicBufferSize * 2 : newCyclicBufferSize);
       newSize = p->hashSizeSum + p->numSons;
-      if (p->hash != 0 && prevSize == newSize)
+      if (p->hash != nullptr && prevSize == newSize)
         return 1;
       MatchFinder_FreeThisClassMemory(p, alloc);
       p->hash = AllocRefs(newSize, alloc);
-      if (p->hash != 0) {
+      if (p->hash != nullptr) {
         p->son = p->hash + p->hashSizeSum;
         return 1;
       }

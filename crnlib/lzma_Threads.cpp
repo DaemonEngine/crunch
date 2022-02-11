@@ -21,18 +21,18 @@ WRes BOOLToWRes(BOOL v) {
 }
 
 static WRes MyCloseHandle(HANDLE* h) {
-  if (*h != NULL)
+  if (*h != nullptr)
     if (!CloseHandle(*h))
       return GetError();
-  *h = NULL;
+  *h = nullptr;
   return 0;
 }
 
 WRes Thread_Create(CThread* thread, THREAD_FUNC_RET_TYPE(THREAD_FUNC_CALL_TYPE* startAddress)(void*), LPVOID parameter) {
-  unsigned threadId; /* Windows Me/98/95: threadId parameter may not be NULL in _beginthreadex/CreateThread functions */
+  unsigned threadId; /* Windows Me/98/95: threadId parameter may not be nullptr in _beginthreadex/CreateThread functions */
   thread->handle =
       /* CreateThread(0, 0, startAddress, parameter, 0, &threadId); */
-      (HANDLE)_beginthreadex(NULL, 0, startAddress, parameter, 0, &threadId);
+      (HANDLE)_beginthreadex(nullptr, 0, startAddress, parameter, 0, &threadId);
   /* maybe we must use errno here, but probably GetLastError() is also OK. */
   return HandleToWRes(thread->handle);
 }
@@ -42,7 +42,7 @@ WRes WaitObject(HANDLE h) {
 }
 
 WRes Thread_Wait(CThread* thread) {
-  if (thread->handle == NULL)
+  if (thread->handle == nullptr)
     return 1;
   return WaitObject(thread->handle);
 }
@@ -52,7 +52,7 @@ WRes Thread_Close(CThread* thread) {
 }
 
 WRes Event_Create(CEvent* p, BOOL manualReset, int initialSignaled) {
-  p->handle = CreateEvent(NULL, manualReset, (initialSignaled ? TRUE : FALSE), NULL);
+  p->handle = CreateEvent(nullptr, manualReset, (initialSignaled ? TRUE : FALSE), nullptr);
   return HandleToWRes(p->handle);
 }
 
@@ -84,7 +84,7 @@ WRes Event_Close(CEvent* p) {
 }
 
 WRes Semaphore_Create(CSemaphore* p, UInt32 initiallyCount, UInt32 maxCount) {
-  p->handle = CreateSemaphore(NULL, (LONG)initiallyCount, (LONG)maxCount, NULL);
+  p->handle = CreateSemaphore(nullptr, (LONG)initiallyCount, (LONG)maxCount, nullptr);
   return HandleToWRes(p->handle);
 }
 
@@ -92,7 +92,7 @@ WRes Semaphore_Release(CSemaphore* p, LONG releaseCount, LONG* previousCount) {
   return BOOLToWRes(ReleaseSemaphore(p->handle, releaseCount, previousCount));
 }
 WRes Semaphore_ReleaseN(CSemaphore* p, UInt32 releaseCount) {
-  return Semaphore_Release(p, (LONG)releaseCount, NULL);
+  return Semaphore_Release(p, (LONG)releaseCount, nullptr);
 }
 WRes Semaphore_Release1(CSemaphore* p) {
   return Semaphore_ReleaseN(p, 1);

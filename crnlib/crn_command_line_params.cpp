@@ -14,8 +14,8 @@
 #endif
 namespace crnlib {
 void get_command_line_as_single_string(dynamic_string& cmd_line, int argc, char* argv[]) {
-  argc, argv;
 #if CRNLIB_USE_WIN32_API
+  argc; argv; // I guess this is to prevent a warning...
   cmd_line.set(GetCommandLineA());
 #else
   cmd_line.clear();

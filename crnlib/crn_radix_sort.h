@@ -60,7 +60,7 @@ T* radix_sort(uint num_vals, T* pBuf0, T* pBuf1, uint key_ofs, uint key_size) {
   } else {
     CRNLIB_ASSERT(key_size == 1);
     if (key_size != 1)
-      return NULL;
+      return nullptr;
 
     T* p = pBuf0;
     T* q = pBuf0 + (num_vals >> 1) * 2;
@@ -211,7 +211,7 @@ T* indirect_radix_sort(uint num_indices, T* pIndices0, T* pIndices1, const Q* pK
   } else {
     CRNLIB_ASSERT(key_size == 1);
     if (key_size != 1)
-      return NULL;
+      return nullptr;
 
     T* p = pIndices0;
     T* q = pIndices0 + (num_indices >> 1) * 2;

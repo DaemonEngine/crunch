@@ -1160,7 +1160,7 @@ void pack_etc1_block_init() {
 static uint64 pack_etc1_block_solid_color(etc1_block& block, const uint8* pColor, crn_etc1_pack_params& pack_params, pack_etc1_block_context& context) {
   CRNLIB_ASSERT(g_etc1_inverse_lookup[0][255]);
 
-  context, pack_params;
+  context; pack_params; // guess: prevents warnings
   static uint s_next_comp[4] = {1, 2, 0, 1};
 
   uint best_error = cUINT32_MAX, best_i = 0;
@@ -1243,7 +1243,7 @@ static uint pack_etc1_block_solid_color_constrained(
     const color_quad_u8* pBase_color5_unscaled) {
   CRNLIB_ASSERT(g_etc1_inverse_lookup[0][255]);
 
-  context, pack_params;
+  context; pack_params; // guess: prevent warnings
   static uint s_next_comp[4] = {1, 2, 0, 1};
 
   uint best_error = cUINT32_MAX, best_i = 0;
@@ -1408,7 +1408,7 @@ uint64 pack_etc1_block(etc1_block& dst_block, const color_quad_u8* pSrc_pixels, 
             if ((subblock_pixels[r].r != subblock_pixel0.r) || (subblock_pixels[r].g != subblock_pixel0.g) || (subblock_pixels[r].b != subblock_pixel0.b))
               break;
           if (!r) {
-            pack_etc1_block_solid_color_constrained(results[2], 8, &subblock_pixel0.r, pack_params, context, !use_color4, (subblock && !use_color4) ? &results[0].m_block_color_unscaled : NULL);
+            pack_etc1_block_solid_color_constrained(results[2], 8, &subblock_pixel0.r, pack_params, context, !use_color4, (subblock && !use_color4) ? &results[0].m_block_color_unscaled : nullptr);
           }
         }
 

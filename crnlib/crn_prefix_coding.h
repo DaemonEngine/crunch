@@ -15,11 +15,11 @@ bool generate_codes(uint num_syms, const uint8* pCodesizes, uint16* pCodes);
 class decoder_tables {
  public:
   inline decoder_tables()
-      : m_table_shift(0), m_table_max_code(0), m_decode_start_code_size(0), m_cur_lookup_size(0), m_lookup(NULL), m_cur_sorted_symbol_order_size(0), m_sorted_symbol_order(NULL) {
+      : m_table_shift(0), m_table_max_code(0), m_decode_start_code_size(0), m_cur_lookup_size(0), m_lookup(nullptr), m_cur_sorted_symbol_order_size(0), m_sorted_symbol_order(nullptr) {
   }
 
   inline decoder_tables(const decoder_tables& other)
-      : m_table_shift(0), m_table_max_code(0), m_decode_start_code_size(0), m_cur_lookup_size(0), m_lookup(NULL), m_cur_sorted_symbol_order_size(0), m_sorted_symbol_order(NULL) {
+      : m_table_shift(0), m_table_max_code(0), m_decode_start_code_size(0), m_cur_lookup_size(0), m_lookup(nullptr), m_cur_sorted_symbol_order_size(0), m_sorted_symbol_order(nullptr) {
     *this = other;
   }
 
@@ -47,13 +47,13 @@ class decoder_tables {
   inline void clear() {
     if (m_lookup) {
       crnlib_delete_array(m_lookup);
-      m_lookup = 0;
+      m_lookup = nullptr;
       m_cur_lookup_size = 0;
     }
 
     if (m_sorted_symbol_order) {
       crnlib_delete_array(m_sorted_symbol_order);
-      m_sorted_symbol_order = NULL;
+      m_sorted_symbol_order = nullptr;
       m_cur_sorted_symbol_order_size = 0;
     }
   }

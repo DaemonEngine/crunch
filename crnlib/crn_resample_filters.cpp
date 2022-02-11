@@ -250,7 +250,6 @@ static double bessel0(double x) {
   return sum;
 }
 
-static const float KAISER_ALPHA = 4.0;
 static double kaiser(double alpha, double half_width, double x) {
   const double ratio = (x / half_width);
   return bessel0(alpha * sqrt(1 - ratio * ratio)) / bessel0(alpha);

@@ -210,7 +210,7 @@ int main(int argc, char* argv[]) {
 
   // Free the block compressor.
   crn_free_block_compressor(pContext);
-  pContext = NULL;
+  pContext = nullptr;
 
   // Now create the DDS file.
   char dst_filename[FILENAME_MAX];

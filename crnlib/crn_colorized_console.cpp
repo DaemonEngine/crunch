@@ -9,7 +9,7 @@
 namespace crnlib {
 void colorized_console::init() {
   console::init();
-  console::add_console_output_func(console_output_func, NULL);
+  console::add_console_output_func(console_output_func, nullptr);
 }
 
 void colorized_console::deinit() {

@@ -13,9 +13,9 @@ class semaphore {
   LZHAM_NO_COPY_OR_ASSIGNMENT_OP(semaphore);
 
  public:
-  semaphore(long initialCount = 0, long maximumCount = 1, const char* pName = NULL) {
-    m_handle = CreateSemaphoreA(NULL, initialCount, maximumCount, pName);
-    if (NULL == m_handle) {
+  semaphore(long initialCount = 0, long maximumCount = 1, const char* pName = nullptr) {
+    m_handle = CreateSemaphoreA(nullptr, initialCount, maximumCount, pName);
+    if (nullptr == m_handle) {
       LZHAM_FAIL("semaphore: CreateSemaphore() failed");
     }
   }
@@ -23,14 +23,14 @@ class semaphore {
   ~semaphore() {
     if (m_handle) {
       CloseHandle(m_handle);
-      m_handle = NULL;
+      m_handle = nullptr;
     }
   }
 
   inline HANDLE get_handle(void) const { return m_handle; }
 
   void release(long releaseCount = 1) {
-    if (0 == ReleaseSemaphore(m_handle, releaseCount, NULL)) {
+    if (0 == ReleaseSemaphore(m_handle, releaseCount, nullptr)) {
       LZHAM_FAIL("semaphore: ReleaseSemaphore() failed");
     }
   }
@@ -138,7 +138,7 @@ class tsstack {
   bool m_use_freelist;
 
   inline node* alloc_node() {
-    node* pNode = m_use_freelist ? (node*)InterlockedPopEntrySList(&m_freelist_head) : NULL;
+    node* pNode = m_use_freelist ? (node*)InterlockedPopEntrySList(&m_freelist_head) : nullptr;
 
     if (!pNode)
       pNode = (node*)lzham_malloc(sizeof(node));
@@ -169,7 +169,7 @@ class task_pool {
 
   // C-style task callback
   typedef void (*task_callback_func)(uint64 data, void* pData_ptr);
-  bool queue_task(task_callback_func pFunc, uint64 data = 0, void* pData_ptr = NULL);
+  bool queue_task(task_callback_func pFunc, uint64 data = 0, void* pData_ptr = nullptr);
 
   class executable_task {
    public:
@@ -177,19 +177,19 @@ class task_pool {
   };
 
   // It's the caller's responsibility to delete pObj within the execute_task() method, if needed!
-  bool queue_task(executable_task* pObj, uint64 data = 0, void* pData_ptr = NULL);
+  bool queue_task(executable_task* pObj, uint64 data = 0, void* pData_ptr = nullptr);
 
   template <typename S, typename T>
-  inline bool queue_object_task(S* pObject, T pObject_method, uint64 data = 0, void* pData_ptr = NULL);
+  inline bool queue_object_task(S* pObject, T pObject_method, uint64 data = 0, void* pData_ptr = nullptr);
 
   template <typename S, typename T>
-  inline bool queue_multiple_object_tasks(S* pObject, T pObject_method, uint64 first_data, uint num_tasks, void* pData_ptr = NULL);
+  inline bool queue_multiple_object_tasks(S* pObject, T pObject_method, uint64 first_data, uint num_tasks, void* pData_ptr = nullptr);
 
   void join();
 
  private:
   struct task {
-    //inline task() : m_data(0), m_pData_ptr(NULL), m_pObj(NULL), m_flags(0) { }
+    //inline task() : m_data(0), m_pData_ptr(nullptr), m_pObj(nullptr), m_flags(0) { }
 
     uint64 m_data;
     void* m_pData_ptr;
@@ -230,8 +230,8 @@ template <typename T>
 class object_task : public task_pool::executable_task {
  public:
   object_task(uint flags = cObjectTaskFlagDefault)
-      : m_pObject(NULL),
-        m_pMethod(NULL),
+      : m_pObject(nullptr),
+        m_pMethod(nullptr),
         m_flags(flags) {
   }
 

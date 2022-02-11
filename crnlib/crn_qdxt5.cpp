@@ -18,8 +18,8 @@ qdxt5::qdxt5(task_pool& task_pool)
       m_progress_start(0),
       m_progress_range(100),
       m_num_blocks(0),
-      m_pBlocks(NULL),
-      m_pDst_elements(NULL),
+      m_pBlocks(nullptr),
+      m_pDst_elements(nullptr),
       m_elements_per_block(0),
       m_max_selector_clusters(0),
       m_prev_percentage_complete(-1),
@@ -32,8 +32,8 @@ qdxt5::~qdxt5() {
 void qdxt5::clear() {
   m_main_thread_id = 0;
   m_num_blocks = 0;
-  m_pBlocks = 0;
-  m_pDst_elements = NULL;
+  m_pBlocks = nullptr;
+  m_pDst_elements = nullptr;
   m_elements_per_block = 0;
   m_params.clear();
   m_endpoint_clusterizer.clear();

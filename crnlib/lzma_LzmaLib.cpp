@@ -11,11 +11,9 @@ Public domain */
 namespace crnlib {
 
 static void* SzAlloc(void* p, size_t size) {
-  p = p;
   return MyAlloc(size);
 }
 static void SzFree(void* p, void* address) {
-  p = p;
   MyFree(address);
 }
 static ISzAlloc g_Alloc = {SzAlloc, SzFree};
@@ -41,7 +39,7 @@ MY_STDAPI LzmaCompress(unsigned char* dest, size_t* destLen, const unsigned char
   props.numThreads = numThreads;
 
   return LzmaEncode(dest, destLen, src, srcLen, &props, outProps, outPropsSize, 0,
-                    NULL, &g_Alloc, &g_Alloc);
+                    nullptr, &g_Alloc, &g_Alloc);
 }
 
 MY_STDAPI LzmaUncompress(unsigned char* dest, size_t* destLen, const unsigned char* src, size_t* srcLen,

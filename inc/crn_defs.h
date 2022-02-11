@@ -36,13 +36,13 @@ const uint32 CRND_MIN_ALLOC_ALIGNMENT = sizeof(uint32) * 2U;
 
 // realloc callback:
 // Used to allocate, resize, or free memory blocks.
-// If p is NULL, the realloc function attempts to allocate a block of at least size bytes. Returns NULL on out of memory.
+// If p is nullptr, the realloc function attempts to allocate a block of at least size bytes. Returns nullptr on out of memory.
 // *pActual_size must be set to the actual size of the allocated block, which must be greater than or equal to the requested size.
-// If p is not NULL, and size is 0, the realloc function frees the specified block, and always returns NULL. *pActual_size should be set to 0.
-// If p is not NULL, and size is non-zero, the realloc function attempts to resize the specified block:
-//    If movable is false, the realloc function attempts to shrink or expand the block in-place. NULL is returned if the block cannot be resized in place, or if the
+// If p is not nullptr, and size is 0, the realloc function frees the specified block, and always returns nullptr. *pActual_size should be set to 0.
+// If p is not nullptr, and size is non-zero, the realloc function attempts to resize the specified block:
+//    If movable is false, the realloc function attempts to shrink or expand the block in-place. nullptr is returned if the block cannot be resized in place, or if the
 //    underlying heap implementation doesn't support in-place resizing. Otherwise, the pointer to the original block is returned.
-//    If movable is true, it is permissible to move the block's contents if it cannot be resized in place. NULL is returned if the block cannot be resized in place, and there
+//    If movable is true, it is permissible to move the block's contents if it cannot be resized in place. nullptr is returned if the block cannot be resized in place, and there
 //    is not enough memory to relocate the block.
 //    In all cases, *pActual_size must be set to the actual size of the allocated block, whether it was successfully resized or not.
 typedef void* (*crnd_realloc_func)(void* p, size_t size, size_t* pActual_size, bool movable, void* pUser_data);
@@ -51,7 +51,7 @@ typedef void* (*crnd_realloc_func)(void* p, size_t size, size_t* pActual_size, b
 typedef size_t (*crnd_msize_func)(void* p, void* pUser_data);
 
 // crnd_set_memory_callbacks() - Use to override the crnd library's memory allocation functions.
-// If any input parameters are NULL, the memory callback functions are reset to the default functions.
+// If any input parameters are nullptr, the memory callback functions are reset to the default functions.
 // The default functions call malloc(), free(),  _msize(), _expand(), etc.
 void crnd_set_memory_callbacks(crnd_realloc_func pRealloc, crnd_msize_func pMSize, void* pUser_data);
 
@@ -136,7 +136,7 @@ typedef void* crnd_unpack_context;
 // Worst case allocation is approx. 200k, assuming all palettes contain 8192 entries.
 // pData must point to a buffer holding all of the compressed .CRN file data.
 // This buffer must be stable until crnd_unpack_end() is called.
-// Returns NULL if out of memory, or if any of the input parameters are invalid.
+// Returns nullptr if out of memory, or if any of the input parameters are invalid.
 crnd_unpack_context crnd_unpack_begin(const void* pData, uint32 data_size);
 
 // Returns a pointer to the compressed .CRN data associated with a crnd_unpack_context.
@@ -166,7 +166,7 @@ bool crnd_unpack_level_segmented(
     uint32 level_index);
 
 // crnd_unpack_end() - Frees the decompress tables and unpacked palettes associated with the specified unpack context.
-// Returns false if the context is NULL, or if it points to an invalid context.
+// Returns false if the context is nullptr, or if it points to an invalid context.
 // This function frees all memory associated with the context.
 bool crnd_unpack_end(crnd_unpack_context pContext);
 
@@ -175,7 +175,7 @@ bool crnd_unpack_end(crnd_unpack_context pContext);
 // - Level data: Individual mipmap levels
 // This allows mipmap levels from multiple CRN files to be tightly packed together into single files.
 
-// Returns a pointer to the level's compressed data, and optionally returns the level's compressed data size if pSize is not NULL.
+// Returns a pointer to the level's compressed data, and optionally returns the level's compressed data size if pSize is not nullptr.
 const void* crnd_get_level_data(const void* pData, uint32 data_size, uint32 level_index, uint32* pSize);
 
 // Returns the compressed size of the texture's header and compression tables (but no levels).
@@ -217,21 +217,30 @@ struct crn_packed_uint {
     return *this;
   }
 
-  inline operator unsigned int() const {
-    switch (N) {
-      case 1:
-        return m_buf[0];
-      case 2:
-        return (m_buf[0] << 8U) | m_buf[1];
-      case 3:
-        return (m_buf[0] << 16U) | (m_buf[1] << 8U) | (m_buf[2]);
-      default:
-        return (m_buf[0] << 24U) | (m_buf[1] << 16U) | (m_buf[2] << 8U) | (m_buf[3]);
-    }
-  }
+  inline operator unsigned int() const;
 
   unsigned char m_buf[N];
 };
+
+template <>
+inline crn_packed_uint<1>::operator unsigned int() const {
+  return m_buf[0];
+}
+
+template <>
+inline crn_packed_uint<2>::operator unsigned int() const {
+  return (m_buf[0] << 8U) | m_buf[1];
+}
+
+template <>
+inline crn_packed_uint<3>::operator unsigned int() const {
+  return (m_buf[0] << 16U) | (m_buf[1] << 8U) | (m_buf[2]);
+}
+
+template <>
+inline crn_packed_uint<4>::operator unsigned int() const {
+  return (m_buf[0] << 24U) | (m_buf[1] << 16U) | (m_buf[2] << 8U) | (m_buf[3]);
+}
 
 #pragma pack(push)
 #pragma pack(1)

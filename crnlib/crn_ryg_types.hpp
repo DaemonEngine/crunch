@@ -120,6 +120,9 @@ sINLINE sF64 sFCos(sF64 f) {
 sINLINE sF64 sFAbs(sF64 f) {
   return fabs(f);
 }
+sINLINE sF32 sFAbs(sF32 f) {
+  return fabsf(f);
+}
 sINLINE sF64 sFLog(sF64 f) {
   return log(f);
 }

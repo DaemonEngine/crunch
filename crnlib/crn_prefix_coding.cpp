@@ -205,7 +205,7 @@ bool generate_decoder_tables(uint num_syms, const uint8* pCodesizes, decoder_tab
 
     if (pTables->m_sorted_symbol_order) {
       crnlib_delete_array(pTables->m_sorted_symbol_order);
-      pTables->m_sorted_symbol_order = NULL;
+      pTables->m_sorted_symbol_order = nullptr;
     }
 
     pTables->m_sorted_symbol_order = crnlib_new_array<uint16>(pTables->m_cur_sorted_symbol_order_size);
@@ -238,7 +238,7 @@ bool generate_decoder_tables(uint num_syms, const uint8* pCodesizes, decoder_tab
 
       if (pTables->m_lookup) {
         crnlib_delete_array(pTables->m_lookup);
-        pTables->m_lookup = NULL;
+        pTables->m_lookup = nullptr;
       }
 
       pTables->m_lookup = crnlib_new_array<uint32>(table_size);

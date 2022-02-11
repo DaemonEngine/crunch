@@ -34,7 +34,7 @@ class clusterizer {
 
   typedef bool (*progress_callback_func_ptr)(uint percentage_completed, void* pData);
 
-  bool generate_codebook(uint max_size, progress_callback_func_ptr pProgress_callback = NULL, void* pProgress_data = NULL, bool quick = false) {
+  bool generate_codebook(uint max_size, progress_callback_func_ptr pProgress_callback = nullptr, void* pProgress_data = nullptr, bool quick = false) {
     if (m_training_vecs.empty())
       return false;
 
