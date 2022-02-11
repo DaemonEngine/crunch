@@ -10,6 +10,21 @@ if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)
 endif()
 
+find_package(Git)
+
+if (Git_FOUND)
+  execute_process(
+    COMMAND ${GIT_EXECUTABLE} rev-parse --short HEAD
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+    OUTPUT_VARIABLE GIT_VERSION
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+  )
+
+  if (GIT_VERSION)
+    add_definitions(-DCOMPUTED_VERSION_SUFFIX="Built from git-${GIT_VERSION}")
+  endif()
+endif()
+
 option(BUILD_SHARED_LIBS "Link executables against shared library" OFF)
 option(BUILD_EXAMPLES "Build examples" OFF)
 option(INSTALL_CRNLIB "Install crnlib" OFF)
