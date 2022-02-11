@@ -1,16 +1,70 @@
-**Daemon fork of crunch: The Daemon engine uses the *master* branch, which currently tracks the
-[Unity fork](https://github.com/Unity-Technologies/crunch/tree/unity), with a few additional
-minor fixes.**
+# Crunch
 
----
+**crunch/crnlib v1.04U** — Advanced DXTn texture compression library (Unity format variant)
 
-crunch/crnlib v1.04 - Advanced DXTn texture compression library
-Copyright (C) 2010-2017 Richard Geldreich, Jr. and Binomial LLC http://binomial.info 
+## Dæmon fork of crunch
 
-For bugs or support contact Binomial <info@binomial.info>.
+ℹ️ The [Dæmon engine](https://github.com/DaemonEngine/Daemon) uses the [`master`](https://github.com/DaemonEngine/crunch/tree/master) branch, which currently tracks the [Unity fork](https://github.com/Unity-Technologies/crunch/tree/unity), with a few additional minor fixes.
+
+The Dæmon engine is the open source game engine powering the [Unvanquished game](https://unvanquished.net).
+
+Crunch is brought to you by:
+
+- 2014-2022 Dæmon Developers and contributors  
+  https://github.com/DaemonEngine/crunch
+- 2017-2018 Alexander Suvorov and Unity Software Inc.  
+  https://github.com/Unity-Technologies/crunch/tree/unity
+- 2010-2017 Richard Geldreich, Jr. and Binomial LLC and contributors  
+  https://github.com/BinomialLLC/crunch
+
+## Improvements
+
+This repository merged improvements done by Unity Technologies, it produces
+smaller files and produce them faster than original code by Binomial.
+Unity also modified the format.
+
+Quote from [unvanquished.net/unvanquished-area-51](https://unvanquished.net/unvanquished-area-51):
+
+> [Unity guys said](https://blog.unity.com/technology/crunch-compression-of-etc-textures) that their modified crunch tool “can compress up to 2.5
+> times faster, while providing about 10% better compression ratio”. So We
+> did a test on our own asset repository, re-crunching all the ressources
+> and textures packages. At the time we did the test the given corpus
+> produced 1797 .crn files.  
+> The Unity’s crunch tool reduced compression time by 4.31 and reduced size
+> by 11.15%. They said “up to 2.5 time faster” but we’ve seen some random
+> textures being compressed 6 time faster and the average of the whole is
+> 4.3 time faster, and yes the tool compresses more than 10% more.
+
+This branch also provides an extra `-rtopmip` command line option to use with `-renormalize` to also renormalize on the top mip-level.
+
+This branch also focus on keeping the code buildable outside of Windows and Visual Studio, and add CMake build option alongside a legacy Makefile.
+
+## How to build
+
+```sh
+git clone https://github.com/DaemonEngine/crunch.git
+cd crunch
+cmake -H. -Bbuild
+cmake --build build --parallel $(nproc)
+```
+
+Where `$(nproc)` is the amount of cores of your computer.
+
+You'll then find a `crunch` binary in `build/` folder.
+
+Some CMake build options are available (explore more with `ccmake`):
+
+```
+cmake -H. -Bbuild -DBUILD_SHARED_LIBS=ON -DINSTALL_CRNLIB=ON -DOPTIMIZE_RELEASE=ON
+cmake --build build --parallel $(nproc)
+```
+
+## Licensing
 
 This software uses the ZLIB license, which is located in license.txt.
 http://opensource.org/licenses/Zlib
+
+Richard Geldreich removed copyright on all his work on Crunch in order to put it in public domain on 2020-09-15 with commit [`crunch@57353fa`](https://github.com/BinomialLLC/crunch/commit/57353fa9ac0908893215bc30ba106adfb80c4c95) but this repository also contains commits by Alexander Suvorov from Unity Technologies and from Dæmon Developers and contributors.
 
 Portions of this software make use of public domain code originally
 written by Igor Pavlov (LZMA), RYG (crn_ryg_dxt*), and Sean Barrett (stb_image.c).
