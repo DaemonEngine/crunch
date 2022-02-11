@@ -1132,8 +1132,24 @@ static bool check_for_option(int argc, char* argv[], const char* pOption) {
 //-----------------------------------------------------------------------------------------------------------------------
 
 static void print_title() {
-  console::printf("crunch: Advanced DXTn Texture Compressor - https://github.com/BinomialLLC/crunch");
-  console::printf("Copyright (c) 2010-2016 Richard Geldreich, Jr. and Binomial LLC");
+  console::printf("crunch: Advanced DXTn Texture Compressor");
+  console::printf("");
+  console::printf("Brought to you by:");
+  console::printf("- 2014-2022 Daemon Developers and contributors");
+  console::printf("  https://github.com/DaemonEngine/crunch");
+  /* Who owns the copyright, Alexander, Unity, both?
+  Unity Technologies is a Trade Name for Unity Software Inc. */
+  console::printf("- 2017-2018 Alexander Suvorov and Unity Software Inc.");
+  console::printf("  https://github.com/Unity-Technologies/crunch/tree/unity");
+  /* Richard removed copyright on his work on 2020-09-15
+  https://github.com/BinomialLLC/crunch/commit/57353fa9ac0908893215bc30ba106adfb80c4c95
+  He also stated on 2019-06-15 that Tenacious Software LLC didn't had copyright
+  https://github.com/BinomialLLC/crunch/commit/7c54efc80e78ac0b7548d5dce35ed7318d413390
+  He also removed mention to Binomial LLC in the copyright line but since this line is
+  no longer a copyright line, the name can be kept. */
+  console::printf("- 2010-2017 Richard Geldreich, Jr. and Binomial LLC and contributors");
+  console::printf("  https://github.com/BinomialLLC/crunch");
+  console::printf("");
   console::printf("crnlib version v%u.%02u %s Built %s, %s", CRNLIB_VERSION / 100U, CRNLIB_VERSION % 100U, crnlib_is_x64() ? "x64" : "x86", __DATE__, __TIME__);
   console::printf("");
 }
