@@ -1132,7 +1132,7 @@ static bool check_for_option(int argc, char* argv[], const char* pOption) {
 //-----------------------------------------------------------------------------------------------------------------------
 
 static void print_title() {
-  console::printf("crunch: Advanced DXTn Texture Compressor");
+  console::printf("crunch: Advanced DXTn Texture Compressor (Unity format variant)");
   console::printf("");
   console::printf("Brought to you by:");
   console::printf("- 2014-2022 Daemon Developers and contributors");
@@ -1150,7 +1150,8 @@ static void print_title() {
   console::printf("- 2010-2017 Richard Geldreich, Jr. and Binomial LLC and contributors");
   console::printf("  https://github.com/BinomialLLC/crunch");
   console::printf("");
-  console::printf("crnlib version v%u.%02u %s Built %s, %s", CRNLIB_VERSION / 100U, CRNLIB_VERSION % 100U, crnlib_is_x64() ? "x64" : "x86", __DATE__, __TIME__);
+  /* Add U suffix to the version string to remind it's the Unity variant. */
+  console::printf("crnlib version v%u.%02uU %s Built %s, %s", CRNLIB_VERSION / 100U, CRNLIB_VERSION % 100U, crnlib_is_x64() ? "x64" : "x86", __DATE__, __TIME__);
   console::printf("");
 }
 
