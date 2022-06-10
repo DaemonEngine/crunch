@@ -89,7 +89,7 @@ class crunch {
     console::printf("-info - Only display input file statistics (no output files are written).");
 
     console::message("\nMisc. options:");
-    console::printf("-helperThreads # - Set number of helper threads, 0-16, default=(# of CPU's)-1");
+    console::printf("-helperThreads # - Set number of helper threads, 0-%d, default=(# of CPU's)-1", cCRNMaxHelperThreads);
     console::printf("-noprogress - Disable progress output");
     console::printf("-quiet - Disable all console output");
     console::printf("-ignoreerrors - Continue processing files after errors. Note: The default");
