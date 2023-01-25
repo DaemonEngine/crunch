@@ -150,6 +150,7 @@ class crunch {
     console::printf(" prefer DXT1A over DXT5 for images with alpha channels (.DDS only).");
     console::printf("-uniformMetrics - Use uniform color metrics, default=use perceptual metrics");
     console::printf("-noAdaptiveBlocks - Disable adaptive block sizes (i.e. disable macroblocks).");
+    console::printf("-noNormalDetection - Disable normal map detection, default=disabled");
 #ifdef CRNLIB_SUPPORT_ATI_COMPRESS
     console::printf("-compressor [CRN,CRNF,RYG,ATI] - Set DXTn compressor, default=CRN");
 #else
@@ -221,6 +222,7 @@ class crunch {
             {"alphaThreshold", 1, false},
             {"uniformMetrics", 0, false},
             {"noAdaptiveBlocks", 0, false},
+            {"noNormalDetection", 0, false},
             {"compressor", 1, false},
             {"dxtQuality", 1, false},
             {"noendpointcaching", 0, false},
@@ -918,13 +920,16 @@ class crunch {
         compressed_size = cmp_tex_bytes.size();
       }
     }
+
+    bool no_normal_type = m_params.has_key("noNormalDetection");
+
     console::info("Source texture dimensions: %ux%u, Levels: %u, Faces: %u, Format: %s\nPacked Format: %u, Apparent Type: %s, Flipped: %u, Can Unflip Without Unpacking: %u",
                   src_tex.get_width(),
                   src_tex.get_height(),
                   src_tex.get_num_levels(),
                   src_tex.get_num_faces(),
                   pixel_format_helpers::get_pixel_format_string(src_tex.get_format()),
-                  src_tex.is_packed(), get_texture_type_desc(src_tex.determine_texture_type()),
+                  src_tex.is_packed(), get_texture_type_desc(src_tex.determine_texture_type(no_normal_type)),
                   src_tex.is_flipped(), src_tex.can_unflip_without_unpacking());
 
     console::info("Total pixels: %u, Source file size: " CRNLIB_UINT64_FORMAT_SPECIFIER ", Source file bits/pixel: %1.3f",
@@ -1039,7 +1044,9 @@ class crunch {
 
     texture_conversion::convert_params params;
 
-    params.m_texture_type = src_tex.determine_texture_type();
+    bool no_normal_type = m_params.has_key("noNormalDetection");
+    params.m_texture_type = src_tex.determine_texture_type(no_normal_type);
+
     params.m_pInput_texture = &src_tex;
     params.m_dst_filename = pDst_filename;
     params.m_dst_file_type = out_file_type;

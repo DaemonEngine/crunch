@@ -177,7 +177,7 @@ class mipmapped_texture {
   bool is_normal_map() const;
   bool is_vertical_cross() const;
   bool is_packed() const;
-  texture_type determine_texture_type() const;
+  texture_type determine_texture_type(bool no_normal_detection) const;
 
   const dynamic_string& get_last_error() const { return m_last_error; }
   void clear_last_error() { m_last_error.clear(); }

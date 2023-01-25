@@ -1652,7 +1652,7 @@ bool mipmapped_texture::write_ktx(data_stream_serializer& serializer) const {
 
   ktx_texture kt;
   bool success;
-  if (determine_texture_type() == cTextureTypeCubemap)
+  if (determine_texture_type(false) == cTextureTypeCubemap)
     success = kt.init_cubemap(get_width(), get_num_levels(), ogl_internal_fmt, ogl_fmt, ogl_type);
   else
     success = kt.init_2D(get_width(), get_height(), get_num_levels(), ogl_internal_fmt, ogl_fmt, ogl_type);
@@ -1767,7 +1767,7 @@ void mipmapped_texture::swap(mipmapped_texture& img) {
   CRNLIB_ASSERT(check());
 }
 
-texture_type mipmapped_texture::determine_texture_type() const {
+texture_type mipmapped_texture::determine_texture_type(bool no_normal_detection) const {
   if (!is_valid())
     return cTextureTypeUnknown;
 
@@ -1775,7 +1775,7 @@ texture_type mipmapped_texture::determine_texture_type() const {
     return cTextureTypeCubemap;
   else if (is_vertical_cross())
     return cTextureTypeVerticalCrossCubemap;
-  else if (is_normal_map())
+  else if (!no_normal_detection && is_normal_map())
     return cTextureTypeNormalMap;
 
   return cTextureTypeRegularMap;
