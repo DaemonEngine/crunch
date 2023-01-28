@@ -158,7 +158,7 @@ class crunch {
     console::printf("-dxtQuality [superfast,fast,normal,better,uber] - Endpoint optimizer speed.");
     console::printf("            Sets endpoint optimizer's max iteration depth. Default=uber.");
     console::printf("-noendpointcaching - Don't try reusing previous DXT endpoint solutions.");
-    console::printf("-grayscalsampling - Assume shader will convert fetched results to luma (Y).");
+    console::printf("-grayscalesampling - Assume shader will convert fetched results to luma (Y).");
     console::printf("-forceprimaryencoding - Only use DXT1 color4 and DXT5 alpha8 block encodings.");
     console::printf("-usetransparentindicesforblack - Try DXT1 transparent indices for dark pixels.");
 
