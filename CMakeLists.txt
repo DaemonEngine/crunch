@@ -28,8 +28,10 @@ if (Git_FOUND)
 endif()
 
 option(BUILD_SHARED_LIBS "Link executables against shared library" OFF)
+option(BUILD_SHARED_LIBCRN "Build shared libcrn" OFF)
+option(BUILD_STATIC_LIBCRN "Build static libcrn" OFF)
+option(BUILD_CRUNCH "Build crunch" ON)
 option(BUILD_EXAMPLES "Build examples" OFF)
-option(INSTALL_CRNLIB "Install crnlib" OFF)
 option(OPTIMIZE_RELEASE "Optimize release build" ON)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
@@ -41,12 +43,14 @@ if(OPTIMIZE_RELEASE)
   set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fomit-frame-pointer -ffast-math -fno-math-errno -fno-strict-aliasing")
 endif()
 
+add_subdirectory(crnlib)
+
+if (BUILD_CRUNCH)
+  add_subdirectory(crunch _crunch)
+endif()
+
 if(BUILD_EXAMPLES)
   add_subdirectory(example1 _example1)
   add_subdirectory(example2 _example2)
   add_subdirectory(example3 _example3)
 endif()
-
-add_subdirectory(crnlib)
-
-add_subdirectory(crunch _crunch)
