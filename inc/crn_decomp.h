@@ -1928,7 +1928,12 @@ static void* crnd_default_realloc(void* p, size_t size, size_t* pActual_size, bo
   void* p_new;
 
   if (!p) {
+#if defined(__FreeBSD__)
+    // See https://github.com/DaemonEngine/crunch/pull/36
+    p_new = ::aligned_alloc(CRNLIB_MIN_ALLOC_ALIGNMENT, size);
+#else
     p_new = ::malloc(size);
+#endif
 
     if (pActual_size) {
 #ifdef WIN32
