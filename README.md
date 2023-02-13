@@ -1,32 +1,42 @@
 # Crunch
 
-**crunch/crnlib v1.04U** — Advanced DXTn texture compression library (Unity format variant)
+**crunch/crnlib v1.04U** — Advanced DXTn texture compression library (Dæmon branch, Unity format variant)
 
-## Dæmon fork of crunch
+- Upstream for the Dæmon branch: https://github.com/DaemonEngine/crunch
+- Bug tracker for the Dæmon branch: https://github.com/DaemonEngine/crunch/issues
 
-ℹ️ The [Dæmon engine](https://github.com/DaemonEngine/Daemon) uses the [`master`](https://github.com/DaemonEngine/crunch/tree/master) branch, which currently tracks the [Unity fork](https://github.com/Unity-Technologies/crunch/tree/unity), with a few additional minor fixes.
+## Dæmon crunch tool
 
-The Dæmon engine is the open source game engine powering the [Unvanquished game](https://unvanquished.net).
+ℹ️ The [Dæmon engine](https://github.com/DaemonEngine/Daemon) uses the [`master`](https://github.com/DaemonEngine/crunch/tree/master) branch, which currently tracks the [Unity fork](https://github.com/Unity-Technologies/crunch/tree/unity), with a few additional minor fixes. The Dæmon engine is the open source game engine powering the [Unvanquished game](https://unvanquished.net). The produced CRN files are openable by the Unity game engine.
 
 Crunch is brought to you by:
 
-- 2014-2022 Dæmon Developers and contributors  
+- **2014-2023**: Dæmon Developers and contributors  
   https://github.com/DaemonEngine/crunch
-- 2017-2018 Alexander Suvorov and Unity Software Inc.  
+- **2017-2018**: Alexander Suvorov and Unity Software Inc.  
   https://github.com/Unity-Technologies/crunch/tree/unity
-- 2010-2017 Richard Geldreich, Jr. and Binomial LLC and contributors  
+- **2010-2017**: Richard Geldreich, Jr. and Binomial LLC and contributors  
   https://github.com/BinomialLLC/crunch
 
-## Improvements
+The Dæmon branch is known to be used by:
+
+- The [Dæmon game engine](https://github.com/DaemonEngine/Daemon),
+- The [Urcheon game data build automation tool](https://github.com/DaemonEngine/Urcheon),
+- The [NetRadiant game level editor](https://netradiant.gitlab.io/) and the `q3map2` map compiler and light mapper,
+- The [Unvanquished game](https://unvanquished.net),
+- The [Xonotic game](https://xonotic.org),
+- Some games using the Unity game engine.
+
+## Unity crunch format
 
 This repository merged improvements done by Unity Technologies, it produces
-smaller files and produce them faster than original code by Binomial.
-Unity also modified the format.
+smaller files and produces them faster than original code by Binomial.
+Unity also modified the format which makes it incompatible with earlier versions of the tool.
 
-Quote from [unvanquished.net/unvanquished-area-51](https://unvanquished.net/unvanquished-area-51):
+Quote from [unvanquished.net](https://unvanquished.net/unvanquished-area-51):
 
 > [Unity guys said](https://blog.unity.com/technology/crunch-compression-of-etc-textures) that their modified crunch tool “can compress up to 2.5
-> times faster, while providing about 10% better compression ratio”. So We
+> times faster, while providing about 10% better compression ratio”. So we
 > did a test on our own asset repository, re-crunching all the ressources
 > and textures packages. At the time we did the test the given corpus
 > produced 1797 .crn files.  
@@ -35,9 +45,31 @@ Quote from [unvanquished.net/unvanquished-area-51](https://unvanquished.net/unva
 > textures being compressed 6 time faster and the average of the whole is
 > 4.3 time faster, and yes the tool compresses more than 10% more.
 
-This branch also provides an extra `-rtopmip` command line option to use with `-renormalize` to also renormalize on the top mip-level.
+## Unity crunch metadata
 
-This branch also focus on keeping the code buildable outside of Windows and Visual Studio, and add CMake build option alongside a legacy Makefile.
+Unlike the Unity `crunch` tool built from their public repository, this tool produces files loadable by the Unity engine.
+
+Since [February 11th 2023](faf5127b8c69dfd1ae554f4f3bf8168048b48d9f), this branch sets the CRN `m_userdata0` field to `1` to make CRN files loadable by the Unity engine which now prevents to load files with this value set to `0`.
+
+Files with this value set to `1` are expected to use the new format. Files with this value set to `0` may or may not use the new format. When Unity updated the tool and modified the format in an incompatible way, no bit was modified to detect if a CRN file was using the old or the new format. Unity has not updated that field in their public repository of Crunch so there may be files using new format with this value set to `0` in the wild.
+
+## Added features and command line options
+
+In addition to the original `crunch` features and command line options this branch brings:
+
+- `-rtopmip`: option to use with `-renormalize` to also renormalize on the top mip-level.
+- `-noNormalDetection`: do not attempt to detect normal map to avoid selecting formats thought for normal maps when it's known an image is not a normal map. It may prevent the tool to use heavier and less-supported `DXT5_AGBR` format when `DXT1` is good enough.
+- `-h` or `--help`: print the command line built-in help.
+
+## Multisystem and multiplatform portability
+
+Unlike upstream branches from Binomial LLC and Unity Software Inc. this branch focuses on keeping the code buildable outside of Windows and Visual Studio, and adds a CMake build option alongside the legacy Makefile.
+
+This `crunch` tool and the related `crnlib` library are known to build with and and run on:
+
+- Compilers: GCC, MSYS2/Mingw, MSVC, Clang, Apple Clang, ICC, ICX.
+- Systems: Linux, Windows, macOS, FreeBSD.
+- Architectures: amd64, arm64, i686, armhf.
 
 ## How to build
 
@@ -52,12 +84,7 @@ Where `$(nproc)` is the amount of cores of your computer.
 
 You'll then find a `crunch` binary in `build/` folder.
 
-Some CMake build options are available (explore more with `ccmake`):
-
-```
-cmake -H. -Bbuild -DBUILD_SHARED_LIBS=ON -DINSTALL_CRNLIB=ON -DOPTIMIZE_RELEASE=ON
-cmake --build build --parallel $(nproc)
-```
+Some CMake build options are availables (explore more with `ccmake`).
 
 ## Licensing
 
