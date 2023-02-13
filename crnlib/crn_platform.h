@@ -18,10 +18,16 @@ const bool c_crnlib_little_endian_platform = false;
 
 const bool c_crnlib_big_endian_platform = !c_crnlib_little_endian_platform;
 
-#if defined(__GNUC__) && !defined(__APPLE__)
+#if defined(__linux__)
 #define crn_fopen(pDstFile, f, m) *(pDstFile) = fopen64(f, m)
 #define crn_fseek fseeko64
 #define crn_ftell ftello64
+#elif defined(__GNUC__)
+// This should be defined before including any header.
+#define _FILE_OFFSET_BITS 64
+#define crn_fopen(pDstFile, f, m) *(pDstFile) = fopen(f, m)
+#define crn_fseek fseeko
+#define crn_ftell ftello
 #elif defined(_MSC_VER)
 #define crn_fopen(pDstFile, f, m) fopen_s(pDstFile, f, m)
 #define crn_fseek _fseeki64
