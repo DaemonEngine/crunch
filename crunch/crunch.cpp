@@ -173,7 +173,7 @@ class crunch {
       console::printf("-%s", pixel_format_helpers::get_pixel_format_string(fmt));
     }
 
-    console::printf("\nFor bugs, support, or feedback: info@binomial.info");
+    console::printf("\nFor bugs: https://github.com/DaemonEngine/crunch/issues");
   }
 
   bool convert(const char* pCommand_line) {
