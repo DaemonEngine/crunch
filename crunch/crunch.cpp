@@ -1169,9 +1169,9 @@ static void print_title() {
   console::printf("");
   /* Add U suffix to the version string to remind it's the Unity variant. */
   #if defined COMPUTED_VERSION_SUFFIX
-  console::printf("crnlib version v%u.%02uU %s %s", CRNLIB_VERSION / 100U, CRNLIB_VERSION % 100U, crnlib_is_x64() ? "x64" : "x86", COMPUTED_VERSION_SUFFIX);
+  console::printf("crnlib version v%u.%02uU %s %s", CRNLIB_VERSION / 100U, CRNLIB_VERSION % 100U, crnlib_is_x64() ? "64-bit" : "32-bit", COMPUTED_VERSION_SUFFIX);
   #else
-  console::printf("crnlib version v%u.%02uU %s Built %s, %s", CRNLIB_VERSION / 100U, CRNLIB_VERSION % 100U, crnlib_is_x64() ? "x64" : "x86", __DATE__, __TIME__);
+  console::printf("crnlib version v%u.%02uU %s Built %s, %s", CRNLIB_VERSION / 100U, CRNLIB_VERSION % 100U, crnlib_is_x64() ? "64-bit" : "32-bit", __DATE__, __TIME__);
   #endif
   console::printf("");
 }
