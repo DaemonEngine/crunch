@@ -1,6 +1,7 @@
 // File: crn_win32_find_files.cpp
 // See Copyright Notice and license at the end of inc/crnlib.h
 #include "crn_core.h"
+#include "crn_console.h"
 #include "crn_find_files.h"
 #include "crn_file_utils.h"
 #include "crn_strutils.h"
@@ -9,6 +10,7 @@
 #include "crn_winhdr.h"
 
 #elif defined(__GNUC__)
+#include <sys/stat.h>
 #include <fnmatch.h>
 #include <dirent.h>
 #endif
@@ -204,8 +206,23 @@ bool find_files::find_internal(const char* pBasepath, const char* pRelpath, cons
     if ((strcmp(ep->d_name, ".") == 0) || (strcmp(ep->d_name, "..") == 0))
       continue;
 
-    const bool is_directory = (ep->d_type & DT_DIR) != 0;
-    const bool is_file = (ep->d_type & DT_REG) != 0;
+    bool is_directory = 0;
+    bool is_file = 0;
+
+    if ( ep->d_type != 0 ) {
+      is_directory = (ep->d_type & DT_DIR) != 0;
+      is_file = (ep->d_type & DT_REG) != 0;
+    } else {
+      struct stat s;
+      if (stat(ep->d_name, &s) == 0) {
+        is_directory = S_ISDIR(s.st_mode);
+        is_file = S_ISREG(s.st_mode);
+      }
+      else {
+        console::error("Cannot detect if given path is a file or a directory");
+        return false;
+      }
+    }
 
     dynamic_string filename(ep->d_name);
 
