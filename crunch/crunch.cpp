@@ -1152,7 +1152,7 @@ static void print_title() {
   console::printf("crunch: Advanced DXTn Texture Compressor (Unity format variant)");
   console::printf("");
   console::printf("Brought to you by:");
-  console::printf("- 2014-2022 Daemon Developers and contributors");
+  console::printf("- 2014-2023 Daemon Developers and contributors");
   console::printf("  https://github.com/DaemonEngine/crunch");
   /* Who owns the copyright, Alexander, Unity, both?
   Unity Technologies is a Trade Name for Unity Software Inc. */
