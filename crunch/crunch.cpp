@@ -172,8 +172,6 @@ class crunch {
       pixel_format fmt = pixel_format_helpers::get_pixel_format_by_index(i);
       console::printf("-%s", pixel_format_helpers::get_pixel_format_string(fmt));
     }
-
-    console::printf("\nFor bugs: https://github.com/DaemonEngine/crunch/issues");
   }
 
   bool convert(const char* pCommand_line) {
@@ -1149,9 +1147,16 @@ static bool check_for_option(int argc, char* argv[], const char* pOption) {
 //-----------------------------------------------------------------------------------------------------------------------
 
 static void print_title() {
-  console::printf("crunch: Advanced DXTn Texture Compressor (Unity format variant)");
+  console::printf("crunch: Advanced DXTn Texture Compressor (Daemon branch, Unity format variant)");
   console::printf("");
-  console::printf("Brought to you by:");
+  /* Add U suffix to the version string to remind it's the Unity variant. */
+  #if defined COMPUTED_VERSION_SUFFIX
+  console::printf("crnlib version v%u.%02uU %s %s", CRNLIB_VERSION / 100U, CRNLIB_VERSION % 100U, crnlib_is_x64() ? "64-bit" : "32-bit", COMPUTED_VERSION_SUFFIX);
+  #else
+  console::printf("crnlib version v%u.%02uU %s Built %s, %s", CRNLIB_VERSION / 100U, CRNLIB_VERSION % 100U, crnlib_is_x64() ? "64-bit" : "32-bit", __DATE__, __TIME__);
+  #endif
+  console::printf("");
+  console::printf("Crunch is brought to you by:");
   console::printf("- 2014-2023 Daemon Developers and contributors");
   console::printf("  https://github.com/DaemonEngine/crunch");
   /* Who owns the copyright, Alexander, Unity, both?
@@ -1167,12 +1172,7 @@ static void print_title() {
   console::printf("- 2010-2017 Richard Geldreich, Jr. and Binomial LLC and contributors");
   console::printf("  https://github.com/BinomialLLC/crunch");
   console::printf("");
-  /* Add U suffix to the version string to remind it's the Unity variant. */
-  #if defined COMPUTED_VERSION_SUFFIX
-  console::printf("crnlib version v%u.%02uU %s %s", CRNLIB_VERSION / 100U, CRNLIB_VERSION % 100U, crnlib_is_x64() ? "64-bit" : "32-bit", COMPUTED_VERSION_SUFFIX);
-  #else
-  console::printf("crnlib version v%u.%02uU %s Built %s, %s", CRNLIB_VERSION / 100U, CRNLIB_VERSION % 100U, crnlib_is_x64() ? "64-bit" : "32-bit", __DATE__, __TIME__);
-  #endif
+  console::printf("Please report bugs here: https://github.com/DaemonEngine/crunch/issues");
   console::printf("");
 }
 
