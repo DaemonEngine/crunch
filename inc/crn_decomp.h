@@ -2204,7 +2204,7 @@ const crn_header* crnd_get_header(const void* pData, uint32 data_size) {
   return &file_header;
 }
 
-bool crnd_validate_file(const void* pData, uint32 data_size, crn_file_info* pFile_info) {
+bool crnd_validate_header(const void* pData, uint32 data_size, crn_file_info* pFile_info) {
   if (pFile_info) {
     if (pFile_info->m_struct_size != sizeof(crn_file_info))
       return false;
@@ -2223,10 +2223,8 @@ bool crnd_validate_file(const void* pData, uint32 data_size, crn_file_info* pFil
   if (header_crc != pHeader->m_header_crc16)
     return false;
 
-  const uint32 data_crc = crc16((const uint8*)pData + pHeader->m_header_size, pHeader->m_data_size - pHeader->m_header_size);
-  if (data_crc != pHeader->m_data_crc16)
-    return false;
-
+  if (pHeader->m_data_size < pHeader->m_header_size)
+      return false;
   if ((pHeader->m_faces != 1) && (pHeader->m_faces != 6))
     return false;
   if ((pHeader->m_width < 1) || (pHeader->m_width > cCRNMaxLevelResolution))
@@ -2266,6 +2264,20 @@ bool crnd_validate_file(const void* pData, uint32 data_size, crn_file_info* pFil
   }
 
   return true;
+}
+
+bool crnd_validate_file(const void* pData, uint32 data_size, crn_file_info* pFile_info) {
+  if (!crnd_validate_header(pData, data_size, pFile_info))
+    return false;
+
+  // was already validated by crnd_get_header
+  const crn_header* pHeader = static_cast<const crn_header*>(pData);
+
+  if (pHeader->m_data_size > data_size)
+      return false;
+
+  const uint32 data_crc = crc16((const uint8*)pData + pHeader->m_header_size, pHeader->m_data_size - pHeader->m_header_size);
+  return data_crc == pHeader->m_data_crc16;
 }
 
 bool crnd_get_texture_info(const void* pData, uint32 data_size, crn_texture_info* pInfo) {
