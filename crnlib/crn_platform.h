@@ -66,7 +66,7 @@ const bool c_crnlib_big_endian_platform = !c_crnlib_little_endian_platform;
 
 #define CRNLIB_GET_ALIGNMENT(v) ((!sizeof(v)) ? 1 : (__alignof(v) ? __alignof(v) : sizeof(uint32)))
 
-#ifndef _MSC_VER
+#if !defined(_WIN32)
 int sprintf_s(char* buffer, size_t sizeOfBuffer, const char* format, ...);
 int vsprintf_s(char* buffer, size_t sizeOfBuffer, const char* format, va_list args);
 char* strlwr(char* p);
