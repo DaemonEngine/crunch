@@ -90,9 +90,9 @@ typedef int Bool;
 #define True 1
 #define False 0
 
-#ifdef _MSC_VER
+#if defined(_WIN32)
 
-#if _MSC_VER >= 1300
+#if defined(_MSC_VER) && _MSC_VER >= 1300
 #define MY_NO_INLINE __declspec(noinline)
 #else
 #define MY_NO_INLINE
