@@ -5,7 +5,8 @@
 #if CRNLIB_USE_WIN32_API
 #include "crn_winhdr.h"
 #endif
-#ifndef _MSC_VER
+
+#if !defined(_WIN32)
 int sprintf_s(char* buffer, size_t sizeOfBuffer, const char* format, ...) {
   if (!sizeOfBuffer)
     return 0;
@@ -54,7 +55,7 @@ char* strupr(char* p) {
   }
   return p;
 }
-#endif  // __GNUC__
+#endif
 
 void crnlib_debug_break(void) {
   CRNLIB_BREAKPOINT

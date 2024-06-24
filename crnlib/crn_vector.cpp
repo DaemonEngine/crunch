@@ -34,7 +34,7 @@ bool elemental_vector::increase_capacity(uint min_new_capacity, bool grow_hint, 
         return false;
 
       char buf[256];
-#ifdef _MSC_VER
+#if defined(_WIN32)
       sprintf_s(buf, sizeof(buf), "vector: crnlib_realloc() failed allocating %u bytes", (uint)desired_size);
 #else
       snprintf(buf, sizeof(buf), "vector: crnlib_realloc() failed allocating %u bytes", (uint)desired_size);
@@ -49,7 +49,7 @@ bool elemental_vector::increase_capacity(uint min_new_capacity, bool grow_hint, 
         return false;
 
       char buf[256];
-#ifdef _MSC_VER
+#if defined(_WIN32)
       sprintf_s(buf, sizeof(buf), "vector: crnlib_malloc() failed allocating %u bytes", (uint)desired_size);
 #else
       snprintf(buf, sizeof(buf), "vector: crnlib_malloc() failed allocating %u bytes", (uint)desired_size);

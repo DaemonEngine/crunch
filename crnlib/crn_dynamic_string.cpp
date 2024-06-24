@@ -236,7 +236,7 @@ dynamic_string& dynamic_string::truncate(uint new_len) {
 
 dynamic_string& dynamic_string::tolower() {
   if (m_len) {
-#ifdef _MSC_VER
+#if defined(_WIN32)
     _strlwr_s(get_ptr_priv(), m_buf_size);
 #else
     strlwr(get_ptr_priv());
@@ -247,7 +247,7 @@ dynamic_string& dynamic_string::tolower() {
 
 dynamic_string& dynamic_string::toupper() {
   if (m_len) {
-#ifdef _MSC_VER
+#if defined(_WIN32)
     _strupr_s(get_ptr_priv(), m_buf_size);
 #else
     strupr(get_ptr_priv());
@@ -300,7 +300,7 @@ dynamic_string& dynamic_string::format_args(const char* p, va_list args) {
   const uint cBufSize = 4096;
   char buf[cBufSize];
 
-#ifdef _MSC_VER
+#if defined(_WIN32)
   int l = vsnprintf_s(buf, cBufSize, _TRUNCATE, p, args);
 #else
   int l = vsnprintf(buf, cBufSize, p, args);
