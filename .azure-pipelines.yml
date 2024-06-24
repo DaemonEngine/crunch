@@ -1,0 +1,127 @@
+# Documentation: https://wiki.unvanquished.net/wiki/Continuous_integration
+
+trigger:
+  branches:
+    include:
+      - master
+
+pr:
+  branches:
+    include:
+      - '*'
+  paths:
+    include:
+      - .azure-pipelines.yml
+      # The rest of this list should stay in sync with .appveyor.yml
+      - crunch/
+      - crnlib/
+      - inc/
+      - example1/
+      - example2/
+      - example3/
+      - test/
+      - cmake/
+      - CMakeLists.txt
+
+strategy:
+  matrix:
+    Linux amd64 GCC:
+      VM_IMAGE: 'ubuntu-20.04'
+      APT_PACKAGES: ninja-build g++-8
+      CXX_COMPILER: g++-8
+      RUN_TESTS: true
+    Linux i686 GCC:
+      VM_IMAGE: 'ubuntu-20.04'
+      APT_PACKAGES: ninja-build g++-i686-linux-gnu
+      CXX_COMPILER: i686-linux-gnu-g++
+      RUN_TESTS: true
+    Linux arm64 GCC:
+      VM_IMAGE: 'ubuntu-20.04'
+      APT_PACKAGES: ninja-build g++-aarch64-linux-gnu
+      CXX_COMPILER: aarch64-linux-gnu-g++
+    Linux armhf GCC:
+      VM_IMAGE: 'ubuntu-20.04'
+      APT_PACKAGES: ninja-build g++-arm-linux-gnueabihf
+      CXX_COMPILER: arm-linux-gnueabihf-g++
+    Linux amd64 Clang:
+      VM_IMAGE: 'ubuntu-20.04'
+      APT_PACKAGES: ninja-build
+      CXX_COMPILER: clang++
+      RUN_TESTS: true
+    Windows amd64 MinGW:
+      VM_IMAGE: 'ubuntu-20.04'
+      APT_PACKAGES: ninja-build g++-mingw-w64-x86-64 mingw-w64-x86-64-dev
+      SETUP_COMMANDS: sudo update-alternatives --set x86_64-w64-mingw32-g++ /usr/bin/x86_64-w64-mingw32-g++-posix
+      TOOLCHAIN_FILE: cmake/cross-toolchain-mingw64.cmake
+      BUILD_EXAMPLES: ON
+      EXE_EXTENSIONS: .exe
+    Windows i686 MinGW:
+      VM_IMAGE: 'ubuntu-20.04'
+      APT_PACKAGES: ninja-build g++-mingw-w64-i686 mingw-w64-i686-dev
+      SETUP_COMMANDS: sudo update-alternatives --set i686-w64-mingw32-g++ /usr/bin/i686-w64-mingw32-g++-posix
+      TOOLCHAIN_FILE: cmake/cross-toolchain-mingw32.cmake
+      BUILD_EXAMPLES: ON
+      EXE_EXTENSIONS: .exe
+    macOS amd64 AppleClang:
+      VM_IMAGE: 'macOS-12'
+      CMAKE_GENERATOR: Unix Makefiles
+      NPROC_COMMAND: sysctl -n hw.logicalcpu
+      RUN_TESTS: true
+    macOS arm64 AppleClang:
+      VM_IMAGE: 'macOS-12'
+      CMAKE_GENERATOR: Unix Makefiles
+      COMPILER_FLAGS: -target arm64-apple-macos11 -Wno-overriding-t-option
+      NPROC_COMMAND: sysctl -n hw.logicalcpu
+    Web Asm.js Emscripten:
+      VM_IMAGE: 'ubuntu-22.04'
+      APT_PACKAGES: ninja-build emscripten
+      TOOLCHAIN_FILE: /usr/share/emscripten/cmake/Modules/Platform/Emscripten.cmake
+      SOURCE_DIR: emscripten
+      EXE_EXTENSIONS: .js .wasm
+
+pool:
+  vmImage: $(VM_IMAGE)
+
+steps:
+- bash: |
+    set -xue
+    if [ -n "${APT_PACKAGES:-}" ]; then
+      sudo apt-get update && sudo apt-get -y -q --no-install-recommends install ${APT_PACKAGES}
+    fi
+    if [ -n "${SETUP_COMMANDS:-}" ]; then
+     $(SETUP_COMMANDS)
+    fi
+  displayName: 'Setup'
+- bash: |
+    set -xue
+    export CMAKE_BUILD_PARALLEL_LEVEL="$(${NPROC_COMMAND:-nproc})"
+    echo "${CMAKE_BUILD_PARALLEL_LEVEL}"
+    cmake_args=(-G"${CMAKE_GENERATOR:-Ninja}")
+    if [ -n "${TOOLCHAIN_FILE:-}" ]; then
+        cmake_args+=(-DCMAKE_TOOLCHAIN_FILE="${TOOLCHAIN_FILE}")
+    fi
+    if [ -n "${CXX_COMPILER:-}" ]; then
+        cmake_args+=(-DCMAKE_CXX_COMPILER="${CXX_COMPILER}")
+    fi
+    if [ -n "${COMPILER_FLAGS:-}" ]; then
+        cmake_args+=(-DCMAKE_CXX_FLAGS="${COMPILER_FLAGS}")
+    fi
+    if [ -z "${SOURCE_DIR:-}" ]; then
+        cmake_args+=(-DBUILD_CRUNCH=ON -DBUILD_SHARED_LIBCRN=ON -DBUILD_EXAMPLES="${BUILD_EXAMPLES:-OFF}")
+    fi
+    cmake -S"${SOURCE_DIR:-.}" -Bbuild "${cmake_args[@]}"
+    cmake --build build --config Release
+  displayName: 'Build'
+- bash: |
+    set -xue
+    if [ -z "${EXE_EXTENSIONS:-}" ]; then
+      file 'build/crunch'
+    else
+      for ext in ${EXE_EXTENSIONS}; do
+        file "build/crunch${ext}"
+      done
+    fi
+    if "${RUN_TESTS:-false}"; then
+      test/test.py
+    fi
+  displayName: 'Test'
