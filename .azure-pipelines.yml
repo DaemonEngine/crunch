@@ -1,0 +1,138 @@
+# Documentation: https://wiki.unvanquished.net/wiki/Continuous_integration
+
+trigger:
+  branches:
+    include:
+      - master
+
+pr:
+  branches:
+    include:
+      - '*'
+  paths:
+    include:
+      - azure-pipelines.yml
+      # The rest of this list should stay in sync with .appveyor.yml
+      - crunch/
+      - crnlib/
+      - inc/
+      - example1/
+      - example2/
+      - example3/
+      - cmake/
+      - CMakeLists.txt
+
+# There should be at least one job or the status badges don't work.
+- jobs:
+  - job: crunch
+    strategy:
+      matrix:
+        Linux amd64 GCC:
+          VM_IMAGE: 'ubuntu-20.04'
+          CMAKE_GENERATOR: Ninja
+          C_COMPILER: gcc-8
+          CXX_COMPILER: g++-8
+          APT_PACKAGES: ninja-build gcc-8 g++-8
+          NPROC_TOOL: nproc
+          BUILD_EXAMPLES: OFF
+        Linux i686 GCC:
+          VM_IMAGE: 'ubuntu-20.04'
+          CMAKE_GENERATOR: Ninja
+          C_COMPILER: i686-linux-gnu-gcc
+          CXX_COMPILER: i686-linux-gnu-g++
+          APT_PACKAGES: ninja-build gcc-i686-linux-gnu g++-i686-linux-gnu
+          NPROC_TOOL: nproc
+          BUILD_EXAMPLES: OFF
+        Linux arm64 GCC:
+          VM_IMAGE: 'ubuntu-20.04'
+          CMAKE_GENERATOR: Ninja
+          C_COMPILER: aarch64-linux-gnu-gcc
+          CXX_COMPILER: aarch64-linux-gnu-g++
+          APT_PACKAGES: ninja-build gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
+          NPROC_TOOL: nproc
+          BUILD_EXAMPLES: OFF
+        Linux armhf GCC:
+          VM_IMAGE: 'ubuntu-20.04'
+          CMAKE_GENERATOR: Ninja
+          C_COMPILER: arm-linux-gnueabihf-gcc
+          CXX_COMPILER: arm-linux-gnueabihf-g++
+          APT_PACKAGES: ninja-build gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf
+          NPROC_TOOL: nproc
+          BUILD_EXAMPLES: OFF
+        Linux amd64 Clang:
+          VM_IMAGE: 'ubuntu-20.04'
+          CMAKE_GENERATOR: Ninja
+          C_COMPILER: clang
+          CXX_COMPILER: clang++
+          APT_PACKAGES: ninja-build
+          NPROC_TOOL: nproc
+          BUILD_EXAMPLES: OFF
+        Windows amd64 MinGW:
+          VM_IMAGE: 'ubuntu-20.04'
+          CMAKE_GENERATOR: Ninja
+          C_COMPILER: x86_64-w64-mingw32-gcc
+          CXX_COMPILER: x86_64-w64-mingw32-g++
+          TOOLCHAIN_FILE: cmake/cross-toolchain-mingw64.cmake
+          INSTALL_TOOL: apt
+          APT_PACKAGES: ninja-build gcc-mingw-w64-x86-64 g++-mingw-w64-x86-64 mingw-w64-x86-64-dev
+          SETUP_COMMANDS: sudo update-alternatives --set x86_64-w64-mingw32-gcc /usr/bin/x86_64-w64-mingw32-gcc-posix ; sudo update-alternatives --set x86_64-w64-mingw32-g++ /usr/bin/x86_64-w64-mingw32-g++-posix
+          NPROC_TOOL: nproc
+          BUILD_EXAMPLES: ON
+          EXE_EXT: .exe
+        Windows i686 MinGW:
+          VM_IMAGE: 'ubuntu-20.04'
+          CMAKE_GENERATOR: Ninja
+          C_COMPILER: i686-w64-mingw32-gcc
+          CXX_COMPILER: i686-w64-mingw32-g++
+          TOOLCHAIN_FILE: cmake/cross-toolchain-mingw32.cmake
+          INSTALL_TOOL: apt
+          APT_PACKAGES: ninja-build gcc-mingw-w64-i686 g++-mingw-w64-i686 mingw-w64-i686-dev
+          SETUP_COMMANDS: sudo update-alternatives --set i686-w64-mingw32-gcc /usr/bin/i686-w64-mingw32-gcc-posix ; sudo update-alternatives --set i686-w64-mingw32-g++ /usr/bin/i686-w64-mingw32-g++-posix
+          NPROC_TOOL: nproc
+          BUILD_EXAMPLES: ON
+          EXE_EXT: .exe
+        macOS amd64 AppleClang:
+          VM_IMAGE: 'macOS-12'
+          CMAKE_GENERATOR: Unix Makefiles
+          C_COMPILER: clang
+          CXX_COMPILER: clang++
+          NPROC_TOOL: sysctl -n hw.logicalcpu
+          BUILD_EXAMPLES: OFF
+        macOS arm64 AppleClang:
+          VM_IMAGE: 'macOS-12'
+          CMAKE_GENERATOR: Unix Makefiles
+          C_COMPILER: clang
+          CXX_COMPILER: clang++
+          COMPILER_FLAGS: -target arm64-apple-macos11 -Wno-overriding-t-option
+          NPROC_TOOL: sysctl -n hw.logicalcpu
+          BUILD_EXAMPLES: OFF
+
+    pool:
+      vmImage: $(VM_IMAGE)
+
+    steps:
+    - bash: |
+        set -xe
+        if [ -n "${APT_PACKAGES:-}" ]; then
+          sudo apt-get update && sudo apt-get -y -q --no-install-recommends install ${APT_PACKAGES}
+        fi
+        if [ -n "${SETUP_COMMANDS:-}" ]; then
+         $(SETUP_COMMANDS)
+        fi
+      displayName: 'Setup'
+    - bash: |
+        set -xe
+        export CMAKE_BUILD_PARALLEL_LEVEL="$(${NPROC_TOOL})"
+        echo "${CMAKE_BUILD_PARALLEL_LEVEL}"
+        export CFLAGS="${CFLAGS:-}${CFLAGS:= }${COMPILER_FLAGS}"
+        export CXXFLAGS="${CXXFLAGS:-}${CXXFLAGS:= }${COMPILER_FLAGS}"
+        cmake -S. -Bbuild \
+          -G"${CMAKE_GENERATOR}" \
+          -DCMAKE_C_COMPILER=${C_COMPILER} -DCMAKE_CXX_COMPILER=${CXX_COMPILER} \
+          -DCMAKE_TOOLCHAIN_FILE=${TOOLCHAIN_FILE} \
+          -DBUILD_CRUNCH=ON -DBUILD_SHARED_LIBCRN=ON -DBUILD_EXAMPLES=${BUILD_EXAMPLES}
+        cmake --build build --config Release
+      displayName: 'Build'
+    - bash: |
+        file "build/crunch${EXE_EXT:-}"
+      displayName: 'Test'
