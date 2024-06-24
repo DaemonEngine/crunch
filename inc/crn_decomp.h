@@ -1602,7 +1602,7 @@ void crnd_assert(const char* pExp, const char* pFile, unsigned line) {
 #if defined(WIN32) && defined(_MSC_VER)
   sprintf_s(buf, sizeof(buf), "%s(%u): Assertion failure: \"%s\"\n", pFile, line, pExp);
 #else
-  sprintf(buf, "%s(%u): Assertion failure: \"%s\"\n", pFile, line, pExp);
+  snprintf(buf, sizeof(buf), "%s(%u): Assertion failure: \"%s\"\n", pFile, line, pExp);
 #endif
 
   crnd_output_debug_string(buf);
@@ -1619,7 +1619,7 @@ void crnd_trace(const char* pFmt, va_list args) {
 #if defined(WIN32) && defined(_MSC_VER)
     vsprintf_s(buf, sizeof(buf), pFmt, args);
 #else
-    vsprintf(buf, pFmt, args);
+    vsnprintf(buf, sizeof(buf), pFmt, args);
 #endif
 
     crnd_output_debug_string(buf);
