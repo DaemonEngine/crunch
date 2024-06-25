@@ -69,23 +69,15 @@ const bool c_crnlib_big_endian_platform = !c_crnlib_little_endian_platform;
 #if defined(_WIN32)
 #define crnlib_snprintf sprintf_s
 #define crnlib_vsnprintf vsprintf_s
-#else
-#define crnlib_snprintf snprintf
-#define crnlib_vsnprintf vsnprintf
-#endif
-
-#if defined(_WIN32)
 #define crnlib_strnlwr _strlwr_s
 #define crnlib_strnupr _strupr_s
-#else
-char* crnlib_strnlwr(char* p, size_t n);
-char* crnlib_strnupr(char* p, size_t n);
-#endif
-
-#if defined(_WIN32)
 #define crnlib_stricmp _stricmp
 #define crnlib_strnicmp _strnicmp
 #else
+#define crnlib_snprintf snprintf
+#define crnlib_vsnprintf vsnprintf
+char* crnlib_strnlwr(char* p, size_t n);
+char* crnlib_strnupr(char* p, size_t n);
 #define crnlib_stricmp strcasecmp
 #define crnlib_strnicmp strncasecmp
 #endif
