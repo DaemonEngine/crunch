@@ -18,7 +18,11 @@ const bool c_crnlib_little_endian_platform = false;
 
 const bool c_crnlib_big_endian_platform = !c_crnlib_little_endian_platform;
 
-#if defined(__linux__)
+#if defined(_WIN32)
+#define crn_fopen(pDstFile, f, m) fopen_s(pDstFile, f, m)
+#define crn_fseek _fseeki64
+#define crn_ftell _ftelli64
+#elif defined(__linux__)
 #define crn_fopen(pDstFile, f, m) *(pDstFile) = fopen64(f, m)
 #define crn_fseek fseeko64
 #define crn_ftell ftello64
@@ -28,10 +32,6 @@ const bool c_crnlib_big_endian_platform = !c_crnlib_little_endian_platform;
 #define crn_fopen(pDstFile, f, m) *(pDstFile) = fopen(f, m)
 #define crn_fseek fseeko
 #define crn_ftell ftello
-#elif defined(_MSC_VER)
-#define crn_fopen(pDstFile, f, m) fopen_s(pDstFile, f, m)
-#define crn_fseek _fseeki64
-#define crn_ftell _ftelli64
 #else
 #define crn_fopen(pDstFile, f, m) *(pDstFile) = fopen(f, m)
 #define crn_fseek(s, o, w) fseek(s, static_cast<long>(o), w)
