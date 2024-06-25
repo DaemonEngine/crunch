@@ -18,7 +18,7 @@ enum pixel_format {
   PIXEL_FMT_DXT5 = CRNLIB_PIXEL_FMT_FOURCC('D', 'X', 'T', '5'),
   PIXEL_FMT_3DC = CRNLIB_PIXEL_FMT_FOURCC('A', 'T', 'I', '2'),    // DXN_YX
   PIXEL_FMT_DXN = CRNLIB_PIXEL_FMT_FOURCC('A', '2', 'X', 'Y'),    // DXN_XY
-  PIXEL_FMT_DXT5A = CRNLIB_PIXEL_FMT_FOURCC('A', 'T', 'I', '1'),  // ATI1N, http://developer.amd.com/media/gpu_assets/Radeon_X1x00_Programming_Guide.pdf
+  PIXEL_FMT_DXT5A = CRNLIB_PIXEL_FMT_FOURCC('A', 'T', 'I', '1'),  // ATI1N, https://www.vgamuseum.info/images/doc/ati/radeon_x1/radeon_x1x00_programming_guide.pdf
 
   // Non-standard, crnlib-specific pixel formats (some of these are supported by ATI's Compressonator)
   PIXEL_FMT_DXT5_CCxY = CRNLIB_PIXEL_FMT_FOURCC('C', 'C', 'x', 'Y'),

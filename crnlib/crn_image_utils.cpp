@@ -672,7 +672,7 @@ bool compute_delta(image_u8& dest, image_u8& a, image_u8& b, uint scale) {
 }
 
 // FIXME: Totally hack-ass computation.
-// Perhaps port http://www.lomont.org/Software/Misc/SSIM/SSIM.html?
+// Perhaps port https://www.lomont.org/software/misc/ssim/SSIM.html ?
 double compute_block_ssim(uint t, const uint8* pX, const uint8* pY) {
   double ave_x = 0.0f;
   double ave_y = 0.0f;

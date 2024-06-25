@@ -3,7 +3,7 @@
 //
 // Notes:
 // stl-like hash map/hash set, with predictable performance across platforms/compilers/C run times/etc.
-// Hash function ref: http://www.brpreiss.com/books/opus4/html/page215.html
+// Hash function ref: https://web.archive.org/web/20160420203106/http://brpreiss.com/books/opus4/html/page215.html
 // Compared for performance against VC9's std::hash_map.
 // Linear probing, auto resizes on ~50% load factor.
 // Uses Knuth's multiplicative method (Fibonacci hashing).
