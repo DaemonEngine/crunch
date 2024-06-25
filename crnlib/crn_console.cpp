@@ -51,7 +51,7 @@ void console::vprintf(eConsoleMessageType type, const char* p, va_list args) {
   m_num_messages[type]++;
 
   char buf[cConsoleBufSize];
-  vsprintf_s(buf, cConsoleBufSize, p, args);
+  crnlib_vsnprintf(buf, cConsoleBufSize, p, args);
 
   bool handled = false;
 

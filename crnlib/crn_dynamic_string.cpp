@@ -303,7 +303,7 @@ dynamic_string& dynamic_string::format_args(const char* p, va_list args) {
 #if defined(_WIN32)
   int l = vsnprintf_s(buf, cBufSize, _TRUNCATE, p, args);
 #else
-  int l = vsnprintf(buf, cBufSize, p, args);
+  int l = crnlib_vsnprintf(buf, cBufSize, p, args);
 #endif
   if (l <= 0)
     clear();

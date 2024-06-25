@@ -13,11 +13,7 @@ static void area_fatal_error(const char*, const char* pMsg, ...) {
   va_start(args, pMsg);
 
   char buf[512];
-#if defined(_WIN32)
-  vsnprintf_s(buf, sizeof(buf), pMsg, args);
-#else
-  vsnprintf(buf, sizeof(buf), pMsg, args);
-#endif
+  crnlib_vsnprintf(buf, sizeof(buf), pMsg, args);
 
   va_end(args);
 
