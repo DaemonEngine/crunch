@@ -69,15 +69,16 @@ jobs:
     - if: matrix.build-mode == 'manual'
       shell: bash
       run: |
-        set -x
+        set -xe
         sudo apt-get update
         sudo apt-get -y -q --no-install-recommends install ninja-build
         export CMAKE_BUILD_PARALLEL_LEVEL="$(nproc)"
-        cmake -S. -Bbuild -GNinja -DBUILD_CRUNCH=ON -DBUILD_SHARED_LIBCRN=ON
+        echo "${CMAKE_BUILD_PARALLEL_LEVEL}"
+        cmake -Wdev -S. -Bbuild -GNinja -DCMAKE_BUILD_TYPE=Release \
+          -DBUILD_CRUNCH=ON -DBUILD_SHARED_LIBCRN=ON -DBUILD_EXAMPLES=OFF
         cmake --build build
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
       with:
         category: "/language:${{matrix.language}}"
-
