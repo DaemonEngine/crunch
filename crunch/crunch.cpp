@@ -1137,7 +1137,7 @@ class crunch {
 static bool check_for_option(int argc, char* argv[], const char* pOption) {
   for (int i = 1; i < argc; i++) {
     if ((argv[i][0] == '/') || (argv[i][0] == '-')) {
-      if (crn_stricmp(&argv[i][1], pOption) == 0)
+      if (crnlib_stricmp(&argv[i][1], pOption) == 0)
         return true;
     }
   }

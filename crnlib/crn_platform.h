@@ -82,9 +82,12 @@ char* crnlib_strnlwr(char* p, size_t n);
 char* crnlib_strnupr(char* p, size_t n);
 #endif
 
-#if !defined(_WIN32)
-#define _stricmp strcasecmp
-#define _strnicmp strncasecmp
+#if defined(_WIN32)
+#define crnlib_stricmp _stricmp
+#define crnlib_strnicmp _strnicmp
+#else
+#define crnlib_stricmp strcasecmp
+#define crnlib_strnicmp strncasecmp
 #endif
 
 inline bool crnlib_is_little_endian() {
