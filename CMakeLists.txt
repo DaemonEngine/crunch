@@ -39,7 +39,17 @@ endif()
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
 
 if (MSVC)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP /W4")
+
+  # At least Ninja doesn't remove the /W3 flag when we add /W4|/Wall one, which
+  # leads to compilation warnings.  Remove /W3 entirely, as /W4|/Wall be used.
+  foreach(flag_var
+      CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
+      CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO)
+    if (${flag_var} MATCHES "/W3")
+      string(REGEX REPLACE "/W3" "" ${flag_var} "${${flag_var}}")
+    endif()
+  endforeach()
 else()
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-unused-value -Wno-unused")
 endif()
