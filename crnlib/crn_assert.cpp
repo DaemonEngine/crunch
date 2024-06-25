@@ -15,7 +15,7 @@ void crnlib_enable_fail_exceptions(bool enabled) {
 void crnlib_assert(const char* pExp, const char* pFile, unsigned line) {
   char buf[512];
 
-  sprintf_s(buf, sizeof(buf), "%s(%u): Assertion failed: \"%s\"\n", pFile, line, pExp);
+  crnlib_snprintf(buf, sizeof(buf), "%s(%u): Assertion failed: \"%s\"\n", pFile, line, pExp);
 
   crnlib_output_debug_string(buf);
 
@@ -28,7 +28,7 @@ void crnlib_assert(const char* pExp, const char* pFile, unsigned line) {
 void crnlib_fail(const char* pExp, const char* pFile, unsigned line) {
   char buf[512];
 
-  sprintf_s(buf, sizeof(buf), "%s(%u): Failure: \"%s\"\n", pFile, line, pExp);
+  crnlib_snprintf(buf, sizeof(buf), "%s(%u): Failure: \"%s\"\n", pFile, line, pExp);
 
   crnlib_output_debug_string(buf);
 
@@ -49,7 +49,7 @@ void crnlib_fail(const char* pExp, const char* pFile, unsigned line) {
 void trace(const char* pFmt, va_list args) {
   if (crnlib_is_debugger_present()) {
     char buf[512];
-    vsprintf_s(buf, sizeof(buf), pFmt, args);
+    crnlib_snprintf(buf, sizeof(buf), pFmt, args);
 
     crnlib_output_debug_string(buf);
   }
