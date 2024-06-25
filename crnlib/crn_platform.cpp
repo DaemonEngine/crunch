@@ -7,18 +7,18 @@
 #endif
 
 #if !defined(_WIN32)
-char* strlwr(char* p) {
+char* crnlib_strnlwr(char* p, size_t n) {
   char* q = p;
-  while (*q) {
+  for (size_t i = 0; i < n && *q; i++) {
     char c = *q;
     *q++ = tolower(c);
   }
   return p;
 }
 
-char* strupr(char* p) {
+char* crnlib_strnupr(char* p, size_t n) {
   char* q = p;
-  while (*q) {
+  for (size_t i = 0; i < n && *q; i++) {
     char c = *q;
     *q++ = toupper(c);
   }
