@@ -19,7 +19,11 @@
 #pragma warning(disable : 4244)  // conversion from 'int' to 'uint8', possible loss of data
 #pragma warning(disable : 4100)  // unreferenced formal parameter
 #endif
+
+#define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "stb_image_write.h"
 
 // windows.h is only needed here for GetSystemInfo().
 #define WIN32_LEAN_AND_MEAN
@@ -27,6 +31,8 @@
 #include "windows.h"
 
 using namespace crnlib;
+
+typedef unsigned int uint;
 
 const int cDefaultCRNQualityLevel = 128;
 
