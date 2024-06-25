@@ -1599,7 +1599,7 @@ namespace crnd {
 void crnd_assert(const char* pExp, const char* pFile, unsigned line) {
   char buf[512];
 
-#if defined(WIN32) && defined(_MSC_VER)
+#if defined(_WIN32)
   sprintf_s(buf, sizeof(buf), "%s(%u): Assertion failure: \"%s\"\n", pFile, line, pExp);
 #else
   snprintf(buf, sizeof(buf), "%s(%u): Assertion failure: \"%s\"\n", pFile, line, pExp);
@@ -1616,7 +1616,7 @@ void crnd_assert(const char* pExp, const char* pFile, unsigned line) {
 void crnd_trace(const char* pFmt, va_list args) {
   if (crnd_is_debugger_present()) {
     char buf[512];
-#if defined(WIN32) && defined(_MSC_VER)
+#if defined(_WIN32)
     vsprintf_s(buf, sizeof(buf), pFmt, args);
 #else
     vsnprintf(buf, sizeof(buf), pFmt, args);
