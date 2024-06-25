@@ -236,22 +236,14 @@ dynamic_string& dynamic_string::truncate(uint new_len) {
 
 dynamic_string& dynamic_string::tolower() {
   if (m_len) {
-#if defined(_WIN32)
-    _strlwr_s(get_ptr_priv(), m_buf_size);
-#else
-    strlwr(get_ptr_priv());
-#endif
+    crnlib_strnlwr(get_ptr_priv(), m_buf_size);
   }
   return *this;
 }
 
 dynamic_string& dynamic_string::toupper() {
   if (m_len) {
-#if defined(_WIN32)
-    _strupr_s(get_ptr_priv(), m_buf_size);
-#else
-    strupr(get_ptr_priv());
-#endif
+    crnlib_strnupr(get_ptr_priv(), m_buf_size);
   }
   return *this;
 }
