@@ -70,7 +70,7 @@ class crunch {
     console::printf("-file @list.txt - List of files to convert.");
     console::printf("Supported source file formats: dds,ktx,crn,tga,bmp,png,jpg/jpeg,psd");
     console::printf("Note: Some file format variants are unsupported.");
-    console::printf("See the docs for stb_image.c: http://www.nothings.org/stb_image.c");
+    console::printf("See the docs for stb_image.h: https://github.com/nothings/stb");
     console::printf("Progressive JPEG files are supported, see: http://code.google.com/p/jpeg-compressor/");
 
     console::printf("\n-h - Print this help.");
