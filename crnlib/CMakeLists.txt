@@ -170,6 +170,8 @@ set(CRNLIB_SRCS
   ${CMAKE_CURRENT_SOURCE_DIR}/lzma_LzmaLib.h
   ${CMAKE_CURRENT_SOURCE_DIR}/lzma_MyVersion.h
   ${CMAKE_CURRENT_SOURCE_DIR}/lzma_Types.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/stb_image.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/stb_image_write.h
   ${CMAKE_CURRENT_SOURCE_DIR}/../inc/crn_decomp.h
   ${CMAKE_CURRENT_SOURCE_DIR}/../inc/crnlib.h
   ${CMAKE_CURRENT_SOURCE_DIR}/../inc/dds_defs.h
