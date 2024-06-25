@@ -4,7 +4,7 @@
 // http://www.ciphersbyritter.com/NEWS4/RANDC.HTM
 // http://burtleburtle.net/bob/rand/smallprng.html
 // http://www.cs.ucl.ac.uk/staff/d.jones/GoodPracticeRNG.pdf
-// See GPG7, page 120, or http://www.lomont.org/Math/Papers/2008/Lomont_PRNG_2008.pdf
+// See GPG7, page 120, or https://www.lomont.org/papers/2008/Lomont_PRNG_2008.pdf
 #include "crn_core.h"
 #include "crn_rand.h"
 #include "crn_hash.h"

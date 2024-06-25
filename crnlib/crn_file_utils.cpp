@@ -469,7 +469,7 @@ void file_utils::trim_trailing_seperator(dynamic_string& path) {
     path.truncate(path.get_len() - 1);
 }
 
-// See http://www.codeproject.com/KB/string/wildcmp.aspx
+// https://www.codeproject.com/Articles/1088/Wildcard-string-compare-globbing
 int file_utils::wildcmp(const char* pWild, const char* pString) {
   const char *cp = NULL, *mp = NULL;
 
