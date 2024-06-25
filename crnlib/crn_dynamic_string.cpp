@@ -71,7 +71,7 @@ void dynamic_string::optimize() {
 int dynamic_string::compare(const char* p, bool case_sensitive) const {
   CRNLIB_ASSERT(p);
 
-  const int result = (case_sensitive ? strcmp : crn_stricmp)(get_ptr_priv(), p);
+  const int result = (case_sensitive ? strcmp : crnlib_stricmp)(get_ptr_priv(), p);
 
   if (result < 0)
     return -1;
@@ -379,7 +379,7 @@ int dynamic_string::find_left(const char* p, bool case_sensitive) const {
   const int p_len = (int)strlen(p);
 
   for (int i = 0; i <= (m_len - p_len); i++)
-    if ((case_sensitive ? strncmp : _strnicmp)(p, &m_pStr[i], p_len) == 0)
+    if ((case_sensitive ? strncmp : crnlib_strnicmp)(p, &m_pStr[i], p_len) == 0)
       return i;
 
   return -1;
@@ -416,7 +416,7 @@ int dynamic_string::find_right(const char* p, bool case_sensitive) const {
   const int p_len = (int)strlen(p);
 
   for (int i = m_len - p_len; i >= 0; i--)
-    if ((case_sensitive ? strncmp : _strnicmp)(p, &m_pStr[i], p_len) == 0)
+    if ((case_sensitive ? strncmp : crnlib_strnicmp)(p, &m_pStr[i], p_len) == 0)
       return i;
 
   return -1;
