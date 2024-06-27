@@ -18,16 +18,16 @@ endif()
 find_package(Git)
 
 if (Git_FOUND)
-  execute_process(
-    COMMAND ${GIT_EXECUTABLE} rev-parse --short HEAD
-    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-    OUTPUT_VARIABLE GIT_VERSION
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-  )
+	execute_process(
+		COMMAND ${GIT_EXECUTABLE} rev-parse --short HEAD
+		WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+		OUTPUT_VARIABLE GIT_VERSION
+		OUTPUT_STRIP_TRAILING_WHITESPACE
+	)
 
-  if (GIT_VERSION)
-    add_definitions(-DCOMPUTED_VERSION_SUFFIX="Built from git-${GIT_VERSION}")
-  endif()
+	if (GIT_VERSION)
+		add_definitions(-DCOMPUTED_VERSION_SUFFIX="Built from git-${GIT_VERSION}")
+	endif()
 endif()
 
 macro(set_cxx_flag FLAG)
@@ -122,15 +122,15 @@ else()
 endif()
 
 if (BUILD_SHARED_LIBCRN OR BUILD_STATIC_LIBCRN OR BUILD_CRUNCH)
-  add_subdirectory(crnlib crnlib)
+	add_subdirectory(crnlib crnlib)
 endif()
 
 if (BUILD_CRUNCH)
-  add_subdirectory(crunch _crunch)
+	add_subdirectory(crunch _crunch)
 endif()
 
-if(BUILD_EXAMPLES)
-  add_subdirectory(example1 _example1)
-  add_subdirectory(example2 _example2)
-  add_subdirectory(example3 _example3)
+if (BUILD_EXAMPLES)
+	add_subdirectory(example1 _example1)
+	add_subdirectory(example2 _example2)
+	add_subdirectory(example3 _example3)
 endif()
