@@ -27,10 +27,12 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
 
+#if defined(_WIN32)
 // windows.h is only needed here for GetSystemInfo().
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 #include "windows.h"
+#endif
 
 using namespace crnlib;
 
