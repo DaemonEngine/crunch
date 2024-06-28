@@ -89,7 +89,11 @@ int main(int argc, char* argv[]) {
       if (++i >= argc)
         return error("Expected output filename!");
 
+#if defined(_WIN32)
       strcpy_s(out_filename, sizeof(out_filename), argv[i]);
+#else
+      strncpy(out_filename, argv[i], sizeof(out_filename));
+#endif
     } else if (!crnlib_stricmp(argv[i], "-nonsrgb"))
       srgb_colorspace = false;
     else if (!crnlib_stricmp(argv[i], "-pixelformat")) {
@@ -224,7 +228,11 @@ int main(int argc, char* argv[]) {
   char dst_filename[FILENAME_MAX];
   crnlib_snprintf(dst_filename, sizeof(dst_filename), "%s%s%s.dds", drive_buf, dir_buf, fname_buf);
   if (out_filename[0])
-    strcpy(dst_filename, out_filename);
+#if defined(_WIN32)
+      strcpy_s(dst_filename, sizeof(dst_filename), out_filename);
+#else
+      strncpy(dst_filename, out_filename, sizeof(dst_filename));
+#endif
 
   printf("Writing DDS file: %s\n", dst_filename);
 
