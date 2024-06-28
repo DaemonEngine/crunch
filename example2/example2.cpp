@@ -86,7 +86,11 @@ int main(int argc, char* argv[]) {
       if (++i >= argc)
         return error("Expected output filename!");
 
+#if defined(_WIN32)
       strcpy_s(out_filename, sizeof(out_filename), argv[i]);
+#else
+      strncpy(out_filename, argv[i], sizeof(out_filename));
+#endif
     } else
       return error("Invalid option: %s\n", argv[i]);
   }
