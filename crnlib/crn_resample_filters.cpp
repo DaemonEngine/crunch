@@ -296,7 +296,7 @@ const int g_num_resample_filters = sizeof(g_resample_filters) / sizeof(g_resampl
 
 int find_resample_filter(const char* pName) {
   for (int i = 0; i < g_num_resample_filters; i++)
-    if (_stricmp(pName, g_resample_filters[i].name) == 0)
+    if (crnlib_stricmp(pName, g_resample_filters[i].name) == 0)
       return i;
   return cInvalidIndex;
 }

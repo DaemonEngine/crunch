@@ -14,6 +14,8 @@
 // .DDS file format definitions.
 #include "dds_defs.h"
 
+#include "crn_platform.h"
+
 // stb_image, for loading/saving image files.
 #ifdef _MSC_VER
 #pragma warning(disable : 4244)  // conversion from 'int' to 'uint8', possible loss of data
@@ -71,7 +73,7 @@ static int error(const char* pMsg, ...) {
   va_list args;
   va_start(args, pMsg);
   char buf[512];
-  vsprintf_s(buf, sizeof(buf), pMsg, args);
+  crnlib_vsnprintf(buf, sizeof(buf), pMsg, args);
   va_end(args);
   printf("%s", buf);
   return EXIT_FAILURE;
@@ -82,7 +84,7 @@ static crn_uint8* read_file_into_buffer(const char* pFilename, crn_uint32& size)
   size = 0;
 
   FILE* pFile = NULL;
-  fopen_s(&pFile, pFilename, "rb");
+  crn_fopen(&pFile, pFilename, "rb");
   if (!pFile)
     return NULL;
 
@@ -260,19 +262,19 @@ int main(int argc, char* argv[]) {
     if (argv[i][0] == '/')
       argv[i][0] = '-';
 
-    if (!_stricmp(argv[i], "-crn")) {
+    if (!crnlib_stricmp(argv[i], "-crn")) {
       output_crn = true;
-    } else if (!_stricmp(argv[i], "-pixelformat")) {
+    } else if (!crnlib_stricmp(argv[i], "-pixelformat")) {
       if (++i >= argc)
         return error("Expected pixel format!");
 
-      if (!_stricmp(argv[i], "dxt1a")) {
+      if (!crnlib_stricmp(argv[i], "dxt1a")) {
         enable_dxt1a = true;
         fmt = cCRNFmtDXT1;
       } else {
         uint f;
         for (f = 0; f < cCRNFmtTotal; f++) {
-          if (!_stricmp(argv[i], crn_get_format_string(static_cast<crn_format>(f)))) {
+          if (!crnlib_stricmp(argv[i], crn_get_format_string(static_cast<crn_format>(f)))) {
             fmt = static_cast<crn_format>(f);
             break;
           }
@@ -280,34 +282,34 @@ int main(int argc, char* argv[]) {
         if (f == cCRNFmtTotal)
           return error("Unrecognized pixel format: %s\n", argv[i]);
       }
-    } else if (!_stricmp(argv[i], "-bitrate")) {
+    } else if (!crnlib_stricmp(argv[i], "-bitrate")) {
       if (++i >= argc)
         return error("Invalid bitrate!");
 
       bitrate = (float)atof(argv[i]);
       if ((bitrate < .1f) || (bitrate > 8.0f))
         return error("Invalid bitrate!");
-    } else if (!_stricmp(argv[i], "-quality")) {
+    } else if (!crnlib_stricmp(argv[i], "-quality")) {
       if (++i >= argc)
         return error("Invalid quality level!");
 
       quality_level = atoi(argv[i]);
       if ((quality_level < 0) || (quality_level > cCRNMaxQualityLevel))
         return error("Invalid quality level!");
-    } else if (!_stricmp(argv[i], "-out")) {
+    } else if (!crnlib_stricmp(argv[i], "-out")) {
       if (++i >= argc)
         return error("Expected output filename!");
 
       strcpy_s(out_filename, sizeof(out_filename), argv[i]);
-    } else if (!_stricmp(argv[i], "-nonsrgb"))
+    } else if (!crnlib_stricmp(argv[i], "-nonsrgb"))
       srgb_colorspace = false;
-    else if (!_stricmp(argv[i], "-nomips"))
+    else if (!crnlib_stricmp(argv[i], "-nomips"))
       create_mipmaps = false;
-    else if (!_stricmp(argv[i], "-noAdaptiveBlocks"))
+    else if (!crnlib_stricmp(argv[i], "-noAdaptiveBlocks"))
       use_adaptive_block_sizes = false;
-    else if (!_stricmp(argv[i], "-setalphatoluma"))
+    else if (!crnlib_stricmp(argv[i], "-setalphatoluma"))
       set_alpha_to_luma = true;
-    else if (!_stricmp(argv[i], "-converttoluma"))
+    else if (!crnlib_stricmp(argv[i], "-converttoluma"))
       convert_to_luma = true;
     else
       return error("Invalid option: %s\n", argv[i]);
@@ -326,12 +328,12 @@ int main(int argc, char* argv[]) {
 
   if (mode == 'i') {
     // Information
-    if (_stricmp(ext_buf, ".crn") == 0) {
+    if (crnlib_stricmp(ext_buf, ".crn") == 0) {
       if (!print_crn_info(pSrc_file_data, src_file_size)) {
         free(pSrc_file_data);
         return error("Not a CRN file!\n");
       }
-    } else if (_stricmp(ext_buf, ".dds") == 0) {
+    } else if (crnlib_stricmp(ext_buf, ".dds") == 0) {
       if (!print_dds_info(pSrc_file_data, src_file_size)) {
         free(pSrc_file_data);
         return error("Not a DDS file!\n");
@@ -355,9 +357,9 @@ int main(int argc, char* argv[]) {
     if (out_filename[0]) {
       char out_fname_buf[_MAX_FNAME], out_ext_buf[_MAX_EXT];
       _splitpath_s(out_filename, NULL, 0, NULL, 0, out_fname_buf, _MAX_FNAME, out_ext_buf, _MAX_EXT);
-      if (!_stricmp(out_ext_buf, ".crn"))
+      if (!crnlib_stricmp(out_ext_buf, ".crn"))
         output_crn = true;
-      else if (!_stricmp(out_ext_buf, ".dds"))
+      else if (!crnlib_stricmp(out_ext_buf, ".dds"))
         output_crn = false;
     }
 
@@ -450,12 +452,13 @@ int main(int argc, char* argv[]) {
 
     // Write the output file.
     char dst_filename[FILENAME_MAX];
-    sprintf_s(dst_filename, sizeof(dst_filename), "%s%s%s%s", drive_buf, dir_buf, fname_buf, output_crn ? ".crn" : ".dds");
+    crnlib_snprintf(dst_filename, sizeof(dst_filename), "%s%s%s%s", drive_buf, dir_buf, fname_buf, output_crn ? ".crn" : ".dds");
     if (out_filename[0])
       strcpy(dst_filename, out_filename);
 
     printf("Writing %s file: %s\n", output_crn ? "CRN" : "DDS", dst_filename);
-    FILE* pFile = fopen(dst_filename, "wb");
+    FILE* pFile = NULL;
+	crn_fopen(&pFile, dst_filename, "wb");
     if ((!pFile) || (fwrite(pOutput_file_data, output_file_size, 1, pFile) != 1) || (fclose(pFile) == EOF)) {
       free(pSrc_file_data);
       crn_free_block(pOutput_file_data);
@@ -465,7 +468,7 @@ int main(int argc, char* argv[]) {
 
     crn_free_block(pOutput_file_data);
     stbi_image_free(pSrc_image);
-  } else if (_stricmp(ext_buf, ".crn") == 0) {
+  } else if (crnlib_stricmp(ext_buf, ".crn") == 0) {
     // Decompress/transcode CRN to DDS.
     printf("Decompressing CRN to DDS\n");
 
@@ -479,12 +482,13 @@ int main(int argc, char* argv[]) {
 
     // Now write the DDS file to disk.
     char dst_filename[FILENAME_MAX];
-    sprintf_s(dst_filename, sizeof(dst_filename), "%s%s%s.dds", drive_buf, dir_buf, fname_buf);
+    crnlib_snprintf(dst_filename, sizeof(dst_filename), "%s%s%s.dds", drive_buf, dir_buf, fname_buf);
     if (out_filename[0])
       strcpy(dst_filename, out_filename);
 
     printf("Writing file: %s\n", dst_filename);
-    FILE* pFile = fopen(dst_filename, "wb");
+    FILE* pFile = NULL;
+	crn_fopen(&pFile, dst_filename, "wb");
     if ((!pFile) || (fwrite(pDDS_file_data, dds_file_size, 1, pFile) != 1) || (fclose(pFile) == EOF)) {
       crn_free_block(pDDS_file_data);
       free(pSrc_file_data);
@@ -496,7 +500,7 @@ int main(int argc, char* argv[]) {
     print_dds_info(pDDS_file_data, dds_file_size);
 
     crn_free_block(pDDS_file_data);
-  } else if (_stricmp(ext_buf, ".dds") == 0) {
+  } else if (crnlib_stricmp(ext_buf, ".dds") == 0) {
     // Unpack DDS to one or more TGA's.
     if (out_filename[0])
       _splitpath_s(out_filename, drive_buf, _MAX_DRIVE, dir_buf, _MAX_DIR, fname_buf, _MAX_FNAME, ext_buf, _MAX_EXT);
@@ -521,7 +525,7 @@ int main(int argc, char* argv[]) {
         int height = std::max(1U, tex_desc.m_height >> level_index);
 
         char dst_filename[FILENAME_MAX];
-        sprintf_s(dst_filename, sizeof(dst_filename), "%s%s%s_face%u_mip%u.tga", drive_buf, dir_buf, fname_buf, face_index, level_index);
+        crnlib_snprintf(dst_filename, sizeof(dst_filename), "%s%s%s_face%u_mip%u.tga", drive_buf, dir_buf, fname_buf, face_index, level_index);
 
         printf("Writing file: %s\n", dst_filename);
         if (!stbi_write_tga(dst_filename, width, height, 4, pImages[level_index + face_index * tex_desc.m_levels])) {

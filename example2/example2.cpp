@@ -20,6 +20,8 @@
 // A simple high-precision, platform independent timer class.
 #include "timer.h"
 
+#include "crn_platform.h"
+
 using namespace crnlib;
 
 static int print_usage() {
@@ -35,7 +37,7 @@ static int error(const char* pMsg, ...) {
   va_list args;
   va_start(args, pMsg);
   char buf[512];
-  vsprintf_s(buf, sizeof(buf), pMsg, args);
+  crnlib_vsnprintf(buf, sizeof(buf), pMsg, args);
   va_end(args);
   printf("%s", buf);
   return EXIT_FAILURE;
@@ -46,7 +48,7 @@ static crn_uint8* read_file_into_buffer(const char* pFilename, crn_uint32& size)
   size = 0;
 
   FILE* pFile = NULL;
-  fopen_s(&pFile, pFilename, "rb");
+  crn_fopen(&pFile, pFilename, "rb");
   if (!pFile)
     return NULL;
 
@@ -80,7 +82,7 @@ int main(int argc, char* argv[]) {
     if (argv[i][0] == '/')
       argv[i][0] = '-';
 
-    if (!_stricmp(argv[i], "-out")) {
+    if (!crnlib_stricmp(argv[i], "-out")) {
       if (++i >= argc)
         return error("Expected output filename!");
 
@@ -131,13 +133,14 @@ int main(int argc, char* argv[]) {
 
   // Now create the DDS file.
   char dst_filename[FILENAME_MAX];
-  sprintf_s(dst_filename, sizeof(dst_filename), "%s%s%s.dds", drive_buf, dir_buf, fname_buf);
+  crnlib_snprintf(dst_filename, sizeof(dst_filename), "%s%s%s.dds", drive_buf, dir_buf, fname_buf);
   if (out_filename[0])
     strcpy(dst_filename, out_filename);
 
   printf("Writing DDS file: %s\n", dst_filename);
 
-  FILE* pDDS_file = fopen(dst_filename, "wb");
+  FILE* pDDS_file = NULL;
+  crn_fopen(&pDDS_file, dst_filename, "wb");
   if (!pDDS_file) {
     crnd::crnd_unpack_end(pContext);
     free(pSrc_file_data);

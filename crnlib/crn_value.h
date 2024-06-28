@@ -166,10 +166,10 @@ class value {
       return false;
     }
 
-    if (_stricmp(p, "false") == 0) {
+    if (crnlib_stricmp(p, "false") == 0) {
       set_bool(false);
       return true;
-    } else if (_stricmp(p, "true") == 0) {
+    } else if (crnlib_stricmp(p, "true") == 0) {
       set_bool(true);
       return true;
     }

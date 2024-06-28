@@ -10,7 +10,6 @@
 
 namespace crnlib {
 char* crn_strdup(const char* pStr);
-int crn_stricmp(const char* p, const char* q);
 
 char* strcpy_safe(char* pDst, uint dst_len, const char* pSrc);
 

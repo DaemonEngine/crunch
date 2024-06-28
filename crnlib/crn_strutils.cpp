@@ -16,10 +16,6 @@ char* crn_strdup(const char* pStr) {
   return p;
 }
 
-int crn_stricmp(const char* p, const char* q) {
-  return _stricmp(p, q);
-}
-
 char* strcpy_safe(char* pDst, uint dst_len, const char* pSrc) {
   CRNLIB_ASSERT(pDst && pSrc && dst_len);
   if (!dst_len)
@@ -310,10 +306,10 @@ bool string_to_bool(const char* p, bool& value) {
 
   value = false;
 
-  if (_stricmp(p, "false") == 0)
+  if (crnlib_stricmp(p, "false") == 0)
     return true;
 
-  if (_stricmp(p, "true") == 0) {
+  if (crnlib_stricmp(p, "true") == 0) {
     value = true;
     return true;
   }

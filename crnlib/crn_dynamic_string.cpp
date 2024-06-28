@@ -71,7 +71,7 @@ void dynamic_string::optimize() {
 int dynamic_string::compare(const char* p, bool case_sensitive) const {
   CRNLIB_ASSERT(p);
 
-  const int result = (case_sensitive ? strcmp : crn_stricmp)(get_ptr_priv(), p);
+  const int result = (case_sensitive ? strcmp : crnlib_stricmp)(get_ptr_priv(), p);
 
   if (result < 0)
     return -1;
@@ -236,22 +236,14 @@ dynamic_string& dynamic_string::truncate(uint new_len) {
 
 dynamic_string& dynamic_string::tolower() {
   if (m_len) {
-#if defined(_WIN32)
-    _strlwr_s(get_ptr_priv(), m_buf_size);
-#else
-    strlwr(get_ptr_priv());
-#endif
+    crnlib_strnlwr(get_ptr_priv(), m_buf_size);
   }
   return *this;
 }
 
 dynamic_string& dynamic_string::toupper() {
   if (m_len) {
-#if defined(_WIN32)
-    _strupr_s(get_ptr_priv(), m_buf_size);
-#else
-    strupr(get_ptr_priv());
-#endif
+    crnlib_strnupr(get_ptr_priv(), m_buf_size);
   }
   return *this;
 }
@@ -303,7 +295,7 @@ dynamic_string& dynamic_string::format_args(const char* p, va_list args) {
 #if defined(_WIN32)
   int l = vsnprintf_s(buf, cBufSize, _TRUNCATE, p, args);
 #else
-  int l = vsnprintf(buf, cBufSize, p, args);
+  int l = crnlib_vsnprintf(buf, cBufSize, p, args);
 #endif
   if (l <= 0)
     clear();
@@ -387,7 +379,7 @@ int dynamic_string::find_left(const char* p, bool case_sensitive) const {
   const int p_len = (int)strlen(p);
 
   for (int i = 0; i <= (m_len - p_len); i++)
-    if ((case_sensitive ? strncmp : _strnicmp)(p, &m_pStr[i], p_len) == 0)
+    if ((case_sensitive ? strncmp : crnlib_strnicmp)(p, &m_pStr[i], p_len) == 0)
       return i;
 
   return -1;
@@ -424,7 +416,7 @@ int dynamic_string::find_right(const char* p, bool case_sensitive) const {
   const int p_len = (int)strlen(p);
 
   for (int i = m_len - p_len; i >= 0; i--)
-    if ((case_sensitive ? strncmp : _strnicmp)(p, &m_pStr[i], p_len) == 0)
+    if ((case_sensitive ? strncmp : crnlib_strnicmp)(p, &m_pStr[i], p_len) == 0)
       return i;
 
   return -1;

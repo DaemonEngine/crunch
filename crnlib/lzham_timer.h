@@ -62,7 +62,7 @@ class scoped_perf_section {
       : m_start_ticks(lzham_timer::get_ticks()) {
     va_list args;
     va_start(args, pName);
-    vsprintf_s(m_name, sizeof(m_name), pName, args);
+    crnlib_vsnprintf(m_name, sizeof(m_name), pName, args);
     va_end(args);
 
     lzham_buffered_printf("Thread: 0x%08X, BEGIN Time: %3.3fms, Section: %s\n", GetCurrentThreadId(), lzham_timer::ticks_to_ms(m_start_ticks), m_name);

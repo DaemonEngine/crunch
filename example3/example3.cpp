@@ -14,6 +14,8 @@
 // .DDS file format definitions.
 #include "dds_defs.h"
 
+#include "crn_platform.h"
+
 // stb_image, for loading/saving image files.
 #ifdef _MSC_VER
 #pragma warning(disable : 4244)  // conversion from 'int' to 'uint8', possible loss of data
@@ -58,7 +60,7 @@ static int error(const char* pMsg, ...) {
   va_list args;
   va_start(args, pMsg);
   char buf[512];
-  vsprintf_s(buf, sizeof(buf), pMsg, args);
+  crnlib_vsnprintf(buf, sizeof(buf), pMsg, args);
   va_end(args);
   printf("%s", buf);
   return EXIT_FAILURE;
@@ -83,43 +85,43 @@ int main(int argc, char* argv[]) {
     if (argv[i][0] == '/')
       argv[i][0] = '-';
 
-    if (!_stricmp(argv[i], "-out")) {
+    if (!crnlib_stricmp(argv[i], "-out")) {
       if (++i >= argc)
         return error("Expected output filename!");
 
       strcpy_s(out_filename, sizeof(out_filename), argv[i]);
-    } else if (!_stricmp(argv[i], "-nonsrgb"))
+    } else if (!crnlib_stricmp(argv[i], "-nonsrgb"))
       srgb_colorspace = false;
-    else if (!_stricmp(argv[i], "-pixelformat")) {
+    else if (!crnlib_stricmp(argv[i], "-pixelformat")) {
       if (++i >= argc)
         return error("Expected pixel format!");
 
       uint f;
       for (f = 0; f < cCRNFmtTotal; f++) {
         crn_format actual_fmt = crn_get_fundamental_dxt_format(static_cast<crn_format>(f));
-        if (!_stricmp(argv[i], crn_get_format_string(actual_fmt))) {
+        if (!crnlib_stricmp(argv[i], crn_get_format_string(actual_fmt))) {
           fmt = actual_fmt;
           break;
         }
       }
       if (f == cCRNFmtTotal)
         return error("Unrecognized pixel format: %s\n", argv[i]);
-    } else if (!_stricmp(argv[i], "-dxtquality")) {
+    } else if (!crnlib_stricmp(argv[i], "-dxtquality")) {
       if (++i >= argc)
         return error("Expected DXTn quality!\n");
 
       uint q;
       for (q = 0; q < cCRNDXTQualityTotal; q++) {
-        if (!_stricmp(argv[i], crn_get_dxt_quality_string(static_cast<crn_dxt_quality>(q)))) {
+        if (!crnlib_stricmp(argv[i], crn_get_dxt_quality_string(static_cast<crn_dxt_quality>(q)))) {
           dxt_quality = static_cast<crn_dxt_quality>(q);
           break;
         }
       }
       if (q == cCRNDXTQualityTotal)
         return error("Unrecognized DXTn quality: %s\n", argv[i]);
-    } else if (!_stricmp(argv[i], "-setalphatoluma"))
+    } else if (!crnlib_stricmp(argv[i], "-setalphatoluma"))
       set_alpha_to_luma = true;
-    else if (!_stricmp(argv[i], "-converttoluma"))
+    else if (!crnlib_stricmp(argv[i], "-converttoluma"))
       convert_to_luma = true;
     else
       return error("Invalid option: %s\n", argv[i]);
@@ -220,13 +222,14 @@ int main(int argc, char* argv[]) {
 
   // Now create the DDS file.
   char dst_filename[FILENAME_MAX];
-  sprintf_s(dst_filename, sizeof(dst_filename), "%s%s%s.dds", drive_buf, dir_buf, fname_buf);
+  crnlib_snprintf(dst_filename, sizeof(dst_filename), "%s%s%s.dds", drive_buf, dir_buf, fname_buf);
   if (out_filename[0])
     strcpy(dst_filename, out_filename);
 
   printf("Writing DDS file: %s\n", dst_filename);
 
-  FILE* pDDS_file = fopen(dst_filename, "wb");
+  FILE* pDDS_file = NULL;
+  crn_fopen(&pDDS_file, dst_filename, "wb");
   if (!pDDS_file) {
     free(pCompressed_data);
     return error("Failed creating destination file!\n");

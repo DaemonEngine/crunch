@@ -66,13 +66,20 @@ const bool c_crnlib_big_endian_platform = !c_crnlib_little_endian_platform;
 
 #define CRNLIB_GET_ALIGNMENT(v) ((!sizeof(v)) ? 1 : (__alignof(v) ? __alignof(v) : sizeof(uint32)))
 
-#if !defined(_WIN32)
-int sprintf_s(char* buffer, size_t sizeOfBuffer, const char* format, ...);
-int vsprintf_s(char* buffer, size_t sizeOfBuffer, const char* format, va_list args);
-char* strlwr(char* p);
-char* strupr(char* p);
-#define _stricmp strcasecmp
-#define _strnicmp strncasecmp
+#if defined(_WIN32)
+#define crnlib_snprintf sprintf_s
+#define crnlib_vsnprintf vsprintf_s
+#define crnlib_strnlwr _strlwr_s
+#define crnlib_strnupr _strupr_s
+#define crnlib_stricmp _stricmp
+#define crnlib_strnicmp _strnicmp
+#else
+#define crnlib_snprintf snprintf
+#define crnlib_vsnprintf vsnprintf
+char* crnlib_strnlwr(char* p, size_t n);
+char* crnlib_strnupr(char* p, size_t n);
+#define crnlib_stricmp strcasecmp
+#define crnlib_strnicmp strncasecmp
 #endif
 
 inline bool crnlib_is_little_endian() {
