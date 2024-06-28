@@ -5,13 +5,14 @@ skip_branch_with_pr: true
 only_commits:
   files:
     - .appveyor.yml
-    - example1/
-    - example2/
-    - example3/
     # The rest of this list should stay in sync with azure-pipelines.yml
     - crunch/
     - crnlib/
+    - example1/
+    - example2/
+    - example3/
     - inc/
+    - test/
     - cmake/
     - CMakeLists.txt
 
@@ -52,3 +53,5 @@ build_script:
       -DBUILD_CRUNCH=ON -DBUILD_SHARED_LIBCRN=ON -DBUILD_EXAMPLES=ON
 
       cmake --build build --config Release
+
+      python test\test.py
