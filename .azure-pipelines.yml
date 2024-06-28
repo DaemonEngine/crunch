@@ -23,7 +23,7 @@ pr:
       - CMakeLists.txt
 
 # There should be at least one job or the status badges don't work.
-- jobs:
+jobs:
   - job: crunch
     strategy:
       matrix:
