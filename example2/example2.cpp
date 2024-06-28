@@ -12,6 +12,10 @@
 #include <math.h>
 #include <algorithm>
 
+#if !defined(_WIN32)
+#include <libgen.h>
+#endif
+
 // CRN transcoder library.
 #include "crn_decomp.h"
 // .DDS file format definitions.
@@ -96,9 +100,20 @@ int main(int argc, char* argv[]) {
   }
 
   // Split the source filename into its various components.
+#if defined(_WIN32)
   char drive_buf[_MAX_DRIVE], dir_buf[_MAX_DIR], fname_buf[_MAX_FNAME], ext_buf[_MAX_EXT];
   if (_splitpath_s(pSrc_filename, drive_buf, _MAX_DRIVE, dir_buf, _MAX_DIR, fname_buf, _MAX_FNAME, ext_buf, _MAX_EXT))
     return error("Invalid source filename!\n");
+#else
+  char in_filename[FILENAME_MAX];
+  strncpy(in_filename, pSrc_filename, FILENAME_MAX); 
+  const char drive_buf[] = "";
+  char *dir_buf = dirname(in_filename);
+  char *fname_buf = basename(in_filename);
+  char *dot = strrchr(fname_buf, '.');
+  if (dot && dot != fname_buf)
+    *dot = '\0';
+#endif
 
   // Load the source file into memory.
   printf("Loading source file: %s\n", pSrc_filename);
