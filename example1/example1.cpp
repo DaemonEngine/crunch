@@ -3,6 +3,7 @@
 // See Copyright Notice and license at the end of inc/crnlib.h
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <math.h>
 #include <algorithm>
 
