@@ -66,7 +66,7 @@ option(BUILD_EXAMPLES "Build examples" OFF)
 # Enable extra optimization flags, like using -O3 even in RelWithDebInfo build.
 option(USE_EXTRA_OPTIMIZATION "Enable extra optimization" ON)
 # Enable link time optimization, slows down the build but produce faster and smaller binaries.
-option(USE_LTO "Enable link-time optimization" ON)
+option(USE_LTO "Enable link-time optimization" OFF)
 # Enabling fast math makes generated images less likely to be reproducible.
 # See https://github.com/DaemonEngine/crunch/issues/29
 option(USE_FAST_MATH "Enable fast math (generated images are less likely to be reproducible)" ON)
