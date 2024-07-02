@@ -1,4 +1,6 @@
 *.o
+*.js
+*.wasm
 *.2010.vcxproj.user
 *.2010.suo
 /crnlib/crunch
@@ -15,4 +17,4 @@
 /lib
 /bin/*
 !bin/crunch_x64.exe
-/build
+build*
