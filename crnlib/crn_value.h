@@ -300,7 +300,7 @@ class value {
         break;
       }
       case cDTFloat: {
-        if ((m_float < INT_MIN) || (m_float > INT_MAX)) {
+        if ((m_float < (float)INT_MIN) || (m_float > (float)INT_MAX)) {
           val = 0;
           return false;
         }
@@ -312,7 +312,7 @@ class value {
           val = 0;
           return false;
         }
-        if (((*m_pVec3F)[component] < INT_MIN) || ((*m_pVec3F)[component] > INT_MAX)) {
+        if (((*m_pVec3F)[component] < (float)INT_MIN) || ((*m_pVec3F)[component] > (float)INT_MAX)) {
           val = 0;
           return false;
         }
@@ -360,7 +360,7 @@ class value {
         break;
       }
       case cDTFloat: {
-        if ((m_float < 0) || (m_float > UINT_MAX)) {
+        if ((m_float < 0) || (m_float > (float)UINT_MAX)) {
           val = 0;
           return false;
         }
@@ -372,7 +372,7 @@ class value {
           val = 0;
           return false;
         }
-        if (((*m_pVec3F)[component] < 0) || ((*m_pVec3F)[component] > UINT_MAX)) {
+        if (((*m_pVec3F)[component] < 0) || ((*m_pVec3F)[component] > (float)UINT_MAX)) {
           val = 0;
           return false;
         }
@@ -560,7 +560,9 @@ class value {
         if (sscanf(p, "%f,%f,%f", &x, &y, &z) == 3)
 #endif
         {
-          if ((x < INT_MIN) || (x > INT_MAX) || (y < INT_MIN) || (y > INT_MAX) || (z < INT_MIN) || (z > INT_MAX)) {
+          if ((x < (float)INT_MIN) || (x > (float)INT_MAX)
+          || (y < (float)INT_MIN) || (y > (float)INT_MAX)
+          || (z < (float)INT_MIN) || (z > (float)INT_MAX)) {
             val.clear();
             return false;
           }
