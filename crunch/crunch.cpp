@@ -215,7 +215,6 @@ class crunch {
             {"wrap", 0, false},
             {"renormalize", 0, false},
             {"rtopmip", 0, false },
-            {"noprogress", 0, false},
             {"paramdebug", 0, false},
             {"debug", 0, false},
             {"quick", 0, false},
