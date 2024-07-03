@@ -42,7 +42,12 @@ struct crnlib_assume_try {};
 #define CRNLIB_JOINER_FINAL(a, b) a##b
 #define CRNLIB_JOINER(a, b) CRNLIB_JOINER_FINAL(a, b)
 #define CRNLIB_JOIN(a, b) CRNLIB_JOINER(a, b)
+
+#ifdef NDEBUG
+#define CRNLIB_ASSUME(p)
+#else
 #define CRNLIB_ASSUME(p) typedef crnlib_assume_try<sizeof(crnlib_assume_failure<(bool)(p)>)> CRNLIB_JOIN(crnlib_assume_typedef, __COUNTER__)
+#endif
 
 #ifdef NDEBUG
 template <typename T>
