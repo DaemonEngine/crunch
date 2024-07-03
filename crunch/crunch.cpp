@@ -92,6 +92,7 @@ class crunch {
 
     console::message("\nMisc. options:");
     console::printf("-helperThreads # - Set number of helper threads, 0-%d, default=(# of CPU's)-1", cCRNMaxHelperThreads);
+    console::printf("-noTitle - Disable title output at run time");
     console::printf("-noprogress - Disable progress output");
     console::printf("-quiet - Disable all console output");
     console::printf("-ignoreerrors - Continue processing files after errors. Note: The default");
@@ -193,6 +194,7 @@ class crunch {
             {"fileformat", 1, false},
 
             {"helperThreads", 1, false},
+            {"noTitle", 0, false},
             {"noprogress", 0, false},
             {"quiet", 0, false},
             {"ignoreerrors", 0, false},
@@ -1187,7 +1189,8 @@ static int main_internal(int argc, char* argv[]) {
   if (check_for_option(argc, argv, "quiet"))
     console::disable_output();
 
-  print_title();
+  if (!check_for_option(argc, argv, "noTitle"))
+    print_title();
 
   dynamic_string cmd_line;
   get_command_line_as_single_string(cmd_line, argc, argv);
