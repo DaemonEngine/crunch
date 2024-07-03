@@ -1157,10 +1157,9 @@ void pack_etc1_block_init() {
 
 // Packs solid color blocks efficiently using a set of small precomputed tables.
 // For random 888 inputs, MSE results are better than Erricson's ETC1 packer in "slow" mode ~9.5% of the time, is slightly worse only ~.01% of the time, and is equal the rest of the time.
-static uint64 pack_etc1_block_solid_color(etc1_block& block, const uint8* pColor, crn_etc1_pack_params& pack_params, pack_etc1_block_context& context) {
+static uint64 pack_etc1_block_solid_color(etc1_block& block, const uint8* pColor, crn_etc1_pack_params& /* pack_params */, pack_etc1_block_context& /* context */) {
   CRNLIB_ASSERT(g_etc1_inverse_lookup[0][255]);
 
-  context, pack_params;
   static uint s_next_comp[4] = {1, 2, 0, 1};
 
   uint best_error = cUINT32_MAX, best_i = 0;
@@ -1237,13 +1236,12 @@ found_perfect_match:
 static uint pack_etc1_block_solid_color_constrained(
     etc1_optimizer::results& results,
     uint num_colors, const uint8* pColor,
-    crn_etc1_pack_params& pack_params,
-    pack_etc1_block_context& context,
+    crn_etc1_pack_params& /* pack_params */,
+    pack_etc1_block_context& /* context */,
     bool use_diff,
     const color_quad_u8* pBase_color5_unscaled) {
   CRNLIB_ASSERT(g_etc1_inverse_lookup[0][255]);
 
-  context, pack_params;
   static uint s_next_comp[4] = {1, 2, 0, 1};
 
   uint best_error = cUINT32_MAX, best_i = 0;
