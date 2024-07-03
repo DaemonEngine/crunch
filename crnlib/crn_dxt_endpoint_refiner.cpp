@@ -109,13 +109,13 @@ void dxt_endpoint_refiner::optimize_dxt5(vec3F low_color, vec3F high_color) {
 
   uint16 solutions[529];
   uint solutions_count = 0;
-  solutions[solutions_count++] = L0 == H0 ? H0 ? H0 - 1 << 8 | L0 : 1 : L0 > H0 ? H0 << 8 | L0 : L0 << 8 | H0;
+  solutions[solutions_count++] = L0 == H0 ? H0 ? (H0 - 1) << 8 | L0 : 1 : L0 > H0 ? H0 << 8 | L0 : L0 << 8 | H0;
   uint8 minL = L0 <= 11 ? 0 : L0 - 11, maxL = L0 >= 244 ? 255 : L0 + 11;
   uint8 minH = H0 <= 11 ? 0 : H0 - 11, maxH = H0 >= 244 ? 255 : H0 + 11;
   for (uint16 L = minL; L <= maxL; L++) {
     for (uint16 H = minH; H <= maxH; H++) {
       if ((maxH < L || L <= H || H < minL) && (L != L0 || H != H0) && (L != H0 || H != L0))
-        solutions[solutions_count++] = L == H ? H ? H - 1 << 8 | L : 1 : L > H ? H << 8 | L : L << 8 | H;
+        solutions[solutions_count++] = L == H ? H ? (H - 1) << 8 | L : 1 : L > H ? H << 8 | L : L << 8 | H;
     }
   }
 
