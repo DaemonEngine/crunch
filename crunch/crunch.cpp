@@ -1158,7 +1158,7 @@ static void print_title() {
   #endif
   console::printf("");
   console::printf("Crunch is brought to you by:");
-  console::printf("- 2014-2023 Daemon Developers and contributors");
+  console::printf("- 2014-2024 Daemon Developers and contributors");
   console::printf("  https://github.com/DaemonEngine/crunch");
   /* Who owns the copyright, Alexander, Unity, both?
   Unity Technologies is a Trade Name for Unity Software Inc. */
