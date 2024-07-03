@@ -253,8 +253,6 @@ static bool create_dds_tex(const crn_comp_params& params, mipmapped_texture& dds
 }
 
 bool create_texture_mipmaps(mipmapped_texture& work_tex, const crn_comp_params& params, const crn_mipmap_params& mipmap_params, bool generate_mipmaps) {
-  crn_comp_params new_params(params);
-
   bool generate_new_mips = false;
 
   switch (mipmap_params.m_mode) {
