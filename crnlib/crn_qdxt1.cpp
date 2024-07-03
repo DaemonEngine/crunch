@@ -780,11 +780,15 @@ bool qdxt1::pack(dxt1_block* pDst_elements, uint elements_per_block, const qdxt1
 
   //      trace("endpoint clusters: %u\n", m_endpoint_cluster_indices.size());
 
+#if 0
   uint total_blocks = 0;
+#endif
   uint max_blocks = 0;
   for (uint i = 0; i < m_endpoint_cluster_indices.size(); i++) {
     uint num = m_endpoint_cluster_indices[i].size();
+#if 0
     total_blocks += num;
+#endif
     max_blocks = math::maximum(max_blocks, num);
   }
 #if 0
