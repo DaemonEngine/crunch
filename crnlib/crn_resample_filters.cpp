@@ -250,7 +250,6 @@ static double bessel0(double x) {
   return sum;
 }
 
-static const float KAISER_ALPHA = 4.0;
 static double kaiser(double alpha, double half_width, double x) {
   const double ratio = (x / half_width);
   return bessel0(alpha * sqrt(1 - ratio * ratio)) / bessel0(alpha);
@@ -265,7 +264,6 @@ static float kaiser_filter(float t) {
     // db atten
     const float att = 40.0f;
     const float alpha = (float)(exp(log((double)0.58417 * (att - 20.96)) * 0.4) + 0.07886 * (att - 20.96));
-    //const float alpha = KAISER_ALPHA;
     return (float)clean(sinc(t) * kaiser(alpha, KAISER_SUPPORT, t));
   }
 
