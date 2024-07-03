@@ -1074,8 +1074,10 @@ bool mipmapped_texture::write_dds(data_stream_serializer& serializer) const {
       const mip_level* pLevel = get_level(face, level);
 
       if (dxt_format) {
+#if !defined(NDEBUG)
         const uint width = pLevel->get_width();
         const uint height = pLevel->get_height();
+#endif
 
         CRNLIB_ASSERT(width == math::maximum<uint>(1, m_width >> level));
         CRNLIB_ASSERT(height == math::maximum<uint>(1, m_height >> level));
@@ -1096,11 +1098,12 @@ bool mipmapped_texture::write_dds(data_stream_serializer& serializer) const {
           p = &tmp;
         }
 
+#if !defined(NDEBUG)
         const uint num_blocks_x = (width + 3) >> 2;
         const uint num_blocks_y = (height + 3) >> 2;
+#endif
 
         CRNLIB_ASSERT(num_blocks_x * num_blocks_y * p->get_elements_per_block() == p->get_total_elements());
-        width, height, num_blocks_x, num_blocks_y;
 
         const uint size_in_bytes = p->get_total_elements() * sizeof(dxt_image::element);
         if (size_in_bytes > write_buf.size())

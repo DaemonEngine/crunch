@@ -97,20 +97,17 @@ bool file_utils::get_file_size(const char* pFilename, uint64& file_size) {
   return true;
 }
 #elif defined(__GNUC__)
-bool file_utils::is_read_only(const char* pFilename) {
-  pFilename;
+bool file_utils::is_read_only(const char* /* pFilename */) {
   // TODO
   return false;
 }
 
-bool file_utils::disable_read_only(const char* pFilename) {
-  pFilename;
+bool file_utils::disable_read_only(const char* /* pFilename */) {
   // TODO
   return false;
 }
 
-bool file_utils::is_older_than(const char* pSrcFilename, const char* pDstFilename) {
-  pSrcFilename, pDstFilename;
+bool file_utils::is_older_than(const char* /* pSrcFilename */, const char* /* pDstFilename */) {
   // TODO
   return false;
 }
@@ -220,7 +217,7 @@ bool file_utils::is_drive_separator(char c) {
 #ifdef WIN32
   return (c == ':');
 #else
-  c;
+  (void)c;
   return false;
 #endif
 }

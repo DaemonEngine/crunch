@@ -13,11 +13,11 @@
 #include "crn_winhdr.h"
 #endif
 namespace crnlib {
-void get_command_line_as_single_string(dynamic_string& cmd_line, int argc, char* argv[]) {
-  argc, argv;
 #if CRNLIB_USE_WIN32_API
+void get_command_line_as_single_string(dynamic_string& cmd_line, int /* argc */, char** /* argv */) {
   cmd_line.set(GetCommandLineA());
 #else
+void get_command_line_as_single_string(dynamic_string& cmd_line, int argc, char* argv[]) {
   cmd_line.clear();
   for (int i = 0; i < argc; i++) {
     dynamic_string tmp(argv[i]);

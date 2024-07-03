@@ -59,9 +59,7 @@ void crn_sleep(unsigned int milliseconds) {
 #endif
 }
 
-mutex::mutex(unsigned int spin_count) {
-  spin_count;
-
+mutex::mutex(unsigned int /* spin_count */) {
   if (pthread_mutex_init(&m_mutex, NULL))
     crnlib_fail("mutex::mutex: pthread_mutex_init() failed", __FILE__, __LINE__);
 
@@ -95,14 +93,14 @@ void mutex::unlock() {
   pthread_mutex_unlock(&m_mutex);
 }
 
-void mutex::set_spin_count(unsigned int count) {
-  count;
+void mutex::set_spin_count(unsigned int /* count */) {
 }
 
 semaphore::semaphore(long initialCount, long maximumCount, const char* pName) {
   CRNLIB_ASSERT(maximumCount >= initialCount);
 #if !defined(__APPLE__)
-  maximumCount, pName;
+  (void)maximumCount;
+  (void)pName;
   m_sem = new sem_t();
   if (sem_init(m_sem, 0, initialCount)) {
     CRNLIB_FAIL("semaphore: sem_init() failed");
