@@ -36,8 +36,6 @@ bool crn_comp::pack_color_endpoints(crnlib::vector<uint8>& packed_data, const cr
   prev[0].clear();
   prev[1].clear();
 
-  int total_residuals = 0;
-
   for (uint endpoint_index = 0; endpoint_index < m_color_endpoints.size(); endpoint_index++) {
     const uint endpoint = remapped_endpoints[endpoint_index];
 
@@ -48,7 +46,6 @@ bool crn_comp::pack_color_endpoints(crnlib::vector<uint8>& packed_data, const cr
     for (uint j = 0; j < 2; j++) {
       for (uint k = 0; k < 3; k++) {
         int delta = cur[j][k] - prev[j][k];
-        total_residuals += delta * delta;
         int sym = delta & component_limits[j * 3 + k];
         int table = (k == 1) ? 1 : 0;
         hist[table].inc_freq(sym);
@@ -126,8 +123,6 @@ bool crn_comp::pack_alpha_endpoints(crnlib::vector<uint8>& packed_data, const cr
   uint prev[2];
   utils::zero_object(prev);
 
-  int total_residuals = 0;
-
   for (uint endpoint_index = 0; endpoint_index < m_alpha_endpoints.size(); endpoint_index++) {
     const uint endpoint = remapped_endpoints[endpoint_index];
 
@@ -137,8 +132,6 @@ bool crn_comp::pack_alpha_endpoints(crnlib::vector<uint8>& packed_data, const cr
 
     for (uint j = 0; j < 2; j++) {
       int delta = cur[j] - prev[j];
-      total_residuals += delta * delta;
-
       int sym = delta & 255;
 
       hist.inc_freq(sym);

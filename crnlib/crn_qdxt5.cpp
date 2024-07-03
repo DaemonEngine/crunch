@@ -693,11 +693,9 @@ bool qdxt5::pack(dxt5_block* pDst_elements, uint elements_per_block, const qdxt5
   } else
     m_endpoint_clusterizer.retrieve_clusters(max_endpoint_clusters, m_endpoint_cluster_indices);
 
-  uint total_blocks = 0;
   uint max_blocks = 0;
   for (uint i = 0; i < m_endpoint_cluster_indices.size(); i++) {
     uint num = m_endpoint_cluster_indices[i].size();
-    total_blocks += num;
     max_blocks = math::maximum(max_blocks, num);
   }
 

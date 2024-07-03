@@ -1852,8 +1852,6 @@ bool mipmapped_texture::convert(pixel_format fmt, bool cook, const dxt_image::pa
     for (uint l = 0; l < m_faces[f].size(); l++)
       total_pixels += m_faces[f][l]->get_total_pixels();
 
-  uint num_pixels_processed = 0;
-
   uint progress_start = p.m_progress_start;
 
   for (uint f = 0; f < m_faces.size(); f++) {
@@ -1872,8 +1870,6 @@ bool mipmapped_texture::convert(pixel_format fmt, bool cook, const dxt_image::pa
         clear();
         return false;
       }
-
-      num_pixels_processed += num_pixels;
     }
   }
 
@@ -2725,8 +2721,6 @@ bool mipmapped_texture::read_crn_from_memory(const void* pData, uint data_size, 
     return false;
   }
 
-  uint total_pixels = 0;
-
   void* pFaces[cCRNMaxFaces];
   for (uint f = tex_info.m_faces; f < cCRNMaxFaces; f++)
     pFaces[f] = NULL;
@@ -2739,8 +2733,6 @@ bool mipmapped_texture::read_crn_from_memory(const void* pData, uint data_size, 
 
     const uint row_pitch = num_blocks_x * tex_info.m_bytes_per_block;
     const uint size_of_face = num_blocks_y * row_pitch;
-
-    total_pixels += num_blocks_x * num_blocks_y * 4 * 4 * tex_info.m_faces;
 
 #if 0
          t.start();
