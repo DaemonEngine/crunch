@@ -642,9 +642,7 @@ class crunch {
     console::enable_crlf();
   }
 
-  static bool progress_callback_func(uint32 percentage_complete, void* pUser_data_ptr) {
-    pUser_data_ptr;
-
+  static bool progress_callback_func(uint32 percentage_complete, void* /* pUser_data_ptr */) {
     console::disable_crlf();
 
     char buf[8];
@@ -1180,9 +1178,6 @@ static void print_title() {
 //-----------------------------------------------------------------------------------------------------------------------
 
 static int main_internal(int argc, char* argv[]) {
-  argc;
-  argv;
-
   colorized_console::init();
 
   if (check_for_option(argc, argv, "quiet"))

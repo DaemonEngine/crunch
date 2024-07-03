@@ -16,9 +16,7 @@ corpus_tester::corpus_tester() {
   m_total_bad_block_files = 0;
 }
 
-void corpus_tester::print_comparative_metric_stats(const command_line_params& cmd_line_params, const crnlib::vector<image_utils::error_metrics>& stats1, const crnlib::vector<image_utils::error_metrics>& stats2, uint num_blocks_x, uint num_blocks_y) {
-  num_blocks_y;
-
+void corpus_tester::print_comparative_metric_stats(const command_line_params& cmd_line_params, const crnlib::vector<image_utils::error_metrics>& stats1, const crnlib::vector<image_utils::error_metrics>& stats2, uint num_blocks_x, uint /* num_blocks_y */) {
   crnlib::vector<uint> better_blocks;
   crnlib::vector<uint> equal_blocks;
   crnlib::vector<uint> worse_blocks;
@@ -71,9 +69,7 @@ void corpus_tester::print_comparative_metric_stats(const command_line_params& cm
   }
 }
 
-void corpus_tester::print_metric_stats(const crnlib::vector<image_utils::error_metrics>& stats, uint num_blocks_x, uint num_blocks_y) {
-  num_blocks_y;
-
+void corpus_tester::print_metric_stats(const crnlib::vector<image_utils::error_metrics>& stats, uint num_blocks_x, uint /* num_blocks_y */) {
   image_utils::error_metrics best_metrics;
   image_utils::error_metrics worst_metrics;
   worst_metrics.mPeakSNR = 1e+6f;
@@ -153,9 +149,8 @@ void corpus_tester::add_bad_block(image_u8& block) {
     flush_bad_blocks();
 }
 
-static bool progress_callback(uint percentage_complete, void* pUser_data_ptr) {
+static bool progress_callback(uint percentage_complete, void* /* pUser_data_ptr */) {
   static int s_prev_percentage_complete = -1;
-  pUser_data_ptr;
   if (s_prev_percentage_complete != static_cast<int>(percentage_complete)) {
     console::progress("%u%%", percentage_complete);
     s_prev_percentage_complete = percentage_complete;
