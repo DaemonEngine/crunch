@@ -5,7 +5,6 @@
 #include "crn_data_stream_serializer.h"
 
 namespace crnlib {
-enum pixel_format;
 
 namespace image_utils {
 enum read_flags_t {
