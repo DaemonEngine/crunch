@@ -125,8 +125,9 @@ semaphore::semaphore(long initialCount, long maximumCount, const char* pName) {
 }
 
 semaphore::~semaphore() {
+#if !defined(__APPLE__)
   sem_destroy(m_sem);
-#if defined(__APPLE__)
+#else
   sem_unlink(m_name);
 #endif
 }
