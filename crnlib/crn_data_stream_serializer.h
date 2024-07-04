@@ -228,7 +228,7 @@ class data_stream_serializer {
     }
 
     return true;
-  };
+  }
 
   template <typename T>
   bool read_vector(T& vec, uint num_expected = UINT_MAX) {
