@@ -5,10 +5,6 @@
 #define CRNLIB_NO_COPY_OR_ASSIGNMENT_OP(c) \
   c(const c&);                             \
   c& operator=(const c&)
-#define CRNLIB_NO_HEAP_ALLOC()       \
- private:                            \
-  static void* operator new(size_t); \
-  static void* operator new[](size_t);
 
 namespace crnlib {
 namespace helpers {
