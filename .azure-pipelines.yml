@@ -53,14 +53,12 @@ strategy:
       APT_PACKAGES: ninja-build g++-mingw-w64-x86-64 mingw-w64-x86-64-dev
       SETUP_COMMANDS: sudo update-alternatives --set x86_64-w64-mingw32-g++ /usr/bin/x86_64-w64-mingw32-g++-posix
       TOOLCHAIN_FILE: cmake/cross-toolchain-mingw64.cmake
-      BUILD_EXAMPLES: ON
       EXE_EXTENSIONS: .exe
     Windows i686 MinGW:
       VM_IMAGE: 'ubuntu-20.04'
       APT_PACKAGES: ninja-build g++-mingw-w64-i686 mingw-w64-i686-dev
       SETUP_COMMANDS: sudo update-alternatives --set i686-w64-mingw32-g++ /usr/bin/i686-w64-mingw32-g++-posix
       TOOLCHAIN_FILE: cmake/cross-toolchain-mingw32.cmake
-      BUILD_EXAMPLES: ON
       EXE_EXTENSIONS: .exe
     macOS amd64 AppleClang:
       VM_IMAGE: 'macOS-12'
@@ -107,7 +105,7 @@ steps:
         cmake_args+=(-DCMAKE_CXX_FLAGS="${COMPILER_FLAGS}")
     fi
     if [ -z "${SOURCE_DIR:-}" ]; then
-        cmake_args+=(-DBUILD_CRUNCH=ON -DBUILD_SHARED_LIBCRN=ON -DBUILD_EXAMPLES="${BUILD_EXAMPLES:-OFF}")
+        cmake_args+=(-DBUILD_CRUNCH=ON -DBUILD_SHARED_LIBCRN=ON -DBUILD_EXAMPLES=ON)
     fi
     cmake -S"${SOURCE_DIR:-.}" -Bbuild "${cmake_args[@]}"
     cmake --build build --config Release
