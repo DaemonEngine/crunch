@@ -35,7 +35,7 @@ def crunch(input_path, output_path, options=[]):
     if input_path:
         input_path = convert_path(input_path)
         output_path = convert_path(output_path)
-        command_list += ["-file", input_path, "-out", output_path]
+        command_list += ["-noTitle", "-file", input_path, "-out", output_path]
 
     run(command_list)
 
