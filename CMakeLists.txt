@@ -121,7 +121,9 @@ else()
 	endif()
 endif()
 
-if (BUILD_SHARED_LIBCRN OR BUILD_STATIC_LIBCRN OR BUILD_CRUNCH)
+if (BUILD_SHARED_LIBCRN OR BUILD_STATIC_LIBCRN OR BUILD_CRUNCH OR BUILD_EXAMPLES)
+	set_cxx_flag("-pthread")
+	set_linker_flag("-pthread")
 	add_subdirectory(crnlib crnlib)
 endif()
 
