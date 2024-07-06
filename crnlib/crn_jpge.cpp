@@ -576,7 +576,7 @@ bool jpeg_encoder::jpg_open(int p_x_res, int p_y_res, int src_channels) {
   m_image_bpl_mcu = m_image_x_mcu * m_num_components;
   m_mcus_per_row = m_image_x_mcu / m_mcu_x;
 
-  if ((m_mcu_lines[0] = static_cast<uint8*>(jpge_malloc(m_image_bpl_mcu * m_mcu_y))) == NULL)
+  if ((m_mcu_lines[0] = static_cast<uint8*>(jpge_malloc((size_t)m_image_bpl_mcu * (size_t)m_mcu_y))) == NULL)
     return false;
   for (int i = 1; i < m_mcu_y; i++)
     m_mcu_lines[i] = m_mcu_lines[i - 1] + m_image_bpl_mcu;

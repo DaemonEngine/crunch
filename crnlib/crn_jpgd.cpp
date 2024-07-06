@@ -2431,7 +2431,7 @@ jpeg_decoder::coeff_buf* jpeg_decoder::coeff_buf_open(int block_num_x, int block
   cb->block_len_x = block_len_x;
   cb->block_len_y = block_len_y;
   cb->block_size = (block_len_x * block_len_y) * sizeof(jpgd_block_t);
-  cb->pData = (uint8*)alloc(cb->block_size * block_num_x * block_num_y, true);
+  cb->pData = (uint8*)alloc((size_t)cb->block_size * (size_t)block_num_x * (size_t)block_num_y, true);
   return cb;
 }
 
@@ -2860,7 +2860,7 @@ unsigned char* decompress_jpeg_image_from_stream(jpeg_decoder_stream* pStream, i
 
   const int dst_bpl = image_width * req_comps;
 
-  uint8* pImage_data = (uint8*)jpgd_malloc(dst_bpl * image_height);
+  uint8* pImage_data = (uint8*)jpgd_malloc((size_t)dst_bpl * (size_t)image_height);
   if (!pImage_data)
     return NULL;
 
