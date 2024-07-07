@@ -28,6 +28,12 @@
 
 using namespace crnlib;
 
+#if defined(_WIN32)
+#define example2_strncpy(out, in, size) strcpy_s(out, size, in)
+#else
+#define example2_strncpy(out, in, size) strncpy(out, in, size)
+#endif
+
 static int print_usage() {
   printf("Description: Transcodes .CRN to .DDS files using crn_decomp.h.\n");
   printf("Copyright (c) 2010-2016 Richard Geldreich, Jr. and Binomial LLC\n");

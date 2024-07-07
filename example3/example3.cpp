@@ -18,7 +18,8 @@
 // .DDS file format definitions.
 #include "dds_defs.h"
 
-#include "crn_platform.h"
+#include "crn_core.h"
+#include "crn_file_utils.h"
 
 // stb_image, for loading/saving image files.
 #ifdef _MSC_VER
@@ -136,20 +137,9 @@ int main(int argc, char* argv[]) {
   }
 
   // Split the source filename into its various components.
-#if defined(_WIN32)
-  char drive_buf[_MAX_DRIVE], dir_buf[_MAX_DIR], fname_buf[_MAX_FNAME], ext_buf[_MAX_EXT];
-  if (_splitpath_s(pSrc_filename, drive_buf, _MAX_DRIVE, dir_buf, _MAX_DIR, fname_buf, _MAX_FNAME, ext_buf, _MAX_EXT))
+  dynamic_string drive, dir, fname, ext;
+  if (!file_utils::split_path(pSrc_filename, &drive, &dir, &fname, &ext))
     return error("Invalid source filename!\n");
-#else
-  char in_filename[FILENAME_MAX];
-  strncpy(in_filename, pSrc_filename, FILENAME_MAX); 
-  const char drive_buf[] = "";
-  char *dir_buf = dirname(in_filename);
-  char *fname_buf = basename(in_filename);
-  char *dot = strrchr(fname_buf, '.');
-  if (dot && dot != fname_buf)
-    *dot = '\0';
-#endif
 
   // Load the source image into memory.
   printf("Loading source file: %s\n", pSrc_filename);
@@ -241,7 +231,7 @@ int main(int argc, char* argv[]) {
 
   // Now create the DDS file.
   char dst_filename[FILENAME_MAX];
-  crnlib_snprintf(dst_filename, sizeof(dst_filename), "%s%s%s.dds", drive_buf, dir_buf, fname_buf);
+  crnlib_snprintf(dst_filename, sizeof(dst_filename), "%s%s%s.dds", drive.get_ptr(), dir.get_ptr(), fname.get_ptr());
   if (out_filename[0])
 #if defined(_WIN32)
       strcpy_s(dst_filename, sizeof(dst_filename), out_filename);
