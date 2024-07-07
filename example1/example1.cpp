@@ -512,7 +512,7 @@ int main(int argc, char* argv[]) {
 
     printf("Writing %s file: %s\n", output_crn ? "CRN" : "DDS", dst_filename);
     FILE* pFile = NULL;
-	crn_fopen(&pFile, dst_filename, "wb");
+    crn_fopen(&pFile, dst_filename, "wb");
     if ((!pFile) || (fwrite(pOutput_file_data, output_file_size, 1, pFile) != 1) || (fclose(pFile) == EOF)) {
       free(pSrc_file_data);
       crn_free_block(pOutput_file_data);
@@ -546,7 +546,7 @@ int main(int argc, char* argv[]) {
 
     printf("Writing file: %s\n", dst_filename);
     FILE* pFile = NULL;
-	crn_fopen(&pFile, dst_filename, "wb");
+    crn_fopen(&pFile, dst_filename, "wb");
     if ((!pFile) || (fwrite(pDDS_file_data, dds_file_size, 1, pFile) != 1) || (fclose(pFile) == EOF)) {
       crn_free_block(pDDS_file_data);
       free(pSrc_file_data);
