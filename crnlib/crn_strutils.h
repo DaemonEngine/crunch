@@ -11,7 +11,7 @@
 namespace crnlib {
 char* crn_strdup(const char* pStr);
 
-char* strcpy_safe(char* pDst, uint dst_len, const char* pSrc);
+char* strcpy_safe(char* pDst, size_t dst_len, const char* pSrc);
 
 bool int_to_string(int value, char* pDst, uint len);
 bool uint_to_string(uint value, char* pDst, uint len);

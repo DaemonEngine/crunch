@@ -20,6 +20,7 @@
 #include "dds_defs.h"
 
 #include "crn_core.h"
+#include "crn_strutils.h"
 #include "crn_file_utils.h"
 
 // stb_image, for loading/saving image files.
@@ -313,11 +314,7 @@ int main(int argc, char* argv[]) {
       if (++i >= argc)
         return error("Expected output filename!");
 
-#if defined(_WIN32)
-      strcpy_s(out_filename, sizeof(out_filename), argv[i]);
-#else
-      strncpy(out_filename, argv[i], sizeof(out_filename));
-#endif
+      strcpy_safe(out_filename, sizeof(out_filename), argv[i]);
     } else if (!crnlib_stricmp(argv[i], "-nonsrgb"))
       srgb_colorspace = false;
     else if (!crnlib_stricmp(argv[i], "-nomips"))
@@ -482,11 +479,7 @@ int main(int argc, char* argv[]) {
     char dst_filename[FILENAME_MAX];
     crnlib_snprintf(dst_filename, sizeof(dst_filename), "%s%s%s%s", drive.get_ptr(), dir.get_ptr(), fname.get_ptr(), output_crn ? ".crn" : ".dds");
     if (out_filename[0])
-#if defined(_WIN32)
-      strcpy_s(dst_filename, sizeof(dst_filename), out_filename);
-#else
-      strncpy(dst_filename, out_filename, sizeof(dst_filename));
-#endif
+      strcpy_safe(dst_filename, sizeof(dst_filename), out_filename);
 
     printf("Writing %s file: %s\n", output_crn ? "CRN" : "DDS", dst_filename);
     FILE* pFile = NULL;
@@ -516,11 +509,7 @@ int main(int argc, char* argv[]) {
     char dst_filename[FILENAME_MAX];
     crnlib_snprintf(dst_filename, sizeof(dst_filename), "%s%s%s.dds", drive.get_ptr(), dir.get_ptr(), fname.get_ptr());
     if (out_filename[0])
-#if defined(_WIN32)
-      strcpy_s(dst_filename, sizeof(dst_filename), out_filename);
-#else
-      strncpy(dst_filename, out_filename, sizeof(dst_filename));
-#endif
+      strcpy_safe(dst_filename, sizeof(dst_filename), out_filename);
 
     printf("Writing file: %s\n", dst_filename);
     FILE* pFile = NULL;

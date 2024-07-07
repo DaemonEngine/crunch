@@ -29,9 +29,9 @@
 using namespace crnlib;
 
 #if defined(_WIN32)
-#define example2_strncpy(out, in, size) strcpy_s(out, size, in)
+#define example2_strcpy_safe(d, l, s) strcpy_s(d, l, s)
 #else
-#define example2_strncpy(out, in, size) strncpy(out, in, size)
+void example2_strcpy_safe(char *d, size_t l, const char* s) {l = strnlen(s, l - 1); memcpy(d, s, l); d[l] = '\0';}
 #endif
 
 static int print_usage() {
@@ -96,11 +96,7 @@ int main(int argc, char* argv[]) {
       if (++i >= argc)
         return error("Expected output filename!");
 
-#if defined(_WIN32)
-      strcpy_s(out_filename, sizeof(out_filename), argv[i]);
-#else
-      strncpy(out_filename, argv[i], sizeof(out_filename));
-#endif
+      example2_strcpy_safe(out_filename, sizeof(out_filename), argv[i]);
     } else
       return error("Invalid option: %s\n", argv[i]);
   }
@@ -143,7 +139,7 @@ int main(int argc, char* argv[]) {
   // Now create the DDS file.
   char dst_filename[FILENAME_MAX];
   if (out_filename[0]) {
-    strcpy(dst_filename, out_filename);
+    example2_strcpy_safe(dst_filename, sizeof(dst_filename), out_filename);
   } else {
     unsigned int stripped_length = UINT32_MAX;
     const char* ext_begin = strrchr(pSrc_filename, '.');

@@ -16,7 +16,7 @@ char* crn_strdup(const char* pStr) {
   return p;
 }
 
-char* strcpy_safe(char* pDst, uint dst_len, const char* pSrc) {
+char* strcpy_safe(char* pDst, size_t dst_len, const char* pSrc) {
   CRNLIB_ASSERT(pDst && pSrc && dst_len);
   if (!dst_len)
     return pDst;
