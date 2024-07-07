@@ -19,7 +19,8 @@
 // .DDS file format definitions.
 #include "dds_defs.h"
 
-#include "crn_platform.h"
+#include "crn_core.h"
+#include "crn_file_utils.h"
 
 // stb_image, for loading/saving image files.
 #ifdef _MSC_VER
@@ -332,24 +333,10 @@ int main(int argc, char* argv[]) {
   }
 
   // Split the source filename into its various components.
-#if defined(_WIN32)
-  char drive_buf[_MAX_DRIVE], dir_buf[_MAX_DIR], fname_buf[_MAX_FNAME], ext_buf[_MAX_EXT];
-  if (_splitpath_s(pSrc_filename, drive_buf, _MAX_DRIVE, dir_buf, _MAX_DIR, fname_buf, _MAX_FNAME, ext_buf, _MAX_EXT))
+  dynamic_string drive, dir, fname, ext;
+
+  if (!file_utils::split_path(pSrc_filename, &drive, &dir, &fname, &ext))
     return error("Invalid source filename!\n");
-#else
-  char in_filename[FILENAME_MAX];
-  strncpy(in_filename, pSrc_filename, FILENAME_MAX); 
-  const char drive_buf[] = "";
-  char *dir_buf = dirname(in_filename);
-  char *fname_buf = basename(in_filename);
-  char *dot = strrchr(fname_buf, '.');
-  char ext_buf[FILENAME_MAX];
-  ext_buf[0] = '\0';
-  if (dot && dot != fname_buf) {
-    strncpy(ext_buf, dot, strlen(dot));
-    *dot = '\0';
-  }
-#endif
 
   // Load the source file into memory.
   printf("Loading source file: %s\n", pSrc_filename);
@@ -360,12 +347,12 @@ int main(int argc, char* argv[]) {
 
   if (mode == 'i') {
     // Information
-    if (crnlib_stricmp(ext_buf, ".crn") == 0) {
+    if (crnlib_stricmp(ext.get_ptr(), ".crn") == 0) {
       if (!print_crn_info(pSrc_file_data, src_file_size)) {
         free(pSrc_file_data);
         return error("Not a CRN file!\n");
       }
-    } else if (crnlib_stricmp(ext_buf, ".dds") == 0) {
+    } else if (crnlib_stricmp(ext.get_ptr(), ".dds") == 0) {
       if (!print_dds_info(pSrc_file_data, src_file_size)) {
         free(pSrc_file_data);
         return error("Not a DDS file!\n");
@@ -387,22 +374,13 @@ int main(int argc, char* argv[]) {
 
     // If the user has explicitly specified an output file, check the output file's extension to ensure we write the expected format.
     if (out_filename[0]) {
-#if defined(_WIN32)
-      char out_fname_buf[_MAX_FNAME], out_ext_buf[_MAX_EXT];
-      _splitpath_s(out_filename, NULL, 0, NULL, 0, out_fname_buf, _MAX_FNAME, out_ext_buf, _MAX_EXT);
-#else
-      char *out_fname_buf = basename( in_filename );
-      dot = strrchr(out_fname_buf, '.');
-      char out_ext_buf[FILENAME_MAX];
-	  out_ext_buf[0] = '\0';
-      if (dot && dot != fname_buf) {
-        strncpy(out_ext_buf, dot, strlen(dot));
-        *dot = '\0';
-      }
-#endif
-      if (!crnlib_stricmp(out_ext_buf, ".crn"))
+      dynamic_string out_fname, out_ext;
+
+      file_utils::split_path(out_filename, NULL, NULL, &out_fname, &out_ext);
+
+      if (!crnlib_stricmp(out_ext.get_ptr(), ".crn"))
         output_crn = true;
-      else if (!crnlib_stricmp(out_ext_buf, ".dds"))
+      else if (!crnlib_stricmp(out_ext.get_ptr(), ".dds"))
         output_crn = false;
     }
 
@@ -502,7 +480,7 @@ int main(int argc, char* argv[]) {
 
     // Write the output file.
     char dst_filename[FILENAME_MAX];
-    crnlib_snprintf(dst_filename, sizeof(dst_filename), "%s%s%s%s", drive_buf, dir_buf, fname_buf, output_crn ? ".crn" : ".dds");
+    crnlib_snprintf(dst_filename, sizeof(dst_filename), "%s%s%s%s", drive.get_ptr(), dir.get_ptr(), fname.get_ptr(), output_crn ? ".crn" : ".dds");
     if (out_filename[0])
 #if defined(_WIN32)
       strcpy_s(dst_filename, sizeof(dst_filename), out_filename);
@@ -522,7 +500,7 @@ int main(int argc, char* argv[]) {
 
     crn_free_block(pOutput_file_data);
     stbi_image_free(pSrc_image);
-  } else if (crnlib_stricmp(ext_buf, ".crn") == 0) {
+  } else if (crnlib_stricmp(ext.get_ptr(), ".crn") == 0) {
     // Decompress/transcode CRN to DDS.
     printf("Decompressing CRN to DDS\n");
 
@@ -536,7 +514,7 @@ int main(int argc, char* argv[]) {
 
     // Now write the DDS file to disk.
     char dst_filename[FILENAME_MAX];
-    crnlib_snprintf(dst_filename, sizeof(dst_filename), "%s%s%s.dds", drive_buf, dir_buf, fname_buf);
+    crnlib_snprintf(dst_filename, sizeof(dst_filename), "%s%s%s.dds", drive.get_ptr(), dir.get_ptr(), fname.get_ptr());
     if (out_filename[0])
 #if defined(_WIN32)
       strcpy_s(dst_filename, sizeof(dst_filename), out_filename);
@@ -558,22 +536,10 @@ int main(int argc, char* argv[]) {
     print_dds_info(pDDS_file_data, dds_file_size);
 
     crn_free_block(pDDS_file_data);
-  } else if (crnlib_stricmp(ext_buf, ".dds") == 0) {
+  } else if (crnlib_stricmp(ext.get_ptr(), ".dds") == 0) {
     // Unpack DDS to one or more TGA's.
     if (out_filename[0]) {
-#if defined(_WIN32)
-      _splitpath_s(out_filename, drive_buf, _MAX_DRIVE, dir_buf, _MAX_DIR, fname_buf, _MAX_FNAME, ext_buf, _MAX_EXT);
-#else
-      dir_buf = dirname(out_filename);
-      fname_buf = basename(out_filename);
-      dot = strrchr(fname_buf, '.');
-      ext_buf[FILENAME_MAX];
-	  ext_buf[0] = '\0';
-      if (dot && dot != fname_buf) {
-        strncpy(ext_buf, dot, strlen(dot));
-        *dot = '\0';
-      }
-#endif
+      file_utils::split_path(out_filename, &drive, &dir, &fname, &ext);
     }
 
     crn_texture_desc tex_desc;
@@ -596,7 +562,7 @@ int main(int argc, char* argv[]) {
         int height = std::max(1U, tex_desc.m_height >> level_index);
 
         char dst_filename[FILENAME_MAX];
-        crnlib_snprintf(dst_filename, sizeof(dst_filename), "%s%s%s_face%u_mip%u.tga", drive_buf, dir_buf, fname_buf, face_index, level_index);
+        crnlib_snprintf(dst_filename, sizeof(dst_filename), "%s%s%s_face%u_mip%u.tga", drive.get_ptr(), dir.get_ptr(), fname.get_ptr(), face_index, level_index);
 
         printf("Writing file: %s\n", dst_filename);
         if (!stbi_write_tga(dst_filename, width, height, 4, pImages[level_index + face_index * tex_desc.m_levels])) {
