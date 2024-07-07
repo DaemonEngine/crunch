@@ -29,53 +29,61 @@ strategy:
       VM_IMAGE: 'ubuntu-20.04'
       APT_PACKAGES: ninja-build g++-8
       CXX_COMPILER: g++-8
-      RUN_TESTS: true
     Linux i686 GCC:
       VM_IMAGE: 'ubuntu-20.04'
       APT_PACKAGES: ninja-build g++-i686-linux-gnu
       CXX_COMPILER: i686-linux-gnu-g++
-      RUN_TESTS: true
     Linux arm64 GCC:
       VM_IMAGE: 'ubuntu-20.04'
-      APT_PACKAGES: ninja-build g++-aarch64-linux-gnu
+      APT_PACKAGES: ninja-build g++-aarch64-linux-gnu qemu-user
       CXX_COMPILER: aarch64-linux-gnu-g++
+      CRUNCH_EXE_RUNNER: qemu-aarch64 -L /usr/aarch64-linux-gnu
     Linux armhf GCC:
       VM_IMAGE: 'ubuntu-20.04'
-      APT_PACKAGES: ninja-build g++-arm-linux-gnueabihf
+      APT_PACKAGES: ninja-build g++-arm-linux-gnueabihf qemu-user
       CXX_COMPILER: arm-linux-gnueabihf-g++
+      CRUNCH_EXE_RUNNER: qemu-arm -L /usr/arm-linux-gnueabihf
+      # There is a qemu-arm IO bug in ubuntu-20.04 and ubuntu-22.04,
+      # remove when ubuntu-24.04 is available.
+      CRUNCH_SIMPLE_TEST: true
     Linux amd64 Clang:
       VM_IMAGE: 'ubuntu-20.04'
       APT_PACKAGES: ninja-build
       CXX_COMPILER: clang++
-      RUN_TESTS: true
     Windows amd64 MinGW:
-      VM_IMAGE: 'ubuntu-20.04'
-      APT_PACKAGES: ninja-build g++-mingw-w64-x86-64 mingw-w64-x86-64-dev
+      VM_IMAGE: 'ubuntu-22.04'
+      APT_PACKAGES: ninja-build g++-mingw-w64-x86-64 mingw-w64-x86-64-dev gcc-mingw-w64-x86-64-posix-runtime wine
       SETUP_COMMANDS: sudo update-alternatives --set x86_64-w64-mingw32-g++ /usr/bin/x86_64-w64-mingw32-g++-posix
       TOOLCHAIN_FILE: cmake/cross-toolchain-mingw64.cmake
-      EXE_EXTENSIONS: .exe
+      CRUNCH_EXE_RUNNER: wine
+      CRUNCH_EXTENSION: .exe
+      RUNTIME_FILES: /usr/lib/gcc/x86_64-w64-mingw32/10-posix/libgcc_s_seh-1.dll /usr/lib/gcc/x86_64-w64-mingw32/10-posix/libstdc++-6.dll /usr/x86_64-w64-mingw32/lib/libwinpthread-1.dll
     Windows i686 MinGW:
-      VM_IMAGE: 'ubuntu-20.04'
-      APT_PACKAGES: ninja-build g++-mingw-w64-i686 mingw-w64-i686-dev
+      VM_IMAGE: 'ubuntu-22.04'
+      APT_ARCHITECTURE: i386
+      APT_PACKAGES: ninja-build g++-mingw-w64-i686 mingw-w64-i686-dev gcc-mingw-w64-i686-posix-runtime wine wine32
       SETUP_COMMANDS: sudo update-alternatives --set i686-w64-mingw32-g++ /usr/bin/i686-w64-mingw32-g++-posix
       TOOLCHAIN_FILE: cmake/cross-toolchain-mingw32.cmake
-      EXE_EXTENSIONS: .exe
+      CRUNCH_EXE_RUNNER: wine
+      CRUNCH_EXTENSION: .exe
+      RUNTIME_FILES: /usr/lib/gcc/i686-w64-mingw32/10-posix/libgcc_s_dw2-1.dll /usr/lib/gcc/i686-w64-mingw32/10-posix/libstdc++-6.dll /usr/i686-w64-mingw32/lib/libwinpthread-1.dll
     macOS amd64 AppleClang:
       VM_IMAGE: 'macOS-12'
       CMAKE_GENERATOR: Unix Makefiles
       NPROC_COMMAND: sysctl -n hw.logicalcpu
-      RUN_TESTS: true
     macOS arm64 AppleClang:
       VM_IMAGE: 'macOS-12'
       CMAKE_GENERATOR: Unix Makefiles
       COMPILER_FLAGS: -target arm64-apple-macos11 -Wno-overriding-t-option
       NPROC_COMMAND: sysctl -n hw.logicalcpu
+      RUN_TESTS: false
     Web Asm.js Emscripten:
       VM_IMAGE: 'ubuntu-22.04'
       APT_PACKAGES: ninja-build emscripten
       TOOLCHAIN_FILE: /usr/share/emscripten/cmake/Modules/Platform/Emscripten.cmake
       SOURCE_DIR: emscripten
-      EXE_EXTENSIONS: .js .wasm
+      EXECUTABLES: crunch.js crunch.wasm
+      RUN_TESTS: false
 
 pool:
   vmImage: $(VM_IMAGE)
@@ -83,6 +91,9 @@ pool:
 steps:
 - bash: |
     set -xue
+    if [ -n "${APT_ARCHITECTURE:-}" ]; then
+      sudo dpkg --add-architecture "${APT_ARCHITECTURE}"
+    fi
     if [ -n "${APT_PACKAGES:-}" ]; then
       sudo apt-get update && sudo apt-get -y -q --no-install-recommends install ${APT_PACKAGES}
     fi
@@ -112,14 +123,14 @@ steps:
   displayName: 'Build'
 - bash: |
     set -xue
-    if [ -z "${EXE_EXTENSIONS:-}" ]; then
-      file 'build/crunch'
-    else
-      for ext in ${EXE_EXTENSIONS}; do
-        file "build/crunch${ext}"
-      done
+    EXECUTABLES="${EXECUTABLES:-crunch example1 example2 example3}"
+    for exe_file in ${EXECUTABLES}; do
+      file 'build/${exe_file}${CRUNCH_EXTENSION:-}'
+    done
+    if [ -n "${RUNTIME_FILES:-}" ]; then
+        cp -av ${RUNTIME_FILES} build/
     fi
-    if "${RUN_TESTS:-false}"; then
+    if "${RUN_TESTS:-true}"; then
       test/test.py
     fi
   displayName: 'Test'

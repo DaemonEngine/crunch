@@ -4,32 +4,44 @@ import os
 import subprocess
 import sys
 
+build_dir = os.getenv("CRUNCH_BUILD_DIR", "build")
+executable_extension = os.getenv("CRUNCH_EXE_EXTENSION", "")
+executable_runner = os.getenv("CRUNCH_EXE_RUNNER")
+
 def print_command(command_list):
     print("running: " + " ".join(command_list), file=sys.stderr)
 
 def convert_path(path):
+    if path.startswith("build/"):
+        path = build_dir + path[len("build"):]
     return path.replace("/", os.path.sep)
 
 def run(command_list):
+    if executable_runner:
+        command_list = executable_runner.split(" ") + command_list
     print_command(command_list)
     returncode = subprocess.run(command_list).returncode
     if returncode:
         exit(returncode)
 
 def mkdir(path):
+    path = convert_path(path)
     print_command(["mkdir", path])
     os.makedirs(path, exist_ok=True)
 
-def crunch(input_path, output_path, options=[]):
-    executable_extension = ["", ".exe"][sys.platform == 'win32']
-    executable_name = "crunch" + executable_extension
-
-    build_dir = "build"
+def get_build_dir():
     windows_build_dir = os.path.join(build_dir, "Release")
     if os.path.exists(windows_build_dir):
-        build_dir = windows_build_dir
+        return windows_build_dir
+    return build_dir
 
-    executable_path = os.path.join(build_dir, executable_name)
+def get_executable_path(executable_name):
+    executable_name += executable_extension
+    build_dir = get_build_dir()
+    return os.path.join(build_dir, executable_name)
+
+def crunch(input_path, output_path, options=[]):
+    executable_path = get_executable_path("crunch")
     command_list = [executable_path] + options
 
     if input_path:
@@ -39,7 +51,30 @@ def crunch(input_path, output_path, options=[]):
 
     run(command_list)
 
+def example(num, input_path, output_path, options=[]):
+    executable_path = get_executable_path("example" + str(num))
+    command_list = [executable_path] 
+
+    if (num == 1):
+        command_list += [options[0]]
+        options = options[1:]
+
+    if input_path:
+        input_path = convert_path(input_path)
+        command_list += [input_path]
+
+    command_list += options
+
+    if output_path:
+        output_path = convert_path(output_path)
+        command_list += ["-out", output_path]
+
+    run(command_list)
+
 crunch(None, None, ["--help"])
+
+if "CRUNCH_SIMPLE_TEST" in os.environ.keys():
+    exit(0)
 
 mkdir("build/test/0")
 crunch("test/unvanquished_64.png", "build/test/0/unvanquished_64.crn")
@@ -99,3 +134,17 @@ crunch("test/sample-vertical-flip.bmp", "build/test/6/sample-vertical-flip.crn")
 
 mkdir("build/test/7")
 crunch("test/black.jpg", "build/test/7/black.crn")
+
+mkdir("build/test/8")
+example(1, "test/unvanquished_64.png", None, ["i"])
+example(1, "test/unvanquished_64.png", "build/test/8/unvanquished_64.dds", ["c"])
+
+mkdir("build/test/9")
+example(1, "test/unvanquished_64.png", "build/test/9/unvanquished_64.crn", ["c", "-crn"])
+example(1, "build/test/9/unvanquished_64.crn", "build/test/9/unvanquished_64.dds", ["d"])
+
+mkdir("build/test/10")
+example(2, "build/test/9/unvanquished_64.crn", "build/test/10/unvanquished_64.dds")
+
+mkdir("build/test/11")
+example(3, "test/unvanquished_64.png", "build/test/11/unvanquished_64.dds")
