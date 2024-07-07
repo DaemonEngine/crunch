@@ -463,17 +463,17 @@ int main(int argc, char* argv[]) {
     }
 
     // Determine the # of helper threads (in addition to the main thread) to use during compression. NumberOfCPU's-1 is reasonable.
-    int num_helper_threads = 1;
+    int number_of_processors = 1;
 #if defined(_WIN32)
     SYSTEM_INFO g_system_info;
     GetSystemInfo(&g_system_info);
-    num_helper_threads = std::max<int>(0, (int)g_system_info.dwNumberOfProcessors - 1);
+    number_of_processors = std::max<int>(1, (int)g_system_info.dwNumberOfProcessors);
 #elif defined(__FreeBSD__) || defined(__APPLE__)
-    num_helper_threads = std::max<int>(1, sysconf(_SC_NPROCESSORS_ONLN));
+    number_of_processors = std::max<int>(1, sysconf(_SC_NPROCESSORS_ONLN));
 #elif defined(__GNUC__)
-    num_helper_threads = std::max<int>(1, get_nprocs());
+    number_of_processors = std::max<int>(1, get_nprocs());
 #endif
-    comp_params.m_num_helper_threads = num_helper_threads;
+    comp_params.m_num_helper_threads = std::min(number_of_processors - 1, (int)cCRNMaxHelperThreads);
 
     comp_params.m_pProgress_func = progress_callback_func;
 
