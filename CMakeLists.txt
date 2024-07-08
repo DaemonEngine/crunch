@@ -99,6 +99,9 @@ else()
 	set_cxx_flag("-g3" DEBUG)
 	set_cxx_flag("-g3" RELWITHDEBINFO)
 
+	set_cxx_flag("-pthread")
+	set_linker_flag("-pthread")
+
 	if (USE_EXTRA_OPTIMIZATION)
 		# CMake already sets the -O3 flag on Release build and -O[1-3s] already sets the -fomit-frame-pointer flag.
 		set_cxx_flag("-Og" DEBUG)
@@ -122,8 +125,6 @@ else()
 endif()
 
 if (BUILD_SHARED_LIBCRN OR BUILD_STATIC_LIBCRN OR BUILD_CRUNCH OR BUILD_EXAMPLES)
-	set_cxx_flag("-pthread")
-	set_linker_flag("-pthread")
 	add_subdirectory(crnlib crnlib)
 endif()
 
