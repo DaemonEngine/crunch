@@ -206,22 +206,41 @@ bool find_files::find_internal(const char* pBasepath, const char* pRelpath, cons
     if ((strcmp(ep->d_name, ".") == 0) || (strcmp(ep->d_name, "..") == 0))
       continue;
 
-    bool is_directory = 0;
-    bool is_file = 0;
+    bool is_directory = false;
+    bool is_file = false;
+    bool known = false;
 
-    if ( ep->d_type != 0 ) {
+    /* This is the faster implementation as it doesn't require any
+    extra IO as everything is already read. But the standard doesn't
+	require filesystems to set d_type. */
+    if (ep->d_type != DT_UNKNOWN) {
       is_directory = (ep->d_type & DT_DIR) != 0;
       is_file = (ep->d_type & DT_REG) != 0;
-    } else {
+      known = true;
+    }
+
+    /* Not all filesystems set d_type which is optional,
+    especially network file systems and non-native ones.
+    This is the standard and portable implementation.
+    See https://github.com/DaemonEngine/crunch/issues/37 */
+    if (!known) {
+      dynamic_string filepath = pathname + dynamic_string("/") + dynamic_string(ep->d_name);
       struct stat s;
-      if (stat(ep->d_name, &s) == 0) {
+      if (stat(filepath.get_ptr(), &s) == 0) {
         is_directory = S_ISDIR(s.st_mode);
         is_file = S_ISREG(s.st_mode);
+        known = true;
       }
-      else {
-        console::error("Cannot detect if given path is a file or a directory");
-        return false;
-      }
+    }
+
+    if (!known) {
+      console::error("Cannot detect if the given path is a file or a directory");
+      return false;
+    }
+
+    if (!is_file && !is_directory) {
+      console::error("The given path is not a file neither a directory");
+      return false;
     }
 
     dynamic_string filename(ep->d_name);
