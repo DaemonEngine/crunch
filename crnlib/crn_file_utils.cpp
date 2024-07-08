@@ -373,15 +373,16 @@ bool file_utils::full_path(dynamic_string& path) {
 }
 
 bool file_utils::get_extension(dynamic_string& filename) {
-  int sep = -1;
-#ifdef WIN32
-  sep = filename.find_right('\\');
+  int sep = filename.find_right('/');
+
+#ifdef _WIN32
+  int sep2 = filename.find_right('\\');
+  if (sep2 > sep)
+    sep = sep2;
 #endif
-  if (sep < 0)
-    sep = filename.find_right('/');
 
   int dot = filename.find_right('.');
-  if (dot < sep) {
+  if (dot <= sep) {
     filename.clear();
     return false;
   }
@@ -392,12 +393,13 @@ bool file_utils::get_extension(dynamic_string& filename) {
 }
 
 bool file_utils::remove_extension(dynamic_string& filename) {
-  int sep = -1;
-#ifdef WIN32
-  sep = filename.find_right('\\');
+  int sep = filename.find_right('/');
+
+#ifdef _WIN32
+  int sep2 = filename.find_right('\\');
+  if (sep2 > sep)
+    sep = sep2;
 #endif
-  if (sep < 0)
-    sep = filename.find_right('/');
 
   int dot = filename.find_right('.');
   if (dot < sep)
