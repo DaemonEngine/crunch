@@ -958,7 +958,7 @@ class crunch {
       else {
         console::info("CRN texture info:");
 
-        console::info("Width: %u, Height: %u, Levels: %u, Faces: %u\nBytes per block: %u, User0: 0x%08X, User1: 0x%08X, CRN Format: %u",
+        console::info("Width: %u, Height: %u, Levels: %u, Faces: %u\nBytes per block: %u, User0: 0x%08X, User1: 0x%08X, CRN Format: %l",
                       tex_info.m_width,
                       tex_info.m_height,
                       tex_info.m_levels,
