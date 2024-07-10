@@ -29,25 +29,7 @@ void crnlib_fail(const char* pExp, const char* pFile, unsigned line);
 void trace(const char* pFmt, va_list args);
 void trace(const char* pFmt, ...);
 
-// Borrowed from boost libraries.
-template <bool x>
-struct crnlib_assume_failure;
-template <>
-struct crnlib_assume_failure<true> {
-  enum { blah = 1 };
-};
-template <int x>
-struct crnlib_assume_try {};
-
-#define CRNLIB_JOINER_FINAL(a, b) a##b
-#define CRNLIB_JOINER(a, b) CRNLIB_JOINER_FINAL(a, b)
-#define CRNLIB_JOIN(a, b) CRNLIB_JOINER(a, b)
-
-#ifdef NDEBUG
-#define CRNLIB_ASSUME(p)
-#else
-#define CRNLIB_ASSUME(p) typedef crnlib_assume_try<sizeof(crnlib_assume_failure<(bool)(p)>)> CRNLIB_JOIN(crnlib_assume_typedef, __COUNTER__)
-#endif
+#define CRNLIB_ASSUME(p) static_assert(p, "")
 
 #ifdef NDEBUG
 template <typename T>
