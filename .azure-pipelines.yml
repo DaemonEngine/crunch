@@ -120,6 +120,7 @@ steps:
     if [ -z "${SOURCE_DIR:-}" ]; then
         cmake_args+=(-DBUILD_CRUNCH=ON -DBUILD_SHARED_LIBCRN=ON -DBUILD_EXAMPLES=ON)
     fi
+    cmake_args+=(-DUSE_FAST_MATH=OFF)
     cmake -S"${SOURCE_DIR:-.}" -Bbuild "${cmake_args[@]}"
     cmake --build build --config Release
   displayName: 'Build'
