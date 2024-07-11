@@ -33,6 +33,7 @@ strategy:
       VM_IMAGE: 'ubuntu-20.04'
       APT_PACKAGES: ninja-build g++-i686-linux-gnu
       CXX_COMPILER: i686-linux-gnu-g++
+      COMPILER_FLAGS: -mfpmath=sse -msse
     Linux arm64 GCC:
       VM_IMAGE: 'ubuntu-20.04'
       APT_PACKAGES: ninja-build g++-aarch64-linux-gnu qemu-user
@@ -64,6 +65,7 @@ strategy:
       APT_PACKAGES: ninja-build g++-mingw-w64-i686 mingw-w64-i686-dev gcc-mingw-w64-i686-posix-runtime wine wine32
       SETUP_COMMANDS: sudo update-alternatives --set i686-w64-mingw32-g++ /usr/bin/i686-w64-mingw32-g++-posix
       TOOLCHAIN_FILE: cmake/cross-toolchain-mingw32.cmake
+      COMPILER_FLAGS: -mfpmath=sse -msse
       CRUNCH_EXE_RUNNER: wine
       CRUNCH_EXTENSION: .exe
       RUNTIME_FILES: /usr/lib/gcc/i686-w64-mingw32/10-posix/libgcc_s_dw2-1.dll /usr/lib/gcc/i686-w64-mingw32/10-posix/libstdc++-6.dll /usr/i686-w64-mingw32/lib/libwinpthread-1.dll
