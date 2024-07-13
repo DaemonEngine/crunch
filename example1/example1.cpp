@@ -143,7 +143,7 @@ static bool print_crn_info(const crn_uint8* pData, crn_uint32 data_size) {
   if (!crnd::crnd_get_texture_info(pData, data_size, &tex_info))
     return false;
 
-  printf("Dimensions: %ux%u\nLevels: %u\nFaces: %u\nBytesPerBlock: %u\nUserData0: %u\nUserData1: %u\nCrnFormat: %S\n",
+  printf("Dimensions: %ux%u\nLevels: %u\nFaces: %u\nBytesPerBlock: %u\nUserData0: %u\nUserData1: %u\nCrnFormat: %s\n",
          tex_info.m_width, tex_info.m_height, tex_info.m_levels, tex_info.m_faces, tex_info.m_bytes_per_block, tex_info.m_userdata0, tex_info.m_userdata1, crn_get_format_string(tex_info.m_format));
 
   return true;
