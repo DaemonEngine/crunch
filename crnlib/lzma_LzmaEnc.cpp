@@ -1948,6 +1948,7 @@ const Byte* LzmaEnc_GetCurBuf(CLzmaEncHandle pp) {
   return p->matchFinder.GetPointerToCurrentPos(p->matchFinderObj) - p->additionalOffset;
 }
 
+#if 0 // Unused function producing a dangling-pointer warning.
 SRes LzmaEnc_CodeOneMemBlock(CLzmaEncHandle pp, Bool reInit,
                              Byte* dest, size_t* destLen, UInt32 desiredPackSize, UInt32* unpackSize) {
   CLzmaEnc* p = (CLzmaEnc*)pp;
@@ -1980,6 +1981,7 @@ SRes LzmaEnc_CodeOneMemBlock(CLzmaEncHandle pp, Bool reInit,
 
   return res;
 }
+#endif
 
 SRes LzmaEnc_Encode(CLzmaEncHandle pp, ISeqOutStream* outStream, ISeqInStream* inStream, ICompressProgress* progress,
                     ISzAlloc* alloc, ISzAlloc* allocBig) {
