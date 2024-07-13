@@ -202,9 +202,9 @@ int main(int argc, char* argv[]) {
 
       // Exact block from image, clamping at the sides of non-divisible by 4 images to avoid artifacts.
       crn_uint32* pDst_pixels = pixels;
-      for (int y = 0; y < cDXTBlockSize; y++) {
+      for (uint y = 0; y < cDXTBlockSize; y++) {
         const uint actual_y = std::min(height - 1U, (block_y * cDXTBlockSize) + y);
-        for (int x = 0; x < cDXTBlockSize; x++) {
+        for (uint x = 0; x < cDXTBlockSize; x++) {
           const uint actual_x = std::min(width - 1U, (block_x * cDXTBlockSize) + x);
           *pDst_pixels++ = pSrc_image[actual_x + actual_y * width];
         }

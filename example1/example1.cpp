@@ -172,7 +172,7 @@ static bool print_dds_info(const void* pData, crn_uint32 data_size) {
           "DDSD_TEXTURESTAGE", "DDSD_FVF", "DDSD_SRCVBHANDLE", "DDSD_DEPTH"};
 
   printf("DDSD Flags: 0x%08X ", desc.dwFlags);
-  for (int i = 0; i < sizeof(pDDSDFlagNames) / sizeof(pDDSDFlagNames[0]); i++)
+  for (size_t i = 0; i < sizeof(pDDSDFlagNames) / sizeof(pDDSDFlagNames[0]); i++)
     if ((pDDSDFlagNames[i]) && (desc.dwFlags & (1 << i)))
       printf("%s ", pDDSDFlagNames[i]);
   printf("\n\n");
@@ -229,7 +229,7 @@ static bool print_dds_info(const void* pData, crn_uint32 data_size) {
           "DDSCAPS2_CUBEMAP_POSITIVEY", "DDSCAPS2_CUBEMAP_NEGATIVEY", "DDSCAPS2_CUBEMAP_POSITIVEZ", "DDSCAPS2_CUBEMAP_NEGATIVEZ",
           NULL, NULL, NULL, NULL,
           NULL, "DDSCAPS2_VOLUME"};
-  for (int i = 0; i < sizeof(pDDCAPS2FlagNames) / sizeof(pDDCAPS2FlagNames[0]); i++)
+  for (size_t i = 0; i < sizeof(pDDCAPS2FlagNames) / sizeof(pDDCAPS2FlagNames[0]); i++)
     if ((pDDCAPS2FlagNames[i]) && (desc.ddsCaps.dwCaps2 & (1 << i)))
       printf("%s ", pDDCAPS2FlagNames[i]);
   printf("\n");
