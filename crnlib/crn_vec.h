@@ -475,9 +475,9 @@ class vec : public helpers::rel_ops<vec<N, T> > {
   }
 
   inline double normalize(const vec* pDefaultVec = NULL) {
-    double n = m_s[0] * m_s[0];
+    double n = (double)m_s[0] * (double)m_s[0];
     for (uint i = 1; i < N; i++)
-      n += m_s[i] * m_s[i];
+      n += (double)m_s[i] * (double)m_s[i];
 
     if (n != 0)
       *this *= static_cast<T>((1.0f / sqrt(n)));
@@ -489,7 +489,7 @@ class vec : public helpers::rel_ops<vec<N, T> > {
   inline double normalize3(const vec* pDefaultVec = NULL) {
     CRNLIB_ASSUME(N >= 3);
 
-    double n = m_s[0] * m_s[0] + m_s[1] * m_s[1] + m_s[2] * m_s[2];
+    double n = (double)m_s[0] * (double)m_s[0] + (double)m_s[1] * (double)m_s[1] + (double)m_s[2] * (double)m_s[2];
 
     if (n != 0)
       *this *= static_cast<T>((1.0f / sqrt(n)));
