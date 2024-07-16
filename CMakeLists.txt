@@ -80,6 +80,10 @@ if (MSVC)
 	# CMake already sets the /O2 flag on Release and RelWithDebInfo build and /O[1-2] already sets the /Oy flag.
 
 	if (USE_FAST_MATH)
+		# By default, the MSVC /fp:fast option enables /fp:contract (introduced in VS 2022).
+		# See https://learn.microsoft.com/en-us/cpp/build/reference/fp-specify-floating-point-behavior
+		# and https://devblogs.microsoft.com/cppblog/the-fpcontract-flag-and-changes-to-fp-modes-in-vs2022/
+		# By default, MSVC doesn't enable the /fp:fast option.
 		set_cxx_flag("/fp:fast")
 	endif()
 
@@ -109,7 +113,13 @@ else()
 	endif()
 
 	if (USE_FAST_MATH)
-		set_cxx_flag("-ffast-math -fno-math-errno")
+		# By default, GCC uses -ffp-contract=fast with -std=gnu* and uses -ffp-contract=off with -std=c*.
+		# See https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html
+		# By default, GCC doesn't enable the -ffast-math option.
+		set_cxx_flag("-ffast-math -fno-math-errno -ffp-contract=fast")
+	else()
+		# By default, GCC uses -std=gnu* and then enables -ffp-contract=fast even if -ffast-math is not enabled.
+		set_cxx_flag("-ffp-contract=off")
 	endif()
 
 	# It should be done at the very end because it copies all compiler flags
