@@ -49,11 +49,7 @@ bool lzma_codec::pack(const void* p, uint n, crnlib::vector<uint8>& buf) {
                               -1, /* 0 <= lp <= 4, default = 0  */
                               -1, /* 0 <= pb <= 4, default = 2  */
                               -1, /* 5 <= fb <= 273, default = 32 */
-#ifdef WIN32
                               (g_number_of_processors > 1) ? 2 : 1
-#else
-                              1
-#endif
                               );
 
       if (status != SZ_ERROR_OUTPUT_EOF)
