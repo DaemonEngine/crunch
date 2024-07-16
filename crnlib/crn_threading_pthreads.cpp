@@ -33,8 +33,6 @@ void crn_threading_init() {
   g_number_of_processors = math::maximum<int>(1, sysconf(_SC_NPROCESSORS_ONLN));
 #elif defined(__GNUC__)
   g_number_of_processors = math::maximum<int>(1, get_nprocs());
-#else
-  g_number_of_processors = 1;
 #endif
   g_number_of_processors = math::minimum<int>(g_number_of_processors, task_pool::cMaxThreads);
 }
