@@ -52,7 +52,7 @@ build_script:
       set CXXFLAGS=/Wv:19.29.30037
 
       cmake -Wdev -G"%generator%" -A"%platform%" -S. -Bbuild -DCMAKE_CONFIGURATION_TYPES=Release
-      -DBUILD_CRUNCH=ON -DBUILD_SHARED_LIBCRN=ON -DBUILD_EXAMPLES=ON
+      -DBUILD_CRUNCH=ON -DBUILD_EXAMPLES=ON
       -DUSE_FAST_MATH=OFF
 
       cmake --build build --config Release

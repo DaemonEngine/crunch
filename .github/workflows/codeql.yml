@@ -75,7 +75,7 @@ jobs:
         export CMAKE_BUILD_PARALLEL_LEVEL="$(nproc)"
         echo "${CMAKE_BUILD_PARALLEL_LEVEL}"
         cmake -Wdev -S. -Bbuild -GNinja -DCMAKE_BUILD_TYPE=Release \
-          -DBUILD_CRUNCH=ON -DBUILD_SHARED_LIBCRN=ON -DBUILD_EXAMPLES=OFF
+          -DBUILD_CRUNCH=ON -DBUILD_EXAMPLES=OFF -DBUILD_SHARED_LIBS=ON
         cmake --build build
 
     - name: Perform CodeQL Analysis
