@@ -123,7 +123,7 @@ steps:
         cmake_args+=(-DCMAKE_CXX_FLAGS="${COMPILER_FLAGS}")
     fi
     if [ -z "${SOURCE_DIR:-}" ]; then
-        cmake_args+=(-DBUILD_CRUNCH=ON -DBUILD_SHARED_LIBCRN=ON -DBUILD_EXAMPLES=ON)
+        cmake_args+=(-DBUILD_CRUNCH=ON -DBUILD_EXAMPLES=ON -DBUILD_SHARED_LIBS=ON)
     fi
     cmake_args+=(-DUSE_FAST_MATH=OFF)
     cmake -S"${SOURCE_DIR:-.}" -Bbuild "${cmake_args[@]}"
