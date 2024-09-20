@@ -374,10 +374,10 @@ void dxt_hc::determine_tiles_task(uint64 data, void*) {
           }
         }
 
-        for (uint8 c = m_has_color_blocks ? 0 : cAlpha0; c < cAlpha0 + m_num_alpha_blocks; c++) {
-          for (uint8 e = 0; e < 8; e++) {
+        for (uint c = m_has_color_blocks ? 0 : cAlpha0; c < cAlpha0 + m_num_alpha_blocks; c++) {
+          for (uint e = 0; e < 8; e++) {
             total_error[c][e] = 0;
-            for (uint8 t = 0, s = e + 1; s; s >>= 1, t++)
+            for (uint t = 0, s = e + 1; s; s >>= 1, t++)
               total_error[c][e] += tile_error[c][tiles[e][t]];
           }
         }
