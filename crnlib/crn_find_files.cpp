@@ -233,17 +233,13 @@ bool find_files::find_internal(const char* pBasepath, const char* pRelpath, cons
       }
     }
 
-    if (!known) {
-      console::error("Cannot detect if the given path is a file or a directory");
-      return false;
-    }
-
-    if (!is_file && !is_directory) {
-      console::error("The given path is not a file neither a directory");
-      return false;
-    }
-
     dynamic_string filename(ep->d_name);
+    dynamic_string fullname = pathname + filename;
+
+    if (!known || (!is_file && !is_directory)) {
+      console::warning("Ignoring unsupported path: %s", fullname.get_ptr());
+      continue;
+    }
 
     if (is_directory) {
       if (flags & cFlagRecursive) {
@@ -259,7 +255,7 @@ bool find_files::find_internal(const char* pBasepath, const char* pRelpath, cons
         file.m_base = pBasepath;
         file.m_rel = pRelpath;
         file.m_name = filename;
-        file.m_fullname = pathname + filename;
+        file.m_fullname = fullname;
       }
     }
   }
