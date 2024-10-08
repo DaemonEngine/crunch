@@ -70,6 +70,17 @@ option(USE_LTO "Enable link-time optimization" OFF)
 # Enabling fast math makes generated images less likely to be reproducible.
 # See https://github.com/DaemonEngine/crunch/issues/29
 option(USE_FAST_MATH "Enable fast math (generated images are less likely to be reproducible)" ON)
+# Limit the maximum amount of threads at build time.
+# Using more than 4 threads (3 helper threads) makes generated images less
+# likely to be reproducible.
+set(USE_MAX_THREADS_DESCRIPTION "Maximum amount of threads to use (minimum: 2)")
+set(USE_MAX_THREADS "16" CACHE STRING "${USE_MAX_THREADS_DESCRIPTION}")
+
+if (USE_MAX_THREADS LESS "2")
+	set(USE_MAX_THREADS "2" CACHE STRING "${USE_MAX_THREADS_DESCRIPTION}" FORCE)
+endif()
+
+add_definitions(-DCRNLIB_MAX_THREADS=${USE_MAX_THREADS})
 
 if (MSVC)
 	# Enable MSVC parallel compilation.

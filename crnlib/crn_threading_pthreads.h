@@ -18,6 +18,10 @@
 #include <os/lock.h>
 #endif
 
+#if !defined(CRNLIB_MAX_THREADS)
+#define CRNLIB_MAX_THREADS 16
+#endif
+
 namespace crnlib {
 // g_number_of_processors defaults to 1. Will be higher on multicore machines.
 extern uint g_number_of_processors;
@@ -160,7 +164,7 @@ class task_pool {
   task_pool(uint num_threads);
   ~task_pool();
 
-  enum { cMaxThreads = 16 };
+  enum { cMaxThreads = CRNLIB_MAX_THREADS };
   bool init(uint num_threads);
   void deinit();
 

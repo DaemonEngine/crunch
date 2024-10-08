@@ -23,6 +23,10 @@
 #define CRNLIB_SUPPORT_ATI_COMPRESS 0
 #define CRNLIB_SUPPORT_SQUISH 0
 
+#if !defined(CRNLIB_MAX_THREADS)
+#define CRNLIB_MAX_THREADS 16
+#endif
+
 typedef unsigned char crn_uint8;
 typedef unsigned short crn_uint16;
 typedef unsigned int crn_uint32;
@@ -92,7 +96,7 @@ enum crn_limits {
   cCRNMaxFaces = 6,
   cCRNMaxLevels = 16,
 
-  cCRNMaxHelperThreads = 15,
+  cCRNMaxHelperThreads = CRNLIB_MAX_THREADS - 1,
 
   cCRNMinQualityLevel = 0,
   cCRNMaxQualityLevel = 255

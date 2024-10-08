@@ -8,6 +8,10 @@
 #error No atomic operations defined in lzham_platform.h!
 #endif
 
+#if !defined(CRNLIB_MAX_THREADS)
+#define CRNLIB_MAX_THREADS 16
+#endif
+
 namespace lzham {
 class semaphore {
   LZHAM_NO_COPY_OR_ASSIGNMENT_OP(semaphore);
@@ -160,7 +164,7 @@ class task_pool {
   task_pool(uint num_threads);
   ~task_pool();
 
-  enum { cMaxThreads = 16 };
+  enum { cMaxThreads = CRNLIB_MAX_THREADS };
   bool init(uint num_threads);
   void deinit();
 
