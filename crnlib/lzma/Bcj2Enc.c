@@ -486,7 +486,7 @@ void Bcj2Enc_Encode(CBcj2Enc *p)
       // (0 < p->tempPos <= 4)
       do
         p->temp[i] = src[i];
-      while (++i != rem);
+      while (++i != rem + 1);
     }
     // (p->tempPos <= 4)
     // (p->src == p->srcLim)
