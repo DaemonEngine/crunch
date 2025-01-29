@@ -70,12 +70,12 @@ strategy:
       CRUNCH_EXTENSION: .exe
       RUNTIME_FILES: /usr/lib/gcc/i686-w64-mingw32/10-posix/libgcc_s_dw2-1.dll /usr/lib/gcc/i686-w64-mingw32/10-posix/libstdc++-6.dll /usr/i686-w64-mingw32/lib/libwinpthread-1.dll
     macOS amd64 AppleClang:
-      VM_IMAGE: 'macOS-12'
+      VM_IMAGE: 'macOS-13'
       PIP_PACKAGES: colorama
       CMAKE_GENERATOR: Unix Makefiles
       NPROC_COMMAND: sysctl -n hw.logicalcpu
     macOS arm64 AppleClang:
-      VM_IMAGE: 'macOS-12'
+      VM_IMAGE: 'macOS-13'
       PIP_PACKAGES: colorama
       CMAKE_GENERATOR: Unix Makefiles
       COMPILER_FLAGS: -target arm64-apple-macos11 -Wno-overriding-t-option
