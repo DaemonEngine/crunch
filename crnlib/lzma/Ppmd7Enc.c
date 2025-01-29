@@ -58,7 +58,7 @@ Z7_FORCE_INLINE
 // Z7_NO_INLINE
 static void Ppmd7z_RangeEnc_Encode(CPpmd7 *p, UInt32 start, UInt32 size)
 {
-  R->Low += start * R->Range;
+  R->Low += (UInt64)start * (UInt64)R->Range;
   R->Range *= size;
   RC_NORM_LOCAL(p)
 }
