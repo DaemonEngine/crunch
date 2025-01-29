@@ -4,7 +4,7 @@
 #include "crn_lzma_codec.h"
 #include "crn_strutils.h"
 #include "crn_checksum.h"
-#include "lzma_LzmaLib.h"
+#include "lzma/LzmaLib.h"
 #include "crn_threading.h"
 
 namespace crnlib {
