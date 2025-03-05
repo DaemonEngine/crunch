@@ -63,7 +63,7 @@ endmacro()
 # This option decides if crunch is dynamically linked against libcrn.so
 # statically linked against libcrn.o, enabling it always build libcrn.so.
 # This option is a builtin CMake one, the name means “build executables
-# against shader libraries”, not “build the shared libraries”.
+# against shared libraries”, not “build the shared libraries”.
 option(BUILD_SHARED_LIBS "Link executables against shared library" OFF)
 # Always build libcrn.so even if crunch is linked to libcrn statically.
 option(BUILD_SHARED_LIBCRN "Build shared libcrn" OFF)
