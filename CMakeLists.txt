@@ -6,7 +6,7 @@ set(CRUNCH_PROJECT_NAME crunch)
 set(CRUNCH_LIBRARY_NAME crn)
 set(CRUNCH_EXE_NAME crunch)
 
-project(${CRUNCH_PROJECT_NAME} LANGUAGES CXX)
+project(${CRUNCH_PROJECT_NAME} LANGUAGES C CXX)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
 
@@ -30,12 +30,14 @@ if (Git_FOUND)
 	endif()
 endif()
 
-macro(set_cxx_flag FLAG)
-	if (${ARGC} GREATER 1)
-		set(CMAKE_CXX_FLAGS_${ARGV1} "${CMAKE_CXX_FLAGS_${ARGV1}} ${FLAG}")
-	else()
-		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${FLAG}")
-	endif()
+macro(set_c_cxx_flag FLAG)
+	foreach(lang C CXX)
+		if (${ARGC} GREATER 1)
+			set(CMAKE_${lang}_FLAGS_${ARGV1} "${CMAKE_${lang}_FLAGS_${ARGV1}} ${FLAG}")
+		else()
+			set(CMAKE_${lang}_FLAGS "${CMAKE_${lang}_FLAGS} ${FLAG}")
+		endif()
+	endforeach()
 endmacro()
 
 macro(set_linker_flag FLAG)
@@ -73,7 +75,7 @@ option(USE_FAST_MATH "Enable fast math (generated images are less likely to be r
 
 if (MSVC)
 	# Enable MSVC parallel compilation.
-	set_cxx_flag("/MP")
+	set_c_cxx_flag("/MP")
 
 	# MSVC doesn't implement strict aliasing so there is nothing else to do.
 	
@@ -84,50 +86,50 @@ if (MSVC)
 		# See https://learn.microsoft.com/en-us/cpp/build/reference/fp-specify-floating-point-behavior
 		# and https://devblogs.microsoft.com/cppblog/the-fpcontract-flag-and-changes-to-fp-modes-in-vs2022/
 		# By default, MSVC doesn't enable the /fp:fast option.
-		set_cxx_flag("/fp:fast")
+		set_c_cxx_flag("/fp:fast")
 	endif()
 
 	if (USE_LTO)
-		set_cxx_flag("/GL" RELEASE)
-		set_cxx_flag("/GL" RELWITHDEBINFO)
-		set_cxx_flag("/GL" MINSIZEREL)
+		set_c_cxx_flag("/GL" RELEASE)
+		set_c_cxx_flag("/GL" RELWITHDEBINFO)
+		set_c_cxx_flag("/GL" MINSIZEREL)
 		set_linker_flag("/LTCG" RELEASE)
 		set_linker_flag("/LTCG" RELWITHDEBINFO)
 		set_linker_flag("/LTCG" MINSIZEREL)
 	endif()
 else()
 	# As written in crnlib.h and stb_image.h, strict aliasing should always be disabled.
-	set_cxx_flag("-fno-strict-aliasing")
+	set_c_cxx_flag("-fno-strict-aliasing")
 
 	# Generate maxmimum amount of debug information, including macro definitions.
-	set_cxx_flag("-g3" DEBUG)
-	set_cxx_flag("-g3" RELWITHDEBINFO)
+	set_c_cxx_flag("-g3" DEBUG)
+	set_c_cxx_flag("-g3" RELWITHDEBINFO)
 
-	set_cxx_flag("-pthread")
+	set_c_cxx_flag("-pthread")
 	set_linker_flag("-pthread")
 
 	if (USE_EXTRA_OPTIMIZATION)
 		# CMake already sets the -O3 flag on Release build and -O[1-3s] already sets the -fomit-frame-pointer flag.
-		set_cxx_flag("-Og" DEBUG)
-		set_cxx_flag("-O3" RELWITHDEBINFO)
+		set_c_cxx_flag("-Og" DEBUG)
+		set_c_cxx_flag("-O3" RELWITHDEBINFO)
 	endif()
 
 	if (USE_FAST_MATH)
 		# By default, GCC uses -ffp-contract=fast with -std=gnu* and uses -ffp-contract=off with -std=c*.
 		# See https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html
 		# By default, GCC doesn't enable the -ffast-math option.
-		set_cxx_flag("-ffast-math -fno-math-errno -ffp-contract=fast")
+		set_c_cxx_flag("-ffast-math -fno-math-errno -ffp-contract=fast")
 	else()
 		# By default, GCC uses -std=gnu* and then enables -ffp-contract=fast even if -ffast-math is not enabled.
-		set_cxx_flag("-ffp-contract=off")
+		set_c_cxx_flag("-ffp-contract=off")
 	endif()
 
 	# It should be done at the very end because it copies all compiler flags
 	# to the linker flags.
 	if (USE_LTO)
-		set_cxx_flag("-flto" RELEASE)
-		set_cxx_flag("-flto" RELWITHDEBINFO)
-		set_cxx_flag("-flto" MINSIZEREL)
+		set_c_cxx_flag("-flto" RELEASE)
+		set_c_cxx_flag("-flto" RELWITHDEBINFO)
+		set_c_cxx_flag("-flto" MINSIZEREL)
 		set_linker_flag("${CMAKE_CXX_FLAGS}" RELEASE)
 		set_linker_flag("${CMAKE_CXX_FLAGS}" RELWITHDEBINFO)
 		set_linker_flag("${CMAKE_CXX_FLAGS}" MINSIZEREL)

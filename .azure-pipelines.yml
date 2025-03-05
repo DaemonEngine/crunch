@@ -28,20 +28,24 @@ strategy:
     Linux amd64 GCC:
       VM_IMAGE: 'ubuntu-20.04'
       APT_PACKAGES: ninja-build g++-8
+      C_COMPILER: gcc-8
       CXX_COMPILER: g++-8
     Linux i686 GCC:
       VM_IMAGE: 'ubuntu-20.04'
       APT_PACKAGES: ninja-build g++-i686-linux-gnu
+      C_COMPILER: i686-linux-gnu-gcc
       CXX_COMPILER: i686-linux-gnu-g++
       COMPILER_FLAGS: -mfpmath=sse -msse
     Linux arm64 GCC:
       VM_IMAGE: 'ubuntu-20.04'
       APT_PACKAGES: ninja-build g++-aarch64-linux-gnu qemu-user
+      C_COMPILER: aarch64-linux-gnu-gcc
       CXX_COMPILER: aarch64-linux-gnu-g++
       CRUNCH_EXE_RUNNER: qemu-aarch64 -L /usr/aarch64-linux-gnu
     Linux armhf GCC:
       VM_IMAGE: 'ubuntu-20.04'
       APT_PACKAGES: ninja-build g++-arm-linux-gnueabihf qemu-user
+      C_COMPILER: arm-linux-gnueabihf-gcc
       CXX_COMPILER: arm-linux-gnueabihf-g++
       CRUNCH_EXE_RUNNER: qemu-arm -L /usr/arm-linux-gnueabihf
       # There is a qemu-arm IO bug in ubuntu-20.04 and ubuntu-22.04,
@@ -50,6 +54,7 @@ strategy:
     Linux amd64 Clang:
       VM_IMAGE: 'ubuntu-20.04'
       APT_PACKAGES: ninja-build
+      C_COMPILER: clang
       CXX_COMPILER: clang++
     Windows amd64 MinGW:
       VM_IMAGE: 'ubuntu-22.04'
@@ -116,11 +121,14 @@ steps:
     if [ -n "${TOOLCHAIN_FILE:-}" ]; then
         cmake_args+=(-DCMAKE_TOOLCHAIN_FILE="${TOOLCHAIN_FILE}")
     fi
+    if [ -n "${C_COMPILER:-}" ]; then
+        cmake_args+=(-DCMAKE_C_COMPILER="${C_COMPILER}")
+    fi
     if [ -n "${CXX_COMPILER:-}" ]; then
         cmake_args+=(-DCMAKE_CXX_COMPILER="${CXX_COMPILER}")
     fi
     if [ -n "${COMPILER_FLAGS:-}" ]; then
-        cmake_args+=(-DCMAKE_CXX_FLAGS="${COMPILER_FLAGS}")
+        cmake_args+=(-DCMAKE_C_FLAGS="${COMPILER_FLAGS}" -DCMAKE_CXX_FLAGS="${COMPILER_FLAGS}")
     fi
     if [ -z "${SOURCE_DIR:-}" ]; then
         cmake_args+=(-DBUILD_CRUNCH=ON -DBUILD_EXAMPLES=ON -DBUILD_SHARED_LIBS=ON)
