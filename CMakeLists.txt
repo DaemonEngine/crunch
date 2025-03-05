@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.5)
 
 set(CMAKE_CXX_STANDARD 11)
 
+include(CheckCXXCompilerFlag)
+
 set(CRUNCH_PROJECT_NAME crunch)
 set(CRUNCH_LIBRARY_NAME crn)
 set(CRUNCH_EXE_NAME crunch)
@@ -50,10 +52,18 @@ macro(set_linker_flag FLAG)
 	endif()
 endmacro()
 
+macro(try_cxx_flag PROP FLAG)
+	check_CXX_compiler_flag(${FLAG} FLAG_${FLAG})
+
+	if (FLAG_${FLAG})
+		set_cxx_flag(${FLAG})
+	endif()
+endmacro()
+
 # This option decides if crunch is dynamically linked against libcrn.so
 # statically linked against libcrn.o, enabling it always build libcrn.so.
 # This option is a builtin CMake one, the name means “build executables
-# against shader libraries”, not “build the shared libraries”.
+# against shared libraries”, not “build the shared libraries”.
 option(BUILD_SHARED_LIBS "Link executables against shared library" OFF)
 # Always build libcrn.so even if crunch is linked to libcrn statically.
 option(BUILD_SHARED_LIBCRN "Build shared libcrn" OFF)
@@ -85,15 +95,14 @@ if (MSVC)
 		# and https://devblogs.microsoft.com/cppblog/the-fpcontract-flag-and-changes-to-fp-modes-in-vs2022/
 		# By default, MSVC doesn't enable the /fp:fast option.
 		set_cxx_flag("/fp:fast")
+	else()
+		# Precise model does safe contractions.
+		set_cxx_flag("/fp:precise")
 	endif()
 
 	if (USE_LTO)
-		set_cxx_flag("/GL" RELEASE)
-		set_cxx_flag("/GL" RELWITHDEBINFO)
-		set_cxx_flag("/GL" MINSIZEREL)
-		set_linker_flag("/LTCG" RELEASE)
-		set_linker_flag("/LTCG" RELWITHDEBINFO)
-		set_linker_flag("/LTCG" MINSIZEREL)
+		set_cxx_flag("/GL")
+		set_linker_flag("/LTCG")
 	endif()
 else()
 	# As written in crnlib.h and stb_image.h, strict aliasing should always be disabled.
@@ -112,22 +121,39 @@ else()
 		set_cxx_flag("-O3" RELWITHDEBINFO)
 	endif()
 
+	try_cxx_flag(FNO_MATH_ERRNO "-fno-math-errno")
+
 	if (USE_FAST_MATH)
-		# By default, GCC uses -ffp-contract=fast with -std=gnu* and uses -ffp-contract=off with -std=c*.
-		# See https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html
-		# By default, GCC doesn't enable the -ffast-math option.
-		set_cxx_flag("-ffast-math -fno-math-errno -ffp-contract=fast")
+		# GCC.
+		try_cxx_flag(FFAST_MATH "-ffast-math")
+		try_cxx_flag(FFP_CONTRACT_FAST "-ffp-contract=fast")
+		# Clang.
+		try_cxx_flag(FFP_MODEL_FAST "-ffp-model=agressive")
+		# ICC.
+		try_cxx_flag(FP_MODEL_FAST_2 "-fp-model=fast=2")
 	else()
+		# By default, GCC uses -ffp-contract=fast with -std=gnu* and uses -ffp-contract=off with -std=c*.
 		# By default, GCC uses -std=gnu* and then enables -ffp-contract=fast even if -ffast-math is not enabled.
-		set_cxx_flag("-ffp-contract=off")
+		# See https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html
+		# GCC. This still does safe contractions.
+		try_cxx_flag(FNO_FAST_MATH "-fno-fast-math")
+		try_cxx_flag(FFP_CONTRACT_FAST "-ffp-contract=fast")
+		# Clang. Precise model does safe contractions.
+		try_cxx_flag(FFP_MODEL_PRECISE "-ffp-model=precise")
+		# ICC. Precise model does safe contractions.
+		try_cxx_flag(FP_MODEL_PRECISE "-fp-model=precise")
+		try_cxx_flag(QSMID_HONOR_FP_MODEL "-qsimd-honor-fp-model")
 	endif()
 
 	# It should be done at the very end because it copies all compiler flags
 	# to the linker flags.
 	if (USE_LTO)
-		set_cxx_flag("-flto" RELEASE)
-		set_cxx_flag("-flto" RELWITHDEBINFO)
-		set_cxx_flag("-flto" MINSIZEREL)
+		try_cxx_flag(FLTO_AUTO "-flto=auto")
+
+		if (NOT FLAG_FLTO_AUTO)
+			try_cxx_flag(FLTO "-flto")
+		endif()
+
 		set_linker_flag("${CMAKE_CXX_FLAGS}" RELEASE)
 		set_linker_flag("${CMAKE_CXX_FLAGS}" RELWITHDEBINFO)
 		set_linker_flag("${CMAKE_CXX_FLAGS}" MINSIZEREL)
