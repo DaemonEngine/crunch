@@ -53,7 +53,6 @@ build_script:
 
       cmake -Wdev -G"%generator%" -A"%platform%" -S. -Bbuild -DCMAKE_CONFIGURATION_TYPES=Release
       -DBUILD_CRUNCH=ON -DBUILD_EXAMPLES=ON
-      -DUSE_FAST_MATH=OFF
 
       cmake --build build --config Release
 
