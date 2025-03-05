@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.5)
 
 set(CMAKE_CXX_STANDARD 11)
 
+include(CheckCXXCompilerFlag)
+
 set(CRUNCH_PROJECT_NAME crunch)
 set(CRUNCH_LIBRARY_NAME crn)
 set(CRUNCH_EXE_NAME crunch)
@@ -52,10 +54,24 @@ macro(set_linker_flag FLAG)
 	endif()
 endmacro()
 
+macro(test_c_cxx_flag PROP FLAG)
+	# HACK: It only checks for C++ but will be used for both C++ and C.
+	# If more precision is needed, the check functions can be used directly.
+	check_CXX_compiler_flag(${FLAG} FLAG_${PROP})
+endmacro()
+
+macro(try_c_cxx_flag PROP FLAG)
+	test_c_cxx_flag(${PROP} ${FLAG})
+
+	if (FLAG_${PROP})
+		set_c_cxx_flag(${FLAG})
+	endif()
+endmacro()
+
 # This option decides if crunch is dynamically linked against libcrn.so
 # statically linked against libcrn.o, enabling it always build libcrn.so.
 # This option is a builtin CMake one, the name means “build executables
-# against shader libraries”, not “build the shared libraries”.
+# against shared libraries”, not “build the shared libraries”.
 option(BUILD_SHARED_LIBS "Link executables against shared library" OFF)
 # Always build libcrn.so even if crunch is linked to libcrn statically.
 option(BUILD_SHARED_LIBCRN "Build shared libcrn" OFF)
@@ -91,6 +107,9 @@ if (MSVC)
 		# and https://devblogs.microsoft.com/cppblog/the-fpcontract-flag-and-changes-to-fp-modes-in-vs2022/
 		# By default, MSVC doesn't enable the /fp:fast option.
 		set_c_cxx_flag("/fp:fast")
+	else()
+		# Precise model (/fp:precise) should do safe contractions (see below for a definition of “safe”).
+		set_c_cxx_flag("/fp:precise")
 	endif()
 
 	if (USE_LTO)
@@ -118,22 +137,58 @@ else()
 		set_c_cxx_flag("-O3" RELWITHDEBINFO)
 	endif()
 
+	try_c_cxx_flag(FNO_MATH_ERRNO "-fno-math-errno")
+
 	if (USE_FAST_MATH)
-		# By default, GCC uses -ffp-contract=fast with -std=gnu* and uses -ffp-contract=off with -std=c*.
-		# See https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html
-		# By default, GCC doesn't enable the -ffast-math option.
-		set_c_cxx_flag("-ffast-math -fno-math-errno -ffp-contract=fast")
+		try_c_cxx_flag(FFAST_MATH "-ffast-math")
+
+		# GCC.
+		try_c_cxx_flag(FFP_CONTRACT_FAST "-ffp-contract=fast")
+		# Clang.
+		try_c_cxx_flag(FFP_MODEL_FAST "-ffp-model=agressive")
+		# ICC.
+		try_c_cxx_flag(FP_MODEL_FAST_2 "-fp-model=fast=2")
+		try_c_cxx_flag(QSIMD_HONOR_FP_MODEL "-qsimd-honor-fp-model")
 	else()
+		try_c_cxx_flag(FNO_FAST_MATH "-fno-fast-math")
+
+		# By default, GCC uses -ffp-contract=fast with -std=gnu* and uses -ffp-contract=off with -std=c*.
 		# By default, GCC uses -std=gnu* and then enables -ffp-contract=fast even if -ffast-math is not enabled.
-		set_c_cxx_flag("-ffp-contract=off")
+		# See https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html
+		# GCC fast contractions (-ffp-contract=fast) should be safe, but aren't on arm64 with GCC 12.
+		# Clang precise contractions (-ffp-contract=precise) should be safe, but aren't on arm64 with Clang 14.
+		# Here the “safe” adjective carries the meaning used by GCC for options like -funsafe-math-optimizations.
+		# In such context “safe” means that after optimization float operations are expected to produce the exact
+		# same results. # See: https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html
+
+		# GCC.
+		try_c_cxx_flag(FFP_CONTRACT_OFF "-ffp-contract=off")
+		# Clang
+		try_c_cxx_flag(FFP_MODEL_STRICT "-ffp-model=strict")
+		# ICC.
+		try_c_cxx_flag(FP_MODEL_STRICT "-fp-model=strict")
+		try_c_cxx_flag(QSIMD_HONOR_FP_MODEL "-qsimd-honor-fp-model")
 	endif()
 
 	# It should be done at the very end because it copies all compiler flags
 	# to the linker flags.
 	if (USE_LTO)
-		set_c_cxx_flag("-flto" RELEASE)
-		set_c_cxx_flag("-flto" RELWITHDEBINFO)
-		set_c_cxx_flag("-flto" MINSIZEREL)
+		test_c_cxx_flag(FLTO_AUTO "-flto=auto")
+
+		if (FLAG_FLTO_AUTO)
+			set_c_cxx_flag("-flto=auto" RELEASE)
+			set_c_cxx_flag("-flto=auto" RELWITHDEBINFO)
+			set_c_cxx_flag("-flto=auto" MINSIZEREL)
+		else()
+			test_c_cxx_flag(FLTO "-flto")
+
+			if (FLAG_FLTO)
+				set_c_cxx_flag("-flto" RELEASE)
+				set_c_cxx_flag("-flto" RELWITHDEBINFO)
+				set_c_cxx_flag("-flto" MINSIZEREL)
+			endif()
+		endif()
+
 		set_linker_flag("${CMAKE_CXX_FLAGS}" RELEASE)
 		set_linker_flag("${CMAKE_CXX_FLAGS}" RELWITHDEBINFO)
 		set_linker_flag("${CMAKE_CXX_FLAGS}" MINSIZEREL)
