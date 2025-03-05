@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.5)
 
 set(CMAKE_CXX_STANDARD 11)
 
+include(CheckCXXCompilerFlag)
+
 set(CRUNCH_PROJECT_NAME crunch)
 set(CRUNCH_LIBRARY_NAME crn)
 set(CRUNCH_EXE_NAME crunch)
@@ -50,6 +52,14 @@ macro(set_linker_flag FLAG)
 	endif()
 endmacro()
 
+macro(try_cxx_flag PROP FLAG)
+	check_CXX_compiler_flag(${FLAG} FLAG_${FLAG})
+
+	if (FLAG_${FLAG})
+		set_cxx_flag(${FLAG})
+	endif()
+endmacro()
+
 # This option decides if crunch is dynamically linked against libcrn.so
 # statically linked against libcrn.o, enabling it always build libcrn.so.
 # This option is a builtin CMake one, the name means “build executables
@@ -88,12 +98,8 @@ if (MSVC)
 	endif()
 
 	if (USE_LTO)
-		set_cxx_flag("/GL" RELEASE)
-		set_cxx_flag("/GL" RELWITHDEBINFO)
-		set_cxx_flag("/GL" MINSIZEREL)
-		set_linker_flag("/LTCG" RELEASE)
-		set_linker_flag("/LTCG" RELWITHDEBINFO)
-		set_linker_flag("/LTCG" MINSIZEREL)
+		set_cxx_flag("/GL")
+		set_linker_flag("/LTCG")
 	endif()
 else()
 	# As written in crnlib.h and stb_image.h, strict aliasing should always be disabled.
@@ -125,9 +131,12 @@ else()
 	# It should be done at the very end because it copies all compiler flags
 	# to the linker flags.
 	if (USE_LTO)
-		set_cxx_flag("-flto" RELEASE)
-		set_cxx_flag("-flto" RELWITHDEBINFO)
-		set_cxx_flag("-flto" MINSIZEREL)
+		try_cxx_flag(FLTO_AUTO "-flto=auto")
+
+		if (NOT FLAG_FLTO_AUTO)
+			try_cxx_flag(FLTO "-flto")
+		endif()
+
 		set_linker_flag("${CMAKE_CXX_FLAGS}" RELEASE)
 		set_linker_flag("${CMAKE_CXX_FLAGS}" RELWITHDEBINFO)
 		set_linker_flag("${CMAKE_CXX_FLAGS}" MINSIZEREL)
