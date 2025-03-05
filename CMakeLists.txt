@@ -95,6 +95,9 @@ if (MSVC)
 		# and https://devblogs.microsoft.com/cppblog/the-fpcontract-flag-and-changes-to-fp-modes-in-vs2022/
 		# By default, MSVC doesn't enable the /fp:fast option.
 		set_cxx_flag("/fp:fast")
+	else()
+		# Precise model does safe contractions.
+		set_cxx_flag("/fp:precise")
 	endif()
 
 	if (USE_LTO)
@@ -118,14 +121,28 @@ else()
 		set_cxx_flag("-O3" RELWITHDEBINFO)
 	endif()
 
+	try_cxx_flag(FNO_MATH_ERRNO "-fno-math-errno")
+
 	if (USE_FAST_MATH)
-		# By default, GCC uses -ffp-contract=fast with -std=gnu* and uses -ffp-contract=off with -std=c*.
-		# See https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html
-		# By default, GCC doesn't enable the -ffast-math option.
-		set_cxx_flag("-ffast-math -fno-math-errno -ffp-contract=fast")
+		# GCC.
+		try_cxx_flag(FFAST_MATH "-ffast-math")
+		try_cxx_flag(FFP_CONTRACT_FAST "-ffp-contract=fast")
+		# Clang.
+		try_cxx_flag(FFP_MODEL_FAST "-ffp-model=agressive")
+		# ICC.
+		try_cxx_flag(FP_MODEL_FAST_2 "-fp-model=fast=2")
 	else()
+		# By default, GCC uses -ffp-contract=fast with -std=gnu* and uses -ffp-contract=off with -std=c*.
 		# By default, GCC uses -std=gnu* and then enables -ffp-contract=fast even if -ffast-math is not enabled.
-		set_cxx_flag("-ffp-contract=off")
+		# See https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html
+		# GCC. This still does safe contractions.
+		try_cxx_flag(FNO_FAST_MATH "-fno-fast-math")
+		try_cxx_flag(FFP_CONTRACT_FAST "-ffp-contract=fast")
+		# Clang. Precise model does safe contractions.
+		try_cxx_flag(FFP_MODEL_PRECISE "-ffp-model=precise")
+		# ICC. Precise model does safe contractions.
+		try_cxx_flag(FP_MODEL_PRECISE "-fp-model=precise")
+		try_cxx_flag(QSMID_HONOR_FP_MODEL "-qsimd-honor-fp-model")
 	endif()
 
 	# It should be done at the very end because it copies all compiler flags
