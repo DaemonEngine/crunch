@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.5)
 
 set(CMAKE_CXX_STANDARD 11)
 
+include(CheckCXXCompilerFlag)
+
 set(CRUNCH_PROJECT_NAME crunch)
 set(CRUNCH_LIBRARY_NAME crn)
 set(CRUNCH_EXE_NAME crunch)
@@ -47,6 +49,14 @@ macro(set_linker_flag FLAG)
 		set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${FLAG}")
 		set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${FLAG}")
 		set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} ${FLAG}")
+	endif()
+endmacro()
+
+macro(try_cxx_flag PROP FLAG)
+	check_CXX_compiler_flag(${FLAG} FLAG_${PROP})
+
+	if (FLAG_${PROP})
+		set_cxx_flag(${FLAG})
 	endif()
 endmacro()
 
@@ -125,9 +135,12 @@ else()
 	# It should be done at the very end because it copies all compiler flags
 	# to the linker flags.
 	if (USE_LTO)
-		set_cxx_flag("-flto" RELEASE)
-		set_cxx_flag("-flto" RELWITHDEBINFO)
-		set_cxx_flag("-flto" MINSIZEREL)
+		try_cxx_flag(FLTO_AUTO "-flto=auto")
+
+		if (NOT FLAG_FLTO_AUTO)
+			try_cxx_flag(FLTO "-flto")
+		endif()
+
 		set_linker_flag("${CMAKE_CXX_FLAGS}" RELEASE)
 		set_linker_flag("${CMAKE_CXX_FLAGS}" RELWITHDEBINFO)
 		set_linker_flag("${CMAKE_CXX_FLAGS}" MINSIZEREL)
