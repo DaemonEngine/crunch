@@ -53,7 +53,7 @@ class clusterizer {
       root.m_total_weight += weight;
       root.m_vectors.push_back(i);
 
-      ttsum += v.dot(v) * weight;
+      ttsum += (double)v.dot(v) * (double)weight;
     }
 
     root.m_variance = (float)(ttsum - (root.m_centroid.dot(root.m_centroid) / root.m_total_weight));
@@ -409,7 +409,7 @@ class clusterizer {
         double sum = 0;
 
         for (uint j = 0; j < N; j++)
-          sum += axis[j] * covar[i][j];
+          sum += static_cast<double>(axis[j]) * static_cast<double>(covar[i][j]);
 
         x[i] = static_cast<float>(sum);
 
@@ -629,14 +629,14 @@ class clusterizer {
           new_left_child += (v * (float)weight);
           left_weight += weight;
 
-          left_ttsum += v.dot(v) * weight;
+          left_ttsum += (double)v.dot(v) * (double)weight;
         } else {
           m_right_children.push_back(parent_node.m_vectors[i]);
 
           new_right_child += (v * (float)weight);
           right_weight += weight;
 
-          right_ttsum += v.dot(v) * weight;
+          right_ttsum += (double)v.dot(v) * (double)weight;
         }
       }
 
