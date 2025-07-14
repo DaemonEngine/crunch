@@ -1456,7 +1456,7 @@ class decoder_tables {
 
     clear();
 
-    memcpy(this, &other, sizeof(*this));
+    memcpy((void*) this, &other, sizeof(*this));
 
     if (other.m_lookup) {
       m_lookup = crnd_new_array<uint32>(m_cur_lookup_size);
