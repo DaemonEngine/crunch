@@ -40,13 +40,11 @@ strategy:
       CXX_COMPILER: aarch64-linux-gnu-g++
       CRUNCH_EXE_RUNNER: qemu-aarch64 -L /usr/aarch64-linux-gnu
     Linux armhf GCC:
-      VM_IMAGE: 'ubuntu-22.04'
+      # There is an IO bug in qemu-arm from ubuntu-22.04.
+      VM_IMAGE: 'ubuntu-24.04'
       APT_PACKAGES: ninja-build g++-arm-linux-gnueabihf qemu-user
       CXX_COMPILER: arm-linux-gnueabihf-g++
       CRUNCH_EXE_RUNNER: qemu-arm -L /usr/arm-linux-gnueabihf
-      # There is a qemu-arm IO bug in ubuntu-22.04,
-      # remove when ubuntu-24.04 is available.
-      CRUNCH_SIMPLE_TEST: true
     Linux amd64 Clang:
       VM_IMAGE: 'ubuntu-22.04'
       APT_PACKAGES: ninja-build
