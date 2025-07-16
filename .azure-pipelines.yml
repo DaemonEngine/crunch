@@ -26,29 +26,29 @@ pr:
 strategy:
   matrix:
     Linux amd64 GCC:
-      VM_IMAGE: 'ubuntu-20.04'
-      APT_PACKAGES: ninja-build g++-8
-      CXX_COMPILER: g++-8
+      VM_IMAGE: 'ubuntu-22.04'
+      APT_PACKAGES: ninja-build g++-10
+      CXX_COMPILER: g++-10
     Linux i686 GCC:
-      VM_IMAGE: 'ubuntu-20.04'
+      VM_IMAGE: 'ubuntu-22.04'
       APT_PACKAGES: ninja-build g++-i686-linux-gnu
       CXX_COMPILER: i686-linux-gnu-g++
       COMPILER_FLAGS: -mfpmath=sse -msse
     Linux arm64 GCC:
-      VM_IMAGE: 'ubuntu-20.04'
+      VM_IMAGE: 'ubuntu-22.04'
       APT_PACKAGES: ninja-build g++-aarch64-linux-gnu qemu-user
       CXX_COMPILER: aarch64-linux-gnu-g++
       CRUNCH_EXE_RUNNER: qemu-aarch64 -L /usr/aarch64-linux-gnu
     Linux armhf GCC:
-      VM_IMAGE: 'ubuntu-20.04'
+      VM_IMAGE: 'ubuntu-22.04'
       APT_PACKAGES: ninja-build g++-arm-linux-gnueabihf qemu-user
       CXX_COMPILER: arm-linux-gnueabihf-g++
       CRUNCH_EXE_RUNNER: qemu-arm -L /usr/arm-linux-gnueabihf
-      # There is a qemu-arm IO bug in ubuntu-20.04 and ubuntu-22.04,
+      # There is a qemu-arm IO bug in ubuntu-22.04,
       # remove when ubuntu-24.04 is available.
       CRUNCH_SIMPLE_TEST: true
     Linux amd64 Clang:
-      VM_IMAGE: 'ubuntu-20.04'
+      VM_IMAGE: 'ubuntu-22.04'
       APT_PACKAGES: ninja-build
       CXX_COMPILER: clang++
     Windows amd64 MinGW:
