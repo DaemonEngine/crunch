@@ -71,6 +71,10 @@ option(USE_LTO "Enable link-time optimization" OFF)
 # See https://github.com/DaemonEngine/crunch/issues/29
 option(USE_FAST_MATH "Enable fast math (generated images are less likely to be reproducible)" OFF)
 
+if (BUILD_STATIC_LIBCRN)
+	option(INSTALL_STATIC_LIBS "Install static libraries" OFF)
+endif()
+
 if (MSVC)
 	# Enable MSVC parallel compilation.
 	set_cxx_flag("/MP")
