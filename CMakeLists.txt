@@ -72,7 +72,7 @@ option(USE_LTO "Enable link-time optimization" OFF)
 option(USE_FAST_MATH "Enable fast math (generated images are less likely to be reproducible)" OFF)
 
 if (BUILD_STATIC_LIBCRN)
-	option(INSTALL_STATIC_LIBS "Install static libraries" OFF)
+	option(INSTALL_STATIC_LIBCRN "Install static libraries" OFF)
 endif()
 
 if (MSVC)
