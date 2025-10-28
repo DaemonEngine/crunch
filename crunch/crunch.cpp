@@ -166,7 +166,7 @@ class crunch {
     console::printf("-forceprimaryencoding - Only use DXT1 color4 and DXT5 alpha8 block encodings.");
     console::printf("-usetransparentindicesforblack - Try DXT1 transparent indices for dark pixels.");
 
-    console::message("\nOuptut pixel format options:");
+    console::message("\nOutput pixel format options:");
     console::printf("-usesourceformat - Use input file's format for output format (when possible).");
     console::message("\nAll supported texture formats (Note: .CRN only supports DXTn pixel formats):");
     for (uint32 i = 0; i < pixel_format_helpers::get_num_formats(); i++) {
