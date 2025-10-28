@@ -20,3 +20,8 @@ target_link_libraries(${CRUNCH_EXE_NAME} ${CRUNCH_LIBRARY_NAME} ${CMAKE_THREAD_L
 
 install(TARGETS ${CRUNCH_EXE_NAME} DESTINATION bin)
 set_property(TARGET ${CRUNCH_EXE_NAME} PROPERTY POSITION_INDEPENDENT_CODE 1)
+
+if (UNIX)
+    include(GNUInstallDirs)
+    install(FILES crunch.1 DESTINATION ${CMAKE_INSTALL_MANDIR}/man1)
+endif ()
