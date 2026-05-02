@@ -3,6 +3,8 @@
 #include "crn_core.h"
 #include "crn_threading_pthreads.h"
 #include "crn_timer.h"
+#include <atomic>
+#include <unistd.h>
 
 #if CRNLIB_USE_PTHREADS_API
 
@@ -104,15 +106,17 @@ semaphore::semaphore(long initialCount, long maximumCount, const char* pName) {
     CRNLIB_FAIL("semaphore: sem_init() failed");
   }
 #else
-  m_name = pName ? pName : "semaphore";
-  for(int i = 0; i < 256; i++) {
-      m_sem = sem_open(m_name, O_CREAT | O_EXCL, 0644, initialCount);
-      if (m_sem != SEM_FAILED)
-      {
-        break;
-      }
-      sem_unlink(m_name);
-  }
+  // Generate a per-instance unique name. The previous code used a fixed
+  // name ("semaphore") for every instance and relied on sem_unlink+retry,
+  // which raced against concurrent constructors using the same name.
+  static std::atomic<unsigned int> s_counter{0};
+  unsigned int idx = s_counter.fetch_add(1u);
+  char buf[64];
+  snprintf(buf, sizeof(buf), "/crn_%d_%u", (int)getpid(), idx);
+  m_name = strdup(buf);
+  (void)pName;
+  sem_unlink(m_name);
+  m_sem = sem_open(m_name, O_CREAT | O_EXCL, 0644, initialCount);
   if (m_sem == SEM_FAILED)
   {
       CRNLIB_FAIL("semaphore: sem_open() failed");
@@ -124,7 +128,9 @@ semaphore::~semaphore() {
 #if !defined(__APPLE__)
   sem_destroy(m_sem);
 #else
+  sem_close(m_sem);
   sem_unlink(m_name);
+  free(const_cast<char*>(m_name));
 #endif
 }
 
