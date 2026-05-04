@@ -570,9 +570,9 @@ bool resample_multithreaded(const image_u8& src, image_u8& dst, const resample_p
     return false;
 
   p.m_pSrc_pixels = src_samples.get_ptr();
-  p.m_src_pitch = src_width * resampler_comps * sizeof(float);
+  p.m_src_pitch = (size_t)src_width * (size_t)resampler_comps * sizeof(float);
   p.m_pDst_pixels = dst_samples.get_ptr();
-  p.m_dst_pitch = dst_width * resampler_comps * sizeof(float);
+  p.m_dst_pitch = (size_t)dst_width * (size_t)resampler_comps * sizeof(float);
 
   for (uint src_y = 0; src_y < src_height; src_y++) {
     const color_quad_u8* pSrc = src.get_scanline(src_y);

@@ -219,7 +219,7 @@ class threaded_clusterizer {
         double sum = 0;
 
         for (uint j = 0; j < N; j++)
-          sum += axis[j] * covar[i][j];
+          sum += static_cast<double>(axis[j]) * static_cast<double>(covar[i][j]);
 
         x[i] = static_cast<float>(sum);
 

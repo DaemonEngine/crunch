@@ -151,9 +151,9 @@ void dxt1_endpoint_optimizer::compute_pca(vec3F& axis, const vec3F_array& norm_c
   double cov[6] = {0, 0, 0, 0, 0, 0};
   for (uint i = 0; i < norm_colors.size(); i++) {
     const vec3F& v = norm_colors[i];
-    float r = v[0];
-    float g = v[1];
-    float b = v[2];
+    double r = (double)v[0];
+    double g = (double)v[1];
+    double b = (double)v[2];
     if (m_unique_colors[i].m_weight > 1) {
       const double weight = m_unique_colors[i].m_weight;
       cov[0] += r * r * weight;

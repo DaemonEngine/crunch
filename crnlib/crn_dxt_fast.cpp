@@ -413,7 +413,7 @@ static bool refine_endpoints(uint n, const color_quad_u8* pBlock, uint& low16, u
           for (uint i = 0; i < n; i++) {
             const color_quad_u8& p = pBlock[i];
 
-            int e = v[pSelectors[i]] - p[axis];
+            uint64 e = v[pSelectors[i]] - p[axis];
 
             axis_error += e * e;
 

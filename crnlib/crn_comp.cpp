@@ -632,7 +632,7 @@ static void remap_color_endpoints(uint16* remapping, const optimize_color_params
     remaining[i].e = unpacked_endpoints[i];
   }
   crnlib::vector<uint16> chosen(n << 1);
-  uint remaining_count = n, chosen_front = n, chosen_back = chosen_front;
+  uint16 remaining_count = n, chosen_front = n, chosen_back = chosen_front;
   chosen[chosen_front] = selected;
   optimize_color_params::unpacked_endpoint front_e = remaining[selected].e, back_e = front_e;
   bool front_updated = true, back_updated = true;
@@ -883,7 +883,7 @@ static void remap_alpha_endpoints(uint16* remapping, const optimize_alpha_params
     const optimize_alpha_params::unpacked_endpoint& e_back = unpacked_endpoints[chosen.back()];
     uint16 selected_index = 0;
     uint64 best_value = 0, selected_similarity_front = 0, selected_similarity_back = 0;
-    for (uint16 i = 0; i < remaining.size(); i++) {
+    for (size_t i = 0; i < remaining.size(); i++) {
       uint remaining_index = remaining[i];
       const optimize_alpha_params::unpacked_endpoint& e_remaining = unpacked_endpoints[remaining_index];
       uint error_front = math::square(e_remaining.low - e_front.low) + math::square(e_remaining.high - e_front.high);
@@ -912,7 +912,7 @@ static void remap_alpha_endpoints(uint16* remapping, const optimize_alpha_params
       chosen.push_back(selected);
     }
     remaining.erase(remaining.begin() + selected_index);
-    for (uint16 i = 0; i < remaining.size(); i++)
+    for (size_t i = 0; i < remaining.size(); i++)
       total_frequency[remaining[i]] += frequency[remaining[i]];
   }
   for (uint16 i = 0; i < n; i++)
