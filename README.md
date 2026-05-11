@@ -20,7 +20,7 @@ Target & compiler|Build status|Target & compiler|Build status
 
 Dæmon crunch is brought to you by:
 
-- **2014-2024**: Dæmon Developers and contributors  
+- **2014-2026**: Dæmon Developers and contributors  
   https://github.com/DaemonEngine/crunch
 - **2017-2018**: Alexander Suvorov and Unity Software Inc.  
   https://github.com/Unity-Technologies/crunch/tree/unity
@@ -34,6 +34,7 @@ The Dæmon crunch is known to be used by:
 - The [NetRadiant game level editor](https://netradiant.gitlab.io/) and the `q3map2` map compiler and light mapper,
 - The [Unvanquished game](https://unvanquished.net),
 - The [Xonotic game](https://xonotic.org),
+- The [Overgrowth game](https://overgrowth.wolfire.com),
 - Some games using the Unity game engine.
 
 This branch provides many improvements over the original crunch:
