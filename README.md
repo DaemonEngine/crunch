@@ -20,7 +20,7 @@ Target & compiler|Build status|Target & compiler|Build status
 
 Dæmon crunch is brought to you by:
 
-- **2014-2024**: Dæmon Developers and contributors  
+- **2014-2026**: Dæmon Developers and contributors  
   https://github.com/DaemonEngine/crunch
 - **2017-2018**: Alexander Suvorov and Unity Software Inc.  
   https://github.com/Unity-Technologies/crunch/tree/unity
@@ -30,17 +30,19 @@ Dæmon crunch is brought to you by:
 The Dæmon crunch is known to be used by:
 
 - The [Dæmon game engine](https://github.com/DaemonEngine/Daemon),
-- The [Urcheon game data build automation tool](https://github.com/DaemonEngine/Urcheon),
+- The [Urcheon game data build tool](https://github.com/DaemonEngine/Urcheon),
 - The [NetRadiant game level editor](https://netradiant.gitlab.io/) and the `q3map2` map compiler and light mapper,
+- The [XQF](https://github.com/XQF/xqf) game server browser,
 - The [Unvanquished game](https://unvanquished.net),
 - The [Xonotic game](https://xonotic.org),
+- The [Overgrowth game](https://overgrowth.wolfire.com),
 - Some games using the Unity game engine.
 
 This branch provides many improvements over the original crunch:
 
 - ✅️ Unity crunch format (runs many time faster and produces smaller files),
 - ✅️ Unity crunch metadata (the header is compatible with Unity),
-- ✅️ Improved image compatibility (1-bit PNG images are now supported),
+- ✅️ Improved image compatibility (1-bit PNG and horizontally-flipped TGA images are now supported),
 - ✅️ Added features and command line options (top mip renormalization and more),
 - ✅️ Network file system compatibility,
 - ✅️ Optional header-only checksumming,
@@ -75,7 +77,13 @@ Files with this value set to `1` are expected to use the new format. Files with 
 
 ## Improved image compatibility
 
-The `stb_image` library was updated from version 1.18 to version 2.30, increasing the amount of image format variants that can be converted, like 1-bit PNG formats.
+The `stb_image` library was updated from version 1.18 to version 2.30, increasing the amount of image format variants that can be converted, like 1-bit PNG formats. Improvements has been brought to `stb_image` to make it support more TGA variants.
+
+## Converted image reproducibility
+
+We take special care that, when using compilation options for IEEE 754 float processing (disabling fast math, preferring SSE over x87…), the bitstream of converted image files are the same whatever the compiler, the operating system, or the CPU architecture crunch is built for and running on. It helps making packaged game assets reproducible. The CI not only checks that crunch builds, but that it runs properly and that the same input converts to the same output.
+
+When reproducibility isn't needed, fast math can be enabled with CMake.
 
 ## Added features and command line options
 
@@ -154,8 +162,9 @@ crnlib's differs significantly from other approaches because its
 compressed texture data format was carefully designed to be quickly
 transcodable directly to DXTn with no intermediate recompression step.
 The typical (single threaded) transcode to DXTn rate is generally
-between 100-250 megatexels/sec. The current library supports PC
-(Win32/x64) and Xbox 360. Fast random access to individual mipmap levels
+between 100-250 megatexels/sec. The library was initially supporting
+Win32/x64 PC and Xbox 360 but is now supporting Linux, macOS and FreeBSD
+on a wide range of CPUs. Fast random access to individual mipmap levels
 is supported.
 
 crnlib can also generates standard DDS files at specified quality
