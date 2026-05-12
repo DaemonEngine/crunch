@@ -30,8 +30,9 @@ Dæmon crunch is brought to you by:
 The Dæmon crunch is known to be used by:
 
 - The [Dæmon game engine](https://github.com/DaemonEngine/Daemon),
-- The [Urcheon game data build automation tool](https://github.com/DaemonEngine/Urcheon),
+- The [Urcheon game data build tool](https://github.com/DaemonEngine/Urcheon),
 - The [NetRadiant game level editor](https://netradiant.gitlab.io/) and the `q3map2` map compiler and light mapper,
+- The [XQF](https://github.com/XQF/xqf) game server browser,
 - The [Unvanquished game](https://unvanquished.net),
 - The [Xonotic game](https://xonotic.org),
 - The [Overgrowth game](https://overgrowth.wolfire.com),
