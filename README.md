@@ -41,7 +41,7 @@ This branch provides many improvements over the original crunch:
 
 - ✅️ Unity crunch format (runs many time faster and produces smaller files),
 - ✅️ Unity crunch metadata (the header is compatible with Unity),
-- ✅️ Improved image compatibility (1-bit PNG images are now supported),
+- ✅️ Improved image compatibility (1-bit PNG and horizontally-flipped TGA images are now supported),
 - ✅️ Added features and command line options (top mip renormalization and more),
 - ✅️ Network file system compatibility,
 - ✅️ Optional header-only checksumming,
@@ -76,7 +76,7 @@ Files with this value set to `1` are expected to use the new format. Files with 
 
 ## Improved image compatibility
 
-The `stb_image` library was updated from version 1.18 to version 2.30, increasing the amount of image format variants that can be converted, like 1-bit PNG formats.
+The `stb_image` library was updated from version 1.18 to version 2.30, increasing the amount of image format variants that can be converted, like 1-bit PNG formats. Improvements has been brought to `stb_image` to make it support more TGA variants.
 
 ## Added features and command line options
 
