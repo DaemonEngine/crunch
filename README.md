@@ -155,8 +155,9 @@ crnlib's differs significantly from other approaches because its
 compressed texture data format was carefully designed to be quickly
 transcodable directly to DXTn with no intermediate recompression step.
 The typical (single threaded) transcode to DXTn rate is generally
-between 100-250 megatexels/sec. The current library supports PC
-(Win32/x64) and Xbox 360. Fast random access to individual mipmap levels
+between 100-250 megatexels/sec. The library was initially supporting
+Win32/x64 PC and Xbox 360 but is now supporting Linux, macOS and FreeBSD
+on a wide range of CPUs. Fast random access to individual mipmap levels
 is supported.
 
 crnlib can also generates standard DDS files at specified quality
