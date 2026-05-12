@@ -78,6 +78,12 @@ Files with this value set to `1` are expected to use the new format. Files with 
 
 The `stb_image` library was updated from version 1.18 to version 2.30, increasing the amount of image format variants that can be converted, like 1-bit PNG formats. Improvements has been brought to `stb_image` to make it support more TGA variants.
 
+## Converted image reproducibility
+
+We take special care that, when using compilation options for IEEE 754 float processing (disabling fast math, preferring SSE over x87…), the bitstream of converted image files are the same whatever the compiler, the operating system, or the CPU architecture crunch is built for and running on. It helps making packaged game assets reproducible. The CI not only checks that crunch builds, but that it runs properly and that the same input converts to the same output.
+
+When reproducibility isn't needed, fast math can be enabled with CMake.
+
 ## Added features and command line options
 
 In addition to the original `crunch` features and command line options this branch brings:
