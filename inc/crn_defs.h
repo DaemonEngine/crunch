@@ -225,6 +225,16 @@ struct crn_packed_uint {
   }
 
   inline operator unsigned int() const {
+#if 0
+    /* Compilers will expand the template with all conditions and generate
+	the code for all conditions even if only one condition is usable per
+	template variant.
+
+    Compilers like ICC will raise warnings at compile time and code analysers
+	like CodeQL will raise warnings when analysing the compiled binary.
+
+    See: https://github.com/DaemonEngine/crunch/issues/79 */
+
     switch (N) {
       case 1:
         return m_buf[0];
@@ -235,6 +245,18 @@ struct crn_packed_uint {
       default:
         return (m_buf[0] << 24U) | (m_buf[1] << 16U) | (m_buf[2] << 8U) | (m_buf[3]);
     }
+#else
+	/* We can assume the compiler will unroll that inline function for us,
+	without any range ambiguity, unlike the above trick. */
+
+    unsigned int val = 0U;
+
+    for (unsigned int i = 0U; i < N; i++) {
+      val |= m_buf[ i ] << ((N - (i + 1U)) * 8U);
+    }
+
+    return val;
+#endif
   }
 
   unsigned char m_buf[N];
