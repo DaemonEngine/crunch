@@ -44,7 +44,7 @@
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
 #endif
-#ifndef
+#ifndef NOMINMAX
 #define NOMINMAX
 #endif
 #include "windows.h"  // only for IsDebuggerPresent(), DebugBreak(), and OutputDebugStringA()
