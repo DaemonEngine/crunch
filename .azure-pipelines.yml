@@ -139,7 +139,7 @@ steps:
     set -xue
     EXECUTABLES="${EXECUTABLES:-crunch example1 example2 example3}"
     for exe_file in ${EXECUTABLES}; do
-      file 'build/${exe_file}${CRUNCH_EXTENSION:-}'
+      file "build/${exe_file}${CRUNCH_EXTENSION:-}"
     done
     if [ -n "${RUNTIME_FILES:-}" ]; then
         cp -av ${RUNTIME_FILES} build/
