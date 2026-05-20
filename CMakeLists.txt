@@ -88,6 +88,9 @@ option(USE_LTO "Enable link-time optimization" OFF)
 # Enabling fast math makes generated images less likely to be reproducible.
 # See https://github.com/DaemonEngine/crunch/issues/29
 option(USE_FAST_MATH "Enable fast math (generated images are less likely to be reproducible)" OFF)
+# Ignoring known warning from third-party vendored libs makes possible to reduce the scope of
+# -Werror on crunch.
+option(IGNORE_VENDORED_WARNING "Ignore known warning from vendored lib (not our fault!)" ON)
 
 if (BUILD_STATIC_LIBCRN)
 	option(INSTALL_STATIC_LIBCRN "Install static libraries" OFF)
