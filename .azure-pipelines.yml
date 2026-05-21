@@ -115,7 +115,7 @@ steps:
     set -xue
     export CMAKE_BUILD_PARALLEL_LEVEL="$(${NPROC_COMMAND:-nproc})"
     echo "${CMAKE_BUILD_PARALLEL_LEVEL}"
-    cmake_args=(-G"${CMAKE_GENERATOR:-Ninja}")
+    cmake_args=(-G"${CMAKE_GENERATOR:-Ninja}" -DUSE_WERROR=ON)
     if [ -n "${TOOLCHAIN_FILE:-}" ]; then
         cmake_args+=(-DCMAKE_TOOLCHAIN_FILE="${TOOLCHAIN_FILE}")
     fi

@@ -37,7 +37,9 @@
 #if defined(_WIN32)
 // windows.h is only needed here for GetSystemInfo().
 #define WIN32_LEAN_AND_MEAN
+#ifndef NOMINMAX
 #define NOMINMAX
+#endif
 #include "windows.h"
 #elif defined(__FreeBSD__) || defined(__APPLE__)
 #include <unistd.h>
