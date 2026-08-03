@@ -72,7 +72,7 @@ class tree_clusterizer {
       m_weightedVectors[i] = v * (float)weight;
       root.m_centroid += m_weightedVectors[i];
       root.m_total_weight += weight;
-      m_weightedDotProducts[i] = v.dot(v) * weight;
+      m_weightedDotProducts[i] = (double)v.dot(v) * (double)weight;
       ttsum += m_weightedDotProducts[i];
     }
     root.m_variance = (float)(ttsum - (root.m_centroid.dot(root.m_centroid) / root.m_total_weight));
@@ -289,7 +289,7 @@ class tree_clusterizer {
           double sum = 0;
 
           for (uint j = 0; j < N; j++)
-            sum += axis[j] * covar[i][j];
+            sum += (double)axis[j] * (double)covar[i][j];
 
           x[i] = (float)sum;
 
@@ -464,7 +464,7 @@ void split_vectors(VectorType (&vectors)[64], uint (&weights)[64], uint size, Ve
     weightedVectors[i] = v * (float)weight;
     centroid += weightedVectors[i];
     total_weight += weight;
-    weightedDotProducts[i] = v.dot(v) * weight;
+    weightedDotProducts[i] = (double)v.dot(v) * (double)weight;
     ttsum += weightedDotProducts[i];
   }
   float variance = (float)(ttsum - (centroid.dot(centroid) / total_weight));
@@ -520,7 +520,7 @@ void split_vectors(VectorType (&vectors)[64], uint (&weights)[64], uint size, Ve
       for (uint i = 0; i < N; i++) {
         double sum = 0;
         for (uint j = 0; j < N; j++)
-          sum += axis[j] * covar[i][j];
+          sum += (double)axis[j] * (double)covar[i][j];
         x[i] = (float)sum;
         max_sum = i ? math::maximum(max_sum, sum) : sum;
       }

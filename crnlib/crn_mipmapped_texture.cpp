@@ -2758,7 +2758,7 @@ bool mipmapped_texture::read_crn_from_memory(const void* pData, uint data_size, 
 
       if (!pDXT_image->init(
               dxt_fmt, level_width, level_height,
-              num_blocks_x * num_blocks_y * (tex_info.m_bytes_per_block / sizeof(dxt_image::element)),
+              (size_t)num_blocks_x * (size_t)num_blocks_y * (tex_info.m_bytes_per_block / sizeof(dxt_image::element)),
               reinterpret_cast<dxt_image::element*>(pFaces[f]), true)) {
         crnlib_delete(pDXT_image);
 
