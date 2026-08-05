@@ -425,6 +425,8 @@ collection_dict_list = [
         "format": "jpg",
         "samples": [
             "sample-black-64x64",
+            "sample-grayscale-sampling1x1",
+            "sample-grayscale-sampling2x2",
         ],
     },
 ]
