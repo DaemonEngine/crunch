@@ -5,6 +5,7 @@ import os
 import subprocess
 import sys
 from collections import OrderedDict
+from itertools import chain
 
 try:
     from colorama import Fore, Style
@@ -264,8 +265,55 @@ def print_end_results(clones_verification, clones_verified, files_verification, 
 
 crunch(None, None, options=["--help"])
 
+def merge_list(*lists):
+    return list(dict.fromkeys(chain.from_iterable(lists)))
+
+def start_from(items, value):
+    i = items.index(value)
+    return items[i:] + items[:i]
+
 if simple_test == "true":
     exit(0)
+
+lossless_format_list = [
+    "tga",
+    "bmp",
+    "png",
+]
+
+lossy_format_list = [
+    "crn",
+    "dds",
+    "ktx",
+    "jpg",
+]
+
+dxt_format_list = [
+    "crn",
+    "dds",
+    "ktx",
+]
+
+transparent_format_list = [
+    "tga",
+    "bmp",
+    "png",
+    "crn",
+    "dds",
+    "ktx",
+]
+
+opaque_format_list = [
+    "jpg",
+]
+
+all_format_list = merge_list(
+    lossless_format_list,
+    dxt_format_list,
+    transparent_format_list,
+    opaque_format_list,
+    lossy_format_list,
+)
 
 mkdir("build/test/png-to-all")
 crunch("test/unvanquished_64.png", "build/test/png-to-all/unvanquished_64.tga", clone="tga")
