@@ -2330,8 +2330,12 @@ void jpeg_decoder::init_frame() {
   int i;
 
   if (m_comps_in_frame == 1) {
-    if ((m_comp_h_samp[0] != 1) || (m_comp_v_samp[0] != 1))
-      stop_decoding(JPGD_UNSUPPORTED_SAMP_FACTORS);
+    if ((m_comp_h_samp[0] != 1) || (m_comp_v_samp[0] != 1)) {
+      // Some grayscale JPEGs contain non-1×1 sampling factors.
+      // There is no chroma plane to subsample, so normalize to the expected layout.
+      m_comp_h_samp[0] = 1;
+      m_comp_v_samp[0] = 1;
+    }
 
     m_scan_type = JPGD_GRAYSCALE;
     m_max_blocks_per_mcu = 1;
