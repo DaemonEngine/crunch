@@ -315,129 +315,123 @@ all_format_list = merge_list(
     lossy_format_list,
 )
 
-mkdir("build/test/png-to-all")
-crunch("test/unvanquished_64.png", "build/test/png-to-all/unvanquished_64.tga", clone="tga")
-crunch("test/unvanquished_64.png", "build/test/png-to-all/unvanquished_64.bmp", clone="bmp")
-crunch("test/unvanquished_64.png", "build/test/png-to-all/unvanquished_64.png", clone="png")
-crunch("test/unvanquished_64.png", "build/test/png-to-all/unvanquished_64.crn", clone="crn")
-crunch("test/unvanquished_64.png", "build/test/png-to-all/unvanquished_64.dds", clone="dds")
-crunch("test/unvanquished_64.png", "build/test/png-to-all/unvanquished_64.ktx", clone="ktx")
-crunch("test/unvanquished_64.png", "build/test/png-to-all/unvanquished_64.jpg", clone="jpg")
+for in_format in start_from(all_format_list, "png"):
+    if in_format == "png":
+        in_dir = "test"
+    else:
+        in_dir = "build/test/crunch-icon-png-to-all"
 
-mkdir("build/test/tga-to-all")
-crunch("build/test/png-to-all/unvanquished_64.tga", "build/test/tga-to-all/unvanquished_64.tga", clone="tga")
-crunch("build/test/png-to-all/unvanquished_64.tga", "build/test/tga-to-all/unvanquished_64.bmp", clone="bmp")
-crunch("build/test/png-to-all/unvanquished_64.tga", "build/test/tga-to-all/unvanquished_64.png", clone="png")
-crunch("build/test/png-to-all/unvanquished_64.tga", "build/test/tga-to-all/unvanquished_64.crn", clone="crn")
-crunch("build/test/png-to-all/unvanquished_64.tga", "build/test/tga-to-all/unvanquished_64.dds", clone="dds")
-crunch("build/test/png-to-all/unvanquished_64.tga", "build/test/tga-to-all/unvanquished_64.ktx", clone="ktx")
-crunch("build/test/png-to-all/unvanquished_64.tga", "build/test/tga-to-all/unvanquished_64.jpg", clone="jpg")
+    out_dir = f"build/test/crunch-icon-{in_format}-to-all"
 
-mkdir("build/test/bmp-to-all")
-crunch("build/test/png-to-all/unvanquished_64.bmp", "build/test/bmp-to-all/unvanquished_64.tga", clone="tga")
-crunch("build/test/png-to-all/unvanquished_64.bmp", "build/test/bmp-to-all/unvanquished_64.bmp", clone="bmp")
-crunch("build/test/png-to-all/unvanquished_64.bmp", "build/test/bmp-to-all/unvanquished_64.png", clone="png")
-crunch("build/test/png-to-all/unvanquished_64.bmp", "build/test/bmp-to-all/unvanquished_64.crn", clone="crn")
-crunch("build/test/png-to-all/unvanquished_64.bmp", "build/test/bmp-to-all/unvanquished_64.dds", clone="dds")
-crunch("build/test/png-to-all/unvanquished_64.bmp", "build/test/bmp-to-all/unvanquished_64.ktx", clone="ktx")
-crunch("build/test/png-to-all/unvanquished_64.bmp", "build/test/bmp-to-all/unvanquished_64.jpg", clone="jpg")
+    mkdir(out_dir)
 
-mkdir("build/test/crn-to-all")
-crunch("build/test/png-to-all/unvanquished_64.crn", "build/test/crn-to-all/unvanquished_64.tga")
-crunch("build/test/png-to-all/unvanquished_64.crn", "build/test/crn-to-all/unvanquished_64.bmp")
-crunch("build/test/png-to-all/unvanquished_64.crn", "build/test/crn-to-all/unvanquished_64.png")
-crunch("build/test/png-to-all/unvanquished_64.crn", "build/test/crn-to-all/unvanquished_64.crn")
-crunch("build/test/png-to-all/unvanquished_64.crn", "build/test/crn-to-all/unvanquished_64.dds", clone="crn_dds")
-crunch("build/test/png-to-all/unvanquished_64.crn", "build/test/crn-to-all/unvanquished_64.ktx")
-crunch("build/test/png-to-all/unvanquished_64.crn", "build/test/crn-to-all/unvanquished_64.jpg")
+    for out_format in all_format_list:
+        sample_name = "unvanquished_64"
 
-mkdir("build/test/dds-to-all")
-crunch("build/test/png-to-all/unvanquished_64.dds", "build/test/dds-to-all/unvanquished_64.tga")
-crunch("build/test/png-to-all/unvanquished_64.dds", "build/test/dds-to-all/unvanquished_64.bmp")
-crunch("build/test/png-to-all/unvanquished_64.dds", "build/test/dds-to-all/unvanquished_64.png")
-crunch("build/test/png-to-all/unvanquished_64.dds", "build/test/dds-to-all/unvanquished_64.crn")
-crunch("build/test/png-to-all/unvanquished_64.dds", "build/test/dds-to-all/unvanquished_64.dds", clone="dds")
-crunch("build/test/png-to-all/unvanquished_64.dds", "build/test/dds-to-all/unvanquished_64.ktx")
-crunch("build/test/png-to-all/unvanquished_64.dds", "build/test/dds-to-all/unvanquished_64.jpg")
+        in_path = f"{in_dir}/{sample_name}.{in_format}"
 
-mkdir("build/test/ktx-to-all")
-crunch("build/test/png-to-all/unvanquished_64.ktx", "build/test/ktx-to-all/unvanquished_64.tga")
-crunch("build/test/png-to-all/unvanquished_64.ktx", "build/test/ktx-to-all/unvanquished_64.bmp")
-crunch("build/test/png-to-all/unvanquished_64.ktx", "build/test/ktx-to-all/unvanquished_64.png")
-crunch("build/test/png-to-all/unvanquished_64.ktx", "build/test/ktx-to-all/unvanquished_64.crn")
-crunch("build/test/png-to-all/unvanquished_64.ktx", "build/test/ktx-to-all/unvanquished_64.dds")
-crunch("build/test/png-to-all/unvanquished_64.ktx", "build/test/ktx-to-all/unvanquished_64.ktx")
-crunch("build/test/png-to-all/unvanquished_64.ktx", "build/test/ktx-to-all/unvanquished_64.jpg")
+        out_path = f"{out_dir}/{sample_name}.{out_format}"
 
-mkdir("build/test/jpg-to-all")
-crunch("build/test/png-to-all/unvanquished_64.jpg", "build/test/jpg-to-all/unvanquished_64.tga")
-crunch("build/test/png-to-all/unvanquished_64.jpg", "build/test/jpg-to-all/unvanquished_64.bmp")
-crunch("build/test/png-to-all/unvanquished_64.jpg", "build/test/jpg-to-all/unvanquished_64.png")
-crunch("build/test/png-to-all/unvanquished_64.jpg", "build/test/jpg-to-all/unvanquished_64.crn")
-crunch("build/test/png-to-all/unvanquished_64.jpg", "build/test/jpg-to-all/unvanquished_64.dds")
-crunch("build/test/png-to-all/unvanquished_64.jpg", "build/test/jpg-to-all/unvanquished_64.ktx")
-crunch("build/test/png-to-all/unvanquished_64.jpg", "build/test/jpg-to-all/unvanquished_64.jpg")
+        if in_format in lossless_format_list:
+            clone_name = f"icon-png-to-{out_format}"
+        elif in_format == out_format and out_format in ["dds", "ktx"]:
+            clone_name = f"icon-png-to-{out_format}"
+        elif in_format == "crn" and out_format == "dds":
+            clone_name = f"icon-{in_format}-to-{out_format}"
+        else:
+            clone_name = None
 
-mkdir("build/test/tga-to-png")
-crunch("test/raw-bottom-left.tga", "build/test/tga-to-png/raw-bottom-left.png", clone="tga_png")
-crunch("test/raw-bottom-right.tga", "build/test/tga-to-png/raw-bottom-right.png", clone="tga_png")
-crunch("test/raw-top-left.tga", "build/test/tga-to-png/raw-top-left.png", clone="tga_png")
-crunch("test/raw-top-right.tga", "build/test/tga-to-png/raw-top-right.png", clone="tga_png")
-crunch("test/rle-bottom-left.tga", "build/test/tga-to-png/rle-bottom-left.png", clone="tga_png")
-crunch("test/rle-bottom-right.tga", "build/test/tga-to-png/rle-bottom-right.png", clone="tga_png")
-crunch("test/rle-top-left.tga", "build/test/tga-to-png/rle-top-left.png", clone="tga_png")
-crunch("test/rle-top-right.tga", "build/test/tga-to-png/rle-top-right.png", clone="tga_png")
+        crunch(in_path, out_path, clone=clone_name)
 
-mkdir("build/test/tga-to-crn")
-crunch("test/raw-bottom-left.tga", "build/test/tga-to-crn/raw-bottom-left.crn", clone="tga_crn")
-crunch("test/raw-bottom-right.tga", "build/test/tga-to-crn/raw-bottom-right.crn", clone="tga_crn")
-crunch("test/raw-top-left.tga", "build/test/tga-to-crn/raw-top-left.crn", clone="tga_crn")
-crunch("test/raw-top-right.tga", "build/test/tga-to-crn/raw-top-right.crn", clone="tga_crn")
-crunch("test/rle-bottom-left.tga", "build/test/tga-to-crn/rle-bottom-left.crn", clone="tga_crn")
-crunch("test/rle-bottom-right.tga", "build/test/tga-to-crn/rle-bottom-right.crn", clone="tga_crn")
-crunch("test/rle-top-left.tga", "build/test/tga-to-crn/rle-top-left.crn", clone="tga_crn")
-crunch("test/rle-top-right.tga", "build/test/tga-to-crn/rle-top-right.crn", clone="tga_crn")
+collection_dict_list = [
+    {
+        "name": "orientation",
+        "format": "tga",
+        "clone": True,
+        "samples": [
+            "sample-flat-bottom-left",
+            "sample-flat-bottom-right",
+            "sample-flat-top-left",
+            "sample-flat-top-right",
+            "sample-rle-bottom-left",
+            "sample-rle-bottom-right",
+            "sample-rle-top-left",
+            "sample-rle-top-right",
+        ],
+    },
+    {
+        "name": "orientation",
+        "format": "bmp",
+        "clone": True,
+        "samples": [
+            "sample-default",
+            "sample-vertical-flip",
+        ],
+    },
+    {
+        "name": "transparency",
+        "format": "png",
+        "clone": False,
+        "samples": [
+            "sample-colormap1-alpha1",
+            "sample-colormap2-alpha1",
+            "sample-colormap4-alpha1",
+            "sample-colormap8-alpha1",
+            "sample-grayscale1-alpha1",
+            "sample-grayscale1-alpha8",
+            "sample-grayscale8-alpha1",
+            "sample-rgb8-alpha8",
+        ],
+    },
+    {
+        "name": "format",
+        "clone": False,
+        "format": "jpg",
+        "samples": [
+            "sample-black",
+        ],
+    },
+]
 
-mkdir("build/test/png-to-png")
-crunch("test/test-colormap1-alpha1.png", "build/test/png-to-png/test-colormap1-alpha1.png")
-crunch("test/test-colormap2-alpha1.png", "build/test/png-to-png/test-colormap2-alpha1.png")
-crunch("test/test-colormap4-alpha1.png", "build/test/png-to-png/test-colormap4-alpha1.png")
-crunch("test/test-colormap8-alpha1.png", "build/test/png-to-png/test-colormap8-alpha1.png")
-crunch("test/test-grayscale1-alpha1.png", "build/test/png-to-png/test-grayscale1-alpha1.png")
-crunch("test/test-grayscale1-alpha8.png", "build/test/png-to-png/test-grayscale1-alpha8.png")
-crunch("test/test-grayscale8-alpha1.png", "build/test/png-to-png/test-grayscale8-alpha1.png")
-crunch("test/test-rgb8-alpha8.png", "build/test/png-to-png/test-rgb8-alpha8.png")
+for collection in collection_dict_list:
+    collection_name = collection["name"]
+    in_format = collection["format"]
+    is_clone = collection["clone"]
+    sample_name_list = collection["samples"]
 
-mkdir("build/test/png-to-crn")
-crunch("test/test-colormap1-alpha1.png", "build/test/png-to-crn/test-colormap1-alpha1.crn")
-crunch("test/test-colormap2-alpha1.png", "build/test/png-to-crn/test-colormap2-alpha1.crn")
-crunch("test/test-colormap4-alpha1.png", "build/test/png-to-crn/test-colormap4-alpha1.crn")
-crunch("test/test-colormap8-alpha1.png", "build/test/png-to-crn/test-colormap8-alpha1.crn")
-crunch("test/test-grayscale1-alpha1.png", "build/test/png-to-crn/test-grayscale1-alpha1.crn")
-crunch("test/test-grayscale1-alpha8.png", "build/test/png-to-crn/test-grayscale1-alpha8.crn")
-crunch("test/test-grayscale8-alpha1.png", "build/test/png-to-crn/test-grayscale8-alpha1.crn")
-crunch("test/test-rgb8-alpha8.png", "build/test/png-to-crn/test-rgb8-alpha8.crn")
+    out_dir = f"build/test/crunch-{collection_name}-{in_format}-to-all"
 
-mkdir("build/test/bmp-to-crn")
-crunch("test/sample-default.bmp", "build/test/bmp-to-crn/sample-default.crn", "bmp_crn")
-crunch("test/sample-vertical-flip.bmp", "build/test/bmp-to-crn/sample-vertical-flip.crn", "bmp_crn")
+    mkdir(out_dir)
 
-mkdir("build/test/jpg-to-crn")
-crunch("test/black.jpg", "build/test/jpg-to-crn/black.crn")
+    for sample_name in sample_name_list:
+        for out_format in all_format_list:
+            in_path = f"test/{sample_name}.{in_format}"
 
-mkdir("build/test/example1-dds")
+            out_path = f"{out_dir}/{sample_name}.{out_format}"
+
+            if is_clone:
+                clone_name = f"{collection_name}-{in_format}-to-{out_format}"
+            else:
+                clone_name = None
+
+            crunch(in_path, out_path, clone=clone_name)
+
 example(1, "test/unvanquished_64.png", None, options=["i"])
-example(1, "test/unvanquished_64.png", "build/test/example1-dds/unvanquished_64.dds", clone="dds", options=["c"])
 
-mkdir("build/test/example1-crn")
-example(1, "test/unvanquished_64.png", "build/test/example1-crn/unvanquished_64.crn", clone="crn", options=["c", "-crn"])
-example(1, "build/test/example1-crn/unvanquished_64.crn", "build/test/example1-crn/unvanquished_64.dds", clone="crn_dds", options=["d"])
+mkdir("build/test/example1-icon-png-to-dds")
+example(1, "test/unvanquished_64.png", "build/test/example1-icon-png-to-dds/unvanquished_64.dds", clone="icon-png-to-dds", options=["c"])
 
-mkdir("build/test/example2-dds")
-example(2, "build/test/example1-crn/unvanquished_64.crn", "build/test/example2-dds/unvanquished_64.dds", clone="crn_dds")
+mkdir("build/test/example1-icon-png-to-crn")
+example(1, "test/unvanquished_64.png", "build/test/example1-icon-png-to-crn/unvanquished_64.crn", clone="icon-png-to-crn", options=["c", "-crn"])
 
-mkdir("build/test/example3-dds")
-example(3, "test/unvanquished_64.png", "build/test/example3-dds/unvanquished_64.dds")
+mkdir("build/test/example1-icon-crn-to-dds")
+example(1, "build/test/example1-icon-png-to-crn/unvanquished_64.crn", "build/test/example1-icon-crn-to-dds/unvanquished_64.dds", clone="icon-crn-to-dds", options=["d"])
+
+mkdir("build/test/example2-icon-crn-to-dds")
+example(2, "build/test/example1-icon-png-to-crn/unvanquished_64.crn", "build/test/example2-icon-crn-to-dds/unvanquished_64.dds", clone="icon-crn-to-dds")
+
+mkdir("build/test/example3-icon-png-to-dds")
+example(3, "test/unvanquished_64.png", "build/test/example3-icon-png-to-dds/unvanquished_64.dds")
 
 print_success("All tests executed")
 
