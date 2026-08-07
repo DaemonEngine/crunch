@@ -454,6 +454,82 @@ for collection in collection_dict_list:
 
             crunch(in_path, out_path, clone_name)
 
+for encoding in [
+    "flat",
+    "rle",
+]:
+    for alpha_type in [
+        "noalpha",
+        "alpha8",
+        "other8",
+    ]:
+        for alpha_name in [
+            "opaque",
+            "transparent",
+        ]:
+            for color_type in [
+                "grayscale8",
+                "rgb8",
+            ]:
+                for color_name, base_width in [
+                    ("white", 1),
+                    ("red", 1),
+                    ("color", 2),
+                ]:
+                    if encoding == "rle":
+                        if color_name == "color":
+                            width_list = [base_width, base_width * 4]
+                        else:
+                            width_list = [base_width * 2]
+                    else:
+                        width_list = [base_width]
+
+                    for width in width_list:
+                        for out_format in all_format_list:
+                            if out_format in lossy_format_list and color_name == "color":
+                                # Lossy or block-compressed formats require a larger color test image to
+                                # preserve clearly distinguishable red/green/blue/white regions.
+                                # Smaller images can introduce unavoidable artifacts from JPEG chroma
+                                # subsampling or block-based texture compression (CRN/DDS/KTX), making
+                                # visual validation unreliable.
+                                #
+                                # A minimum image width of 8 gives each color quadrant at least 4×4 pixels:
+                                #  ______________
+                                # |      |       |
+                                # | red  | green |
+                                # |      |       |
+                                # |‒‒‒‒‒‒‒‒‒‒‒‒‒‒|
+                                # |      |       |
+                                # | blue | white |
+                                # |      |       |
+                                #  ‾‾‾‾‾‾‾‾‾‾‾‾‾‾
+                                if width < 8:
+                                    continue
+
+                            if color_type == "grayscale8" and not color_name == "white":
+                                continue
+
+                            if alpha_type == "noalpha" and alpha_name == "transparent":
+                                continue
+
+                            base_name = f"sample-storage-{encoding}-{color_type}-{alpha_type}-{color_name}-{alpha_name}-{width}x{width}"
+
+                            in_format = 'tga'
+                            in_path = f"test/{base_name}.{in_format}"
+
+                            out_alpha_name = alpha_name
+
+                            if out_format in opaque_format_list:
+                                out_alpha_name = "opaque"
+
+                            out_dir = f"build/test/{in_format}-to-all-{out_alpha_name}"
+                            out_path = f"{out_dir}/{base_name}.{out_format}"
+
+                            clone_name = f"{color_name}_{out_alpha_name}_{width}_{in_format}_{out_format}"
+
+                            mkdir(out_dir)
+                            crunch(in_path, out_path, clone_name)
+
 example(1, "test/sample-icon-unvanquished-64x64.png", None, None, options=["i"])
 
 mkdir("build/test/example1-icon-png-to-dds")
