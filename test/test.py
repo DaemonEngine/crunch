@@ -56,6 +56,10 @@ def get_file_sum(file_path):
     return hashlib.blake2b(open(file_path, "rb").read()).hexdigest()
 
 def run(command_list):
+    if executable_runner and executable_runner.endswith("wine"):
+        wineserver = f"{executable_runner}server"
+        subprocess.run([wineserver, "-k"], check=False)
+
     if executable_runner:
         command_list = executable_runner.split(" ") + command_list
 
