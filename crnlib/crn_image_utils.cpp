@@ -174,27 +174,50 @@ bool write_to_file(const char* pFilename, const image_u8& img, uint write_flags,
     if (grayscale_comp_index > 3)
       grayscale_comp_index = 3;
 
-    temp.resize(img.get_total_pixels());
+    if ((img.get_comp_flags() & pixel_format_helpers::cCompFlagGrayscale) &&
+        img.is_component_valid(3) &&
+        !(write_flags & cWriteFlagIgnoreAlpha)) {
+      temp.resize(img.get_total_pixels() * 2);
 
-    for (uint y = 0; y < img.get_height(); y++) {
-      const color_quad_u8* pSrc = img.get_scanline(y);
-      const color_quad_u8* pSrc_end = pSrc + img.get_width();
-      uint8* pDst = &temp[y * img.get_width()];
+      for (uint y = 0; y < img.get_height(); y++) {
+        const color_quad_u8* pSrc = img.get_scanline(y);
+        const color_quad_u8* pSrc_end = pSrc + img.get_width();
+        uint8* pDst = &temp[y * img.get_width() * 2];
 
-      if (img.get_comp_flags() & pixel_format_helpers::cCompFlagGrayscale) {
-        while (pSrc != pSrc_end)
-          *pDst++ = (*pSrc++)[1];
-      } else if (grayscale_comp_index < 0) {
-        while (pSrc != pSrc_end)
-          *pDst++ = static_cast<uint8>((*pSrc++).get_luma());
-      } else {
-        while (pSrc != pSrc_end)
-          *pDst++ = (*pSrc++)[grayscale_comp_index];
+        while (pSrc != pSrc_end) {
+          const color_quad_u8 c(*pSrc++);
+
+          pDst[0] = c[1];
+          pDst[1] = c.a;
+          pDst += 2;
+        }
       }
-    }
 
-    pSrc_img = &temp[0];
-    num_src_chans = 1;
+      pSrc_img = &temp[0];
+      num_src_chans = 2;
+    } else {
+      temp.resize(img.get_total_pixels());
+
+      for (uint y = 0; y < img.get_height(); y++) {
+        const color_quad_u8* pSrc = img.get_scanline(y);
+        const color_quad_u8* pSrc_end = pSrc + img.get_width();
+        uint8* pDst = &temp[y * img.get_width()];
+
+        if (img.get_comp_flags() & pixel_format_helpers::cCompFlagGrayscale) {
+          while (pSrc != pSrc_end)
+            *pDst++ = (*pSrc++)[1];
+        } else if (grayscale_comp_index < 0) {
+          while (pSrc != pSrc_end)
+            *pDst++ = static_cast<uint8>((*pSrc++).get_luma());
+        } else {
+          while (pSrc != pSrc_end)
+            *pDst++ = (*pSrc++)[grayscale_comp_index];
+        }
+      }
+
+      pSrc_img = &temp[0];
+      num_src_chans = 1;
+    }
   } else if ((!img.is_component_valid(3)) || (write_flags & cWriteFlagIgnoreAlpha)) {
     temp.resize(img.get_total_pixels() * 3);
 
