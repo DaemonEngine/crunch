@@ -4,7 +4,7 @@
 #include "crn_timer.h"
 #include <time.h>
 
-#if defined(__FreeBSD__)
+#if !defined(CRNLIB_USE_WIN32_API)
 #include "sys/time.h"
 #endif
 
@@ -27,7 +27,6 @@ inline void query_counter_frequency(timer_ticks* pTicks) {
   QueryPerformanceFrequency(reinterpret_cast<LARGE_INTEGER*>(pTicks));
 }
 #elif defined(__GNUC__)
-#include <sys/timex.h>
 inline void query_counter(timer_ticks* pTicks) {
   struct timeval cur_time;
   gettimeofday(&cur_time, NULL);
