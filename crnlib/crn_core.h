@@ -75,7 +75,13 @@
 
 #define CRNLIB_USE_UNALIGNED_INT_LOADS 1
 
+#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
 #define CRNLIB_LITTLE_ENDIAN_CPU 1
+#elif __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+#define CRNLIB_BIG_ENDIAN_CPU 1
+#else
+#error "Unknown CPU endianness"
+#endif
 
 #define CRNLIB_USE_PTHREADS_API 1
 #define CRNLIB_USE_GCC_ATOMIC_BUILTINS 1
