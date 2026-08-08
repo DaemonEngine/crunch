@@ -1617,7 +1617,20 @@ uint64 pack_etc1s_block(etc1_block& dst_block, const color_quad_u8* pSrc_pixels,
     }
   }
 
-  dst_block.m_uint64 = (uint64)selector << 32 | results.m_block_inten_table << 29 | results.m_block_inten_table << 26 | 1 << 25 | (results.m_block_color_unscaled.m_u32 & 0xFFFFFF) << 3;
+  const uint32 color =
+    ((uint32)results.m_block_color_unscaled.r << 16) |
+    ((uint32)results.m_block_color_unscaled.g << 8) |
+    (uint32)results.m_block_color_unscaled.b;
+
+  const uint64 packed =
+    (uint64)selector << 32 |
+    (uint64)results.m_block_inten_table << 29 |
+    (uint64)results.m_block_inten_table << 26 |
+    (uint64)1 << 25 |
+    (uint64)color << 3;
+
+  utils::write_be64(&dst_block.m_uint64, packed);
+
   return results.m_error;
 }
 
