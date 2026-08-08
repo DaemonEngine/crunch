@@ -347,23 +347,23 @@ bool file_utils::full_path(dynamic_string& path) {
   if (!p)
     return false;
 #else
-  char buf[PATH_MAX];
-  char* p;
+  char* p = nullptr;
   dynamic_string pn, fn;
   split_path(path.get_ptr(), pn, fn);
   if ((fn == ".") || (fn == "..")) {
-    p = realpath(path.get_ptr(), buf);
+    p = realpath(path.get_ptr(), NULL);
     if (!p)
       return false;
-    path.set(buf);
+    path.set(p);
   } else {
     if (pn.is_empty())
       pn = "./";
-    p = realpath(pn.get_ptr(), buf);
+    p = realpath(pn.get_ptr(), NULL);
     if (!p)
       return false;
-    combine_path(path, buf, fn.get_ptr());
+    combine_path(path, p, fn.get_ptr());
   }
+  free(p);
 #endif
 
   return true;
