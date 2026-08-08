@@ -1278,23 +1278,26 @@ struct dxt1_block {
     utils::zero_this(this);
   }
 
-  // These methods assume the in-memory rep is in LE byte order.
-  inline uint32 get_low_color() const {
-    return m_low_color[0] | (m_low_color[1] << 8U);
+  inline uint16 get_low_color() const {
+    return static_cast<uint16>(
+      static_cast<uint16>(m_low_color[0]) |
+      (static_cast<uint16>(m_low_color[1]) << 8U));
   }
-
-  inline uint32 get_high_color() const {
-    return m_high_color[0] | (m_high_color[1] << 8U);
+  
+  inline uint16 get_high_color() const {
+    return static_cast<uint16>(
+      static_cast<uint16>(m_high_color[0]) |
+      (static_cast<uint16>(m_high_color[1]) << 8U));
   }
-
+  
   inline void set_low_color(uint16 c) {
-    m_low_color[0] = static_cast<uint8>(c & 0xFF);
-    m_low_color[1] = static_cast<uint8>((c >> 8) & 0xFF);
+    m_low_color[0] = static_cast<uint8>(c);
+    m_low_color[1] = static_cast<uint8>(c >> 8);
   }
-
+  
   inline void set_high_color(uint16 c) {
-    m_high_color[0] = static_cast<uint8>(c & 0xFF);
-    m_high_color[1] = static_cast<uint8>((c >> 8) & 0xFF);
+    m_high_color[0] = static_cast<uint8>(c);
+    m_high_color[1] = static_cast<uint8>(c >> 8);
   }
 
   inline uint32 get_selector(uint32 x, uint32 y) const {
@@ -1364,11 +1367,18 @@ struct dxt5_block {
     m_endpoints[1] = static_cast<uint8>(i);
   }
 
-  uint32 get_endpoints_as_word() const { return m_endpoints[0] | (m_endpoints[1] << 8); }
-
-  uint32 get_selectors_as_word(uint32 index) {
+  uint16 get_endpoints_as_word() const {
+    return static_cast<uint16>(
+      static_cast<uint16>(m_endpoints[0]) |
+      (static_cast<uint16>(m_endpoints[1]) << 8));
+  }
+  
+  uint16 get_selectors_as_word(uint index) const {
     CRND_ASSERT(index < 3);
-    return m_selectors[index * 2] | (m_selectors[index * 2 + 1] << 8);
+  
+    return static_cast<uint16>(
+      static_cast<uint16>(m_selectors[index * 2]) |
+      (static_cast<uint16>(m_selectors[index * 2 + 1]) << 8));
   }
 
   inline uint32 get_selector(uint32 x, uint32 y) const {
