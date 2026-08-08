@@ -3416,8 +3416,20 @@ class crn_unpacker {
           }
           uint32 color_selector_index = m_codec.decode(m_selector_delta_dm[0]);
           if (visible) {
-            pData[0] = m_color_endpoints[color_endpoint_index];
-            pData[1] = m_color_selectors[color_selector_index];
+            uint32 endpoint = m_color_endpoints[color_endpoint_index];
+            uint32 selector = m_color_selectors[color_selector_index];
+
+            uint8* pBytes = reinterpret_cast<uint8*>(pData);
+
+            pBytes[0] = static_cast<uint8>(endpoint);
+            pBytes[1] = static_cast<uint8>(endpoint >> 8);
+            pBytes[2] = static_cast<uint8>(endpoint >> 16);
+            pBytes[3] = static_cast<uint8>(endpoint >> 24);
+
+            pBytes[4] = static_cast<uint8>(selector);
+            pBytes[5] = static_cast<uint8>(selector >> 8);
+            pBytes[6] = static_cast<uint8>(selector >> 16);
+            pBytes[7] = static_cast<uint8>(selector >> 24);
           }
         }
       }
