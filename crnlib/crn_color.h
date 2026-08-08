@@ -176,6 +176,13 @@ class color_quad : public helpers::rel_ops<color_quad<component_type, parameter_
     a = 0;
   }
 
+  inline uint32 get_rgba_u32() const {
+    return uint32(r) |
+      (uint32(g) << 8) |
+      (uint32(b) << 16) |
+      (uint32(a) << 24);
+  }
+
   inline color_quad& operator=(const color_quad& other) {
     r = other.r;
     g = other.g;

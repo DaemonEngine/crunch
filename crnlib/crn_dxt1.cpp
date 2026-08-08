@@ -222,6 +222,7 @@ void dxt1_endpoint_optimizer::return_solution() {
   m_pResults->m_enforce_selector = m_best_solution.m_enforce_selector;
   m_pResults->m_enforced_selector = m_best_solution.m_enforced_selector;
   m_pResults->m_reordered = invert_selectors;
+
   if (invert_selectors) {
     m_pResults->m_low_color = m_best_solution.m_coords.m_high_color;
     m_pResults->m_high_color = m_best_solution.m_coords.m_low_color;
@@ -234,17 +235,13 @@ void dxt1_endpoint_optimizer::return_solution() {
   if (invert_selectors)
     pInvert_table = m_best_solution.m_alpha_block ? g_invTableAlpha : g_invTableColor;
 
-  const uint alpha_thresh = m_pParams->m_pixels_have_alpha ? (m_pParams->m_dxt1a_alpha_threshold << 24U) : 0;
-
-  const uint32* pSrc_pixels = reinterpret_cast<const uint32*>(m_pParams->m_pPixels);
+  const color_quad_u8* pSrc_pixels = m_pParams->m_pPixels;
   uint8* pDst_selectors = m_pResults->m_pSelectors;
 
   if ((m_unique_colors.size() == 1) && (!m_pParams->m_pixels_have_alpha)) {
-    uint32 c = utils::read_le32(pSrc_pixels);
+    color_quad_u8 color(pSrc_pixels->r, pSrc_pixels->g, pSrc_pixels->b, 255);
 
-    CRNLIB_ASSERT(c >= alpha_thresh);
-
-    c |= 0xFF000000U;
+    uint32 c = color.get_rgba_u32();
 
     unique_color_hash_map::const_iterator it(m_unique_color_hash_map.find(c));
     CRNLIB_ASSERT(it != m_unique_color_hash_map.end());
@@ -261,13 +258,15 @@ void dxt1_endpoint_optimizer::return_solution() {
     uint32 prev_color = 0;
 
     do {
-      uint32 c = utils::read_le32(pSrc_pixels);
-      pSrc_pixels++;
-
       uint8 selector = 3;
 
-      if (c >= alpha_thresh) {
-        c |= 0xFF000000U;
+      uint8 alpha_thresh = pSrc_pixels->a;
+
+      if (!m_pParams->m_pixels_have_alpha || (alpha_thresh >= m_pParams->m_dxt1a_alpha_threshold)) {
+
+        color_quad_u8 color(pSrc_pixels->r, pSrc_pixels->g, pSrc_pixels->b, 255);
+
+        uint32 c = color.get_rgba_u32();
 
         if (c == prev_color)
           selector = prev_selector;
@@ -284,6 +283,8 @@ void dxt1_endpoint_optimizer::return_solution() {
           prev_selector = selector;
         }
       }
+
+      pSrc_pixels++;
 
       *pDst_selectors++ = selector;
 
@@ -1708,8 +1709,8 @@ void dxt1_endpoint_optimizer::compute_internal(const params& p, results& r) {
   unique_color color(color_quad_u8(0), 1);
   for (uint i = 0; i < m_pParams->m_num_pixels; i++) {
     if (!m_pParams->m_pixels_have_alpha || m_pParams->m_pPixels[i].a >= m_pParams->m_dxt1a_alpha_threshold) {
-      color.m_color.m_u32 = m_pParams->m_pPixels[i].m_u32 | 0xFF000000;
-      unique_color_hash_map::insert_result ins_result(m_unique_color_hash_map.insert(color.m_color.m_u32, m_unique_colors.size()));
+      color.m_color = color_quad_u8(m_pParams->m_pPixels[i].r, m_pParams->m_pPixels[i].g, m_pParams->m_pPixels[i].b, 255);
+      unique_color_hash_map::insert_result ins_result(m_unique_color_hash_map.insert(color.m_color.get_rgba_u32(), m_unique_colors.size()));
       if (ins_result.second) {
         m_unique_colors.push_back(color);
       } else {
