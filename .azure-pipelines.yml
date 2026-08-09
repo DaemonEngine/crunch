@@ -37,41 +37,77 @@ strategy:
       CXX_COMPILER: i686-linux-gnu-g++
       COMPILER_FLAGS: -mfpmath=sse -msse
     Linux arm64 GCC:
-      VM_IMAGE: 'ubuntu-22.04'
+      VM_IMAGE: 'ubuntu-26.04'
       APT_PACKAGES: ninja-build g++-aarch64-linux-gnu qemu-user
       C_COMPILER: aarch64-linux-gnu-gcc
       CXX_COMPILER: aarch64-linux-gnu-g++
       CRUNCH_EXE_RUNNER: qemu-aarch64 -L /usr/aarch64-linux-gnu
     Linux armhf GCC:
-      # There is an IO bug in qemu-arm from ubuntu-22.04.
-      VM_IMAGE: 'ubuntu-24.04'
+      VM_IMAGE: 'ubuntu-26.04'
       APT_PACKAGES: ninja-build g++-arm-linux-gnueabihf qemu-user
       C_COMPILER: arm-linux-gnueabihf-gcc
       CXX_COMPILER: arm-linux-gnueabihf-g++
       CRUNCH_EXE_RUNNER: qemu-arm -L /usr/arm-linux-gnueabihf
+    Linux ppc64 GCC:
+      VM_IMAGE: 'ubuntu-26.04'
+      APT_PACKAGES: ninja-build g++-powerpc64-linux-gnu qemu-user
+      C_COMPILER: powerpc64-linux-gnu-gcc
+      CXX_COMPILER: powerpc64-linux-gnu-g++
+      CRUNCH_EXE_RUNNER: qemu-ppc64 -L /usr/powerpc64-linux-gnu
+    Linux ppc64el GCC:
+      VM_IMAGE: 'ubuntu-26.04'
+      APT_PACKAGES: ninja-build g++-powerpc64le-linux-gnu qemu-user
+      C_COMPILER: powerpc64le-linux-gnu-gcc
+      CXX_COMPILER: powerpc64le-linux-gnu-g++
+      CRUNCH_EXE_RUNNER: qemu-ppc64le -L /usr/powerpc64le-linux-gnu
+    Linux riscv64 GCC:
+      VM_IMAGE: 'ubuntu-26.04'
+      APT_PACKAGES: ninja-build g++-riscv64-linux-gnu qemu-user
+      C_COMPILER: riscv64-linux-gnu-gcc
+      CXX_COMPILER: riscv64-linux-gnu-g++
+      CRUNCH_EXE_RUNNER: qemu-riscv64 -L /usr/riscv64-linux-gnu
+    Linux loong64 GCC:
+      VM_IMAGE: 'ubuntu-26.04'
+      APT_PACKAGES: ninja-build g++-loongarch64-linux-gnu qemu-user
+      C_COMPILER: loongarch64-linux-gnu-gcc
+      CXX_COMPILER: loongarch64-linux-gnu-g++
+      CRUNCH_EXE_RUNNER: qemu-loongarch64 -L /usr/loongarch64-linux-gnu
+    Linux s390x GCC:
+      VM_IMAGE: 'ubuntu-26.04'
+      APT_PACKAGES: ninja-build g++-s390x-linux-gnu qemu-user
+      C_COMPILER: s390x-linux-gnu-gcc
+      CXX_COMPILER: s390x-linux-gnu-g++
+      CRUNCH_EXE_RUNNER: qemu-s390x -L /usr/s390x-linux-gnu
     Linux amd64 Clang:
       VM_IMAGE: 'ubuntu-22.04'
       APT_PACKAGES: ninja-build
       C_COMPILER: clang
       CXX_COMPILER: clang++
     Windows amd64 MinGW:
-      VM_IMAGE: 'ubuntu-22.04'
-      APT_PACKAGES: ninja-build g++-mingw-w64-x86-64 mingw-w64-x86-64-dev gcc-mingw-w64-x86-64-posix-runtime wine
+      VM_IMAGE: 'ubuntu-26.04'
+      APT_PACKAGES: ninja-build g++-mingw-w64-x86-64 mingw-w64-x86-64-dev gcc-mingw-w64-x86-64-posix-runtime wine64
       SETUP_COMMANDS: sudo update-alternatives --set x86_64-w64-mingw32-g++ /usr/bin/x86_64-w64-mingw32-g++-posix
       TOOLCHAIN_FILE: cmake/cross-toolchain-mingw64.cmake
+      RUNTIME_FILES: /usr/lib/gcc/x86_64-w64-mingw32/13-posix/libgcc_s_seh-1.dll /usr/lib/gcc/x86_64-w64-mingw32/13-posix/libstdc++-6.dll /usr/x86_64-w64-mingw32/lib/libwinpthread-1.dll
       CRUNCH_EXE_RUNNER: wine
-      CRUNCH_EXTENSION: .exe
-      RUNTIME_FILES: /usr/lib/gcc/x86_64-w64-mingw32/10-posix/libgcc_s_seh-1.dll /usr/lib/gcc/x86_64-w64-mingw32/10-posix/libstdc++-6.dll /usr/x86_64-w64-mingw32/lib/libwinpthread-1.dll
+      CRUNCH_EXE_EXTENSION: .exe
     Windows i686 MinGW:
-      VM_IMAGE: 'ubuntu-22.04'
+      VM_IMAGE: 'ubuntu-26.04'
       APT_ARCHITECTURE: i386
-      APT_PACKAGES: ninja-build g++-mingw-w64-i686 mingw-w64-i686-dev gcc-mingw-w64-i686-posix-runtime wine wine32
+      APT_PACKAGES: ninja-build g++-mingw-w64-i686 mingw-w64-i686-dev gcc-mingw-w64-i686-posix-runtime wine64
       SETUP_COMMANDS: sudo update-alternatives --set i686-w64-mingw32-g++ /usr/bin/i686-w64-mingw32-g++-posix
       TOOLCHAIN_FILE: cmake/cross-toolchain-mingw32.cmake
       COMPILER_FLAGS: -mfpmath=sse -msse
+      RUNTIME_FILES: /usr/lib/gcc/i686-w64-mingw32/13-posix/libgcc_s_dw2-1.dll /usr/lib/gcc/i686-w64-mingw32/13-posix/libstdc++-6.dll /usr/i686-w64-mingw32/lib/libwinpthread-1.dll
       CRUNCH_EXE_RUNNER: wine
-      CRUNCH_EXTENSION: .exe
-      RUNTIME_FILES: /usr/lib/gcc/i686-w64-mingw32/10-posix/libgcc_s_dw2-1.dll /usr/lib/gcc/i686-w64-mingw32/10-posix/libstdc++-6.dll /usr/i686-w64-mingw32/lib/libwinpthread-1.dll
+      CRUNCH_EXE_EXTENSION: .exe
+    Windows arm64 MinGW:
+      VM_IMAGE: 'windows-2025'
+      PACMAN_PACKAGES: mingw-w64-cross-mingwarm64-gcc
+      C_COMPILER: aarch64-w64-mingw32-gcc
+      CXX_COMPILER: aarch64-w64-mingw32-g++
+      CRUNCH_EXE_EXTENSION: .exe
+      RUN_TESTS: false
     macOS amd64 AppleClang:
       VM_IMAGE: 'macOS-14'
       PIP_PACKAGES: colorama
@@ -104,11 +140,19 @@ steps:
     if [ -n "${APT_PACKAGES:-}" ]; then
       sudo apt-get update && sudo apt-get -y -q --no-install-recommends install ${APT_PACKAGES}
     fi
+    if [ -n "${PACMAN_PACKAGES:-}" ]; then
+      'C:\msys64\usr\bin\bash.exe' -lc "pacman -Sy --noconfirm && pacman -S --noconfirm ${PACMAN_PACKAGES}"
+      echo '##vso[task.prependpath]C:\msys64\usr\bin'
+      echo '##vso[task.prependpath]C:\msys64\opt\bin'
+    fi
     if [ -n "${PIP_PACKAGES:-}" ]; then
       pip install ${PIP_PACKAGES}
     fi
     if [ -n "${SETUP_COMMANDS:-}" ]; then
-     $(SETUP_COMMANDS)
+      $(SETUP_COMMANDS)
+    fi
+    if [ -x '/usr/lib/x86_64-linux-gnu/wine/wineserver' ]; then
+      echo '##vso[task.prependpath]/usr/lib/x86_64-linux-gnu/wine'
     fi
   displayName: 'Setup'
 - bash: |
@@ -138,7 +182,7 @@ steps:
     set -xue
     EXECUTABLES="${EXECUTABLES:-crunch example1 example2 example3}"
     for exe_file in ${EXECUTABLES}; do
-      file "build/${exe_file}${CRUNCH_EXTENSION:-}"
+      file "build/${exe_file}${CRUNCH_EXE_EXTENSION:-}"
     done
     if [ -n "${RUNTIME_FILES:-}" ]; then
         cp -av ${RUNTIME_FILES} build/
