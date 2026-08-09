@@ -800,20 +800,13 @@ void crn_comp::optimize_color() {
     uint32 endpoint = m_color_endpoints[i];
 
     if (m_has_etc_color_blocks) {
-      unpacked_endpoints[i].low.r = uint8(endpoint);
-      unpacked_endpoints[i].low.g = uint8(endpoint >> 8);
-      unpacked_endpoints[i].low.b = uint8(endpoint >> 16);
-      unpacked_endpoints[i].low.a = 0;
-
-      endpoint >>= 24;
-      unpacked_endpoints[i].high.r = uint8(endpoint);
-      unpacked_endpoints[i].high.g = 0;
-      unpacked_endpoints[i].high.b = 0;
-      unpacked_endpoints[i].high.a = 0;
+      unpacked_endpoints[i].low.set_rgba_u32(endpoint & 0xFFFFFF);
+      unpacked_endpoints[i].high.set_rgba_u32(endpoint >> 24);
     } else {
-      unpacked_endpoints[i].low = dxt1_block::unpack_color(endpoint & 0xFFFF, true);
-
-      unpacked_endpoints[i].high = dxt1_block::unpack_color(endpoint >> 16, true);
+      unpacked_endpoints[i].low =
+        dxt1_block::unpack_color(endpoint & 0xFFFF, true);
+      unpacked_endpoints[i].high =
+        dxt1_block::unpack_color(endpoint >> 16, true);
     }
   }
 

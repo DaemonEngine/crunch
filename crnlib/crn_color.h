@@ -176,6 +176,13 @@ class color_quad : public helpers::rel_ops<color_quad<component_type, parameter_
     a = 0;
   }
 
+  inline void set_rgba_u32(uint32 v) {
+    r = static_cast<component_t>(v);
+    g = static_cast<component_t>(v >> 8);
+    b = static_cast<component_t>(v >> 16);
+    a = static_cast<component_t>(v >> 24);
+  }
+
   inline uint32 get_rgba_u32() const {
     return uint32(r) |
       (uint32(g) << 8) |
