@@ -72,6 +72,36 @@ static int error(const char* pMsg, ...) {
   return EXIT_FAILURE;
 }
 
+// Writes a 32-bit value in little-endian byte order.
+// DDS files use little-endian fields regardless of the host CPU byte order.
+// Do not write integer values or structures directly with fwrite(),
+// because that would make the output dependent on the host endianness.
+static void write_u32_le(FILE* pFile, crn_uint32 v)
+{
+  crn_uint8 buf[4];
+  buf[0] = static_cast<crn_uint8>(v);
+  buf[1] = static_cast<crn_uint8>(v >> 8);
+  buf[2] = static_cast<crn_uint8>(v >> 16);
+  buf[3] = static_cast<crn_uint8>(v >> 24);
+  fwrite(buf, sizeof(buf), 1, pFile);
+}
+
+// Writes a DDS header using the format's required little-endian byte order.
+// DDSURFACEDESC2 consists of 32-bit fields. Serialize each field
+// through the little endian writer instead of relying on the native
+// memory layout of the structure.
+// Do not fwrite() the structure directly: DDS files have a fixed byte order
+// while the host CPU may be big-endian.
+static void write_dds_header(FILE* pFile, const crnlib::DDSURFACEDESC2& h)
+{
+  static_assert(sizeof(crnlib::DDSURFACEDESC2) % sizeof(crn_uint32) == 0,
+   "DDS header must contain only 32-bit fields");
+
+  const crn_uint32* p = reinterpret_cast<const crn_uint32*>(&h);
+  for (size_t i = 0; i < sizeof(h) / sizeof(crn_uint32); i++)
+    write_u32_le(pFile, p[i]);
+}
+
 int main(int argc, char* argv[]) {
   printf("example3 - Version v%u.%02u Built " __DATE__ ", " __TIME__ "\n", CRNLIB_VERSION / 100, CRNLIB_VERSION % 100);
 
@@ -241,8 +271,8 @@ int main(int argc, char* argv[]) {
     return error("Failed creating destination file!\n");
   }
 
-  // Write the 4-byte DDS signature (not endian safe, but whatever this is a sample).
-  fwrite(&crnlib::cDDSFileSignature, sizeof(crnlib::cDDSFileSignature), 1, pDDS_file);
+  // Write the 4-byte DDS signature.
+  write_u32_le(pDDS_file, crnlib::cDDSFileSignature);
 
   // Prepare the DDS header.
   crnlib::DDSURFACEDESC2 dds_desc;
@@ -263,7 +293,7 @@ int main(int argc, char* argv[]) {
   dds_desc.dwFlags |= DDSD_LINEARSIZE;
 
   // Write the DDS header to the output file.
-  fwrite(&dds_desc, sizeof(dds_desc), 1, pDDS_file);
+  write_dds_header(pDDS_file, dds_desc);
 
   // Write the image's compressed data to the output file.
   fwrite(pCompressed_data, total_compressed_size, 1, pDDS_file);
