@@ -97,7 +97,6 @@ def add_clone(clone, file_path):
         clone_knowledge[clone] = {}
         clone_knowledge[clone]["files"] = OrderedDict()
 
-
     clone_knowledge[clone]["files"][file_path] = False
 
 def crunch(input_path, output_path, clone=None, options=[]):
@@ -163,6 +162,9 @@ def verify_clones(verification):
     if verification:
         for file_clone in clone_knowledge.keys():
             for file_path in clone_knowledge[file_clone]["files"].keys():
+                if file_path not in file_knowledge.keys():
+                    continue
+
                 file_sum = file_knowledge[file_path]["file_sum"]
 
                 if "known_sum" in clone_knowledge[file_clone].keys():
@@ -189,6 +191,7 @@ def verify_files(verification):
 
         for line in database_file.readlines():
             file_path, known_sum = line.split("\t")
+
             file_knowledge[file_path]["known_sum"] = known_sum.split("\n")[0]
 
         database_file.close()
@@ -196,6 +199,12 @@ def verify_files(verification):
         for file_path in file_knowledge.keys():
             print_status("Checking file {}".format(file_path))
             file_sum = file_knowledge[file_path]["file_sum"]
+
+            if "known_sum" not in file_knowledge[file_path].keys():
+                print_warning(f"Missing recorded sum for {file_path}")
+                all_verified = False
+                continue
+
             known_sum = file_knowledge[file_path]["known_sum"]
             verified = file_sum == known_sum
             file_knowledge[file_path]["verified"] = verified
@@ -237,6 +246,10 @@ def print_files_results(verification):
 
     for file_path in file_knowledge.keys():
         if verification:
+            if "verified" not in file_knowledge[file_path].keys():
+                print_warning(f"Missing verified status for {file_path}")
+                continue
+
             verified = file_knowledge[file_path]["verified"]
             verified_string = ["No", "Yes"][verified]
         else:
