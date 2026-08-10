@@ -5,6 +5,7 @@ import os
 import subprocess
 import sys
 from collections import OrderedDict
+from itertools import chain
 
 try:
     from colorama import Fore, Style
@@ -55,6 +56,10 @@ def get_file_sum(file_path):
     return hashlib.blake2b(open(file_path, "rb").read()).hexdigest()
 
 def run(command_list):
+    if executable_runner and executable_runner.endswith("wine"):
+        wineserver = f"{executable_runner}server"
+        subprocess.run([wineserver, "-k"], check=False)
+
     if executable_runner:
         command_list = executable_runner.split(" ") + command_list
 
@@ -88,34 +93,33 @@ def get_executable_path(executable_name):
 
     return os.path.join(build_dir, executable_name)
 
-def add_clone(clone, file_path):
-    if not clone:
+def add_clone(clone_name, file_path):
+    if not clone_name:
         return
 
-    if clone not in clone_knowledge.keys():
-        clone_knowledge[clone] = {}
-        clone_knowledge[clone]["files"] = OrderedDict()
+    if clone_name not in clone_knowledge.keys():
+        clone_knowledge[clone_name] = {}
+        clone_knowledge[clone_name]["files"] = OrderedDict()
 
+    clone_knowledge[clone_name]["files"][file_path] = False
 
-    clone_knowledge[clone]["files"][file_path] = False
-
-def crunch(input_path, output_path, clone=None, options=[]):
+def crunch(input_path, output_path, clone_name, options=[]):
     executable_path = get_executable_path("crunch")
     command_list = [executable_path] + options
 
     if input_path:
         converted_input_path = convert_path(input_path)
-        command_list += ["-noTitle", "-helperThreads", "3", "-nostats", "-noprogress", "-file", converted_input_path]
+        command_list += ["-noTitle", "-helperThreads", "3", "-nostats", "-noprogress", "-noNormalDetection", "-file", converted_input_path]
 
     if output_path:
         converted_output_path = convert_path(output_path)
         command_list += ["-out", converted_output_path]
         file_knowledge[output_path] = {"converted_path": converted_output_path}
-        add_clone(clone, output_path)
+        add_clone(clone_name, output_path)
 
     run(command_list)
 
-def example(num, input_path, output_path, clone=None, options=[]):
+def example(num, input_path, output_path, clone_name, options=[]):
     executable_path = get_executable_path("example" + str(num))
     command_list = [executable_path]
 
@@ -133,7 +137,7 @@ def example(num, input_path, output_path, clone=None, options=[]):
         converted_output_path = convert_path(output_path)
         command_list += ["-out", converted_output_path]
         file_knowledge[output_path] = {"converted_path": converted_output_path}
-        add_clone(clone, output_path)
+        add_clone(clone_name, output_path)
 
     run(command_list)
 
@@ -157,11 +161,15 @@ def record_sums():
     print_success("All test results recorded")
 
 def verify_clones(verification):
-    all_verified = True
+    clones_verified = 0
+    clones_failed = 0
 
     if verification:
         for file_clone in clone_knowledge.keys():
             for file_path in clone_knowledge[file_clone]["files"].keys():
+                if file_path not in file_knowledge.keys():
+                    continue
+
                 file_sum = file_knowledge[file_path]["file_sum"]
 
                 if "known_sum" in clone_knowledge[file_clone].keys():
@@ -171,23 +179,36 @@ def verify_clones(verification):
 
                     if verified:
                         print_success("Clone {}'s checksum {} matches known one".format(file_path, known_sum))
+                        clones_verified += 1
+
+                        # Count the first clone as verified once the second one is found and is verified.
+                        if len(clone_knowledge[file_clone]["files"].keys()) == 1:
+                            clones_verified += 1
                     else:
                         print_warning("Clone {}'s checksum {} doesn't match known one {}".format(file_path, file_sum, known_sum))
-                        all_verified = False
+                        clones_failed += 1
+
+                        # Count the first clone as failed once the second one is found and is failed.
+                        if len(clone_knowledge[file_clone]["files"].keys()) == 1:
+                            clones_verified += 1
 
                 else:
                     clone_knowledge[file_clone]["known_sum"] = file_sum
 
-    return all_verified
+                    # Do not count the first clone as verified or failed until a second clone is seen and verified.
+
+    return clones_verified, clones_failed
 
 def verify_files(verification):
-    all_verified = True
+    files_verified = 0
+    files_failed = 0
 
     if verification:
         database_file = open(database_path, "r")
 
         for line in database_file.readlines():
             file_path, known_sum = line.split("\t")
+
             file_knowledge[file_path]["known_sum"] = known_sum.split("\n")[0]
 
         database_file.close()
@@ -195,17 +216,24 @@ def verify_files(verification):
         for file_path in file_knowledge.keys():
             print_status("Checking file {}".format(file_path))
             file_sum = file_knowledge[file_path]["file_sum"]
+
+            if "known_sum" not in file_knowledge[file_path].keys():
+                print_warning(f"Missing recorded sum for {file_path}")
+                files_failed += 1
+                continue
+
             known_sum = file_knowledge[file_path]["known_sum"]
             verified = file_sum == known_sum
             file_knowledge[file_path]["verified"] = verified
 
             if verified:
                 print_success("File {}'s checksum {} matches known one".format(file_path, known_sum))
+                files_verified += 1
             else:
                 print_warning("File {}'s checksum {} doesn't match known one {}".format(file_path, file_sum, known_sum))
-                all_verified = False
+                files_verified += 1
 
-    return all_verified
+    return files_verified, files_failed
 
 def print_clones_results(verification):
     if verification:
@@ -236,6 +264,10 @@ def print_files_results(verification):
 
     for file_path in file_knowledge.keys():
         if verification:
+            if "verified" not in file_knowledge[file_path].keys():
+                print_warning(f"Missing verified status for {file_path}")
+                continue
+
             verified = file_knowledge[file_path]["verified"]
             verified_string = ["No", "Yes"][verified]
         else:
@@ -244,152 +276,198 @@ def print_files_results(verification):
         short_sum = file_knowledge[file_path]["file_sum"][0:10]
         print("{:<3} {} {}".format(verified_string, short_sum, file_path))
 
-def print_end_results(clones_verification, clones_verified, files_verification, files_verified):
+def print_end_results(clones_verification, clones_verified, clones_failed, files_verification, files_verified, files_failed):
     if clones_verification:
-        if clones_verified:
-            print_success("All clones verified")
+        clones_total = clones_verified + clones_failed
+        if not clones_failed:
+            print_success(f"All clones verified (total: {clones_total})")
         else:
-            print_warning("Some clones were not verified")
+            print_warning(f"Some clones were not verified (verified: {clones_verified}, failed: {clones_failed}, total: {clones_total})")
 
     if files_verification:
-        if files_verified:
-            print_success("All files verified")
+        files_total = files_verified + files_failed
+        if not files_failed:
+            print_success(f"All files verified (total: {files_total})")
         else:
-            print_warning("Some files were not verified")
+            print_warning(f"Some files were not verified (verified: {files_verified}, failed: {files_failed}, total: {files_total})")
 
-    if clones_verified and files_verified:
-       print_success("All tests passed")
+    tests_verified = clones_verified + files_verified
+    tests_failed = clones_failed + files_failed
+    tests_total = tests_verified + tests_failed
+    if not tests_failed:
+       print_success(f"All tests passed (total: {tests_total})")
     else:
-       print_error("Some tests failed")
+       print_error(f"Some tests failed (verified: {tests_verified}, failed: {tests_failed}, total: {tests_total})")
 
-crunch(None, None, options=["--help"])
+crunch(None, None, None, options=["--help"])
+
+def merge_list(*lists):
+    return list(dict.fromkeys(chain.from_iterable(lists)))
+
+def start_from(items, value):
+    i = items.index(value)
+    return items[i:] + items[:i]
 
 if simple_test == "true":
     exit(0)
 
-mkdir("build/test/png-to-all")
-crunch("test/unvanquished_64.png", "build/test/png-to-all/unvanquished_64.tga", clone="tga")
-crunch("test/unvanquished_64.png", "build/test/png-to-all/unvanquished_64.bmp", clone="bmp")
-crunch("test/unvanquished_64.png", "build/test/png-to-all/unvanquished_64.png", clone="png")
-crunch("test/unvanquished_64.png", "build/test/png-to-all/unvanquished_64.crn", clone="crn")
-crunch("test/unvanquished_64.png", "build/test/png-to-all/unvanquished_64.dds", clone="dds")
-crunch("test/unvanquished_64.png", "build/test/png-to-all/unvanquished_64.ktx", clone="ktx")
-crunch("test/unvanquished_64.png", "build/test/png-to-all/unvanquished_64.jpg", clone="jpg")
+lossless_format_list = [
+    "tga",
+    "bmp",
+    "png",
+]
 
-mkdir("build/test/tga-to-all")
-crunch("build/test/png-to-all/unvanquished_64.tga", "build/test/tga-to-all/unvanquished_64.tga", clone="tga")
-crunch("build/test/png-to-all/unvanquished_64.tga", "build/test/tga-to-all/unvanquished_64.bmp", clone="bmp")
-crunch("build/test/png-to-all/unvanquished_64.tga", "build/test/tga-to-all/unvanquished_64.png", clone="png")
-crunch("build/test/png-to-all/unvanquished_64.tga", "build/test/tga-to-all/unvanquished_64.crn", clone="crn")
-crunch("build/test/png-to-all/unvanquished_64.tga", "build/test/tga-to-all/unvanquished_64.dds", clone="dds")
-crunch("build/test/png-to-all/unvanquished_64.tga", "build/test/tga-to-all/unvanquished_64.ktx", clone="ktx")
-crunch("build/test/png-to-all/unvanquished_64.tga", "build/test/tga-to-all/unvanquished_64.jpg", clone="jpg")
+lossy_format_list = [
+    "crn",
+    "dds",
+    "ktx",
+    "jpg",
+]
 
-mkdir("build/test/bmp-to-all")
-crunch("build/test/png-to-all/unvanquished_64.bmp", "build/test/bmp-to-all/unvanquished_64.tga", clone="tga")
-crunch("build/test/png-to-all/unvanquished_64.bmp", "build/test/bmp-to-all/unvanquished_64.bmp", clone="bmp")
-crunch("build/test/png-to-all/unvanquished_64.bmp", "build/test/bmp-to-all/unvanquished_64.png", clone="png")
-crunch("build/test/png-to-all/unvanquished_64.bmp", "build/test/bmp-to-all/unvanquished_64.crn", clone="crn")
-crunch("build/test/png-to-all/unvanquished_64.bmp", "build/test/bmp-to-all/unvanquished_64.dds", clone="dds")
-crunch("build/test/png-to-all/unvanquished_64.bmp", "build/test/bmp-to-all/unvanquished_64.ktx", clone="ktx")
-crunch("build/test/png-to-all/unvanquished_64.bmp", "build/test/bmp-to-all/unvanquished_64.jpg", clone="jpg")
+dxt_format_list = [
+    "crn",
+    "dds",
+    "ktx",
+]
 
-mkdir("build/test/crn-to-all")
-crunch("build/test/png-to-all/unvanquished_64.crn", "build/test/crn-to-all/unvanquished_64.tga")
-crunch("build/test/png-to-all/unvanquished_64.crn", "build/test/crn-to-all/unvanquished_64.bmp")
-crunch("build/test/png-to-all/unvanquished_64.crn", "build/test/crn-to-all/unvanquished_64.png")
-crunch("build/test/png-to-all/unvanquished_64.crn", "build/test/crn-to-all/unvanquished_64.crn")
-crunch("build/test/png-to-all/unvanquished_64.crn", "build/test/crn-to-all/unvanquished_64.dds", clone="crn_dds")
-crunch("build/test/png-to-all/unvanquished_64.crn", "build/test/crn-to-all/unvanquished_64.ktx")
-crunch("build/test/png-to-all/unvanquished_64.crn", "build/test/crn-to-all/unvanquished_64.jpg")
+transparent_format_list = [
+    "tga",
+    "bmp",
+    "png",
+    "crn",
+    "dds",
+    "ktx",
+]
 
-mkdir("build/test/dds-to-all")
-crunch("build/test/png-to-all/unvanquished_64.dds", "build/test/dds-to-all/unvanquished_64.tga")
-crunch("build/test/png-to-all/unvanquished_64.dds", "build/test/dds-to-all/unvanquished_64.bmp")
-crunch("build/test/png-to-all/unvanquished_64.dds", "build/test/dds-to-all/unvanquished_64.png")
-crunch("build/test/png-to-all/unvanquished_64.dds", "build/test/dds-to-all/unvanquished_64.crn")
-crunch("build/test/png-to-all/unvanquished_64.dds", "build/test/dds-to-all/unvanquished_64.dds", clone="dds")
-crunch("build/test/png-to-all/unvanquished_64.dds", "build/test/dds-to-all/unvanquished_64.ktx")
-crunch("build/test/png-to-all/unvanquished_64.dds", "build/test/dds-to-all/unvanquished_64.jpg")
+opaque_format_list = [
+    "jpg",
+]
 
-mkdir("build/test/ktx-to-all")
-crunch("build/test/png-to-all/unvanquished_64.ktx", "build/test/ktx-to-all/unvanquished_64.tga")
-crunch("build/test/png-to-all/unvanquished_64.ktx", "build/test/ktx-to-all/unvanquished_64.bmp")
-crunch("build/test/png-to-all/unvanquished_64.ktx", "build/test/ktx-to-all/unvanquished_64.png")
-crunch("build/test/png-to-all/unvanquished_64.ktx", "build/test/ktx-to-all/unvanquished_64.crn")
-crunch("build/test/png-to-all/unvanquished_64.ktx", "build/test/ktx-to-all/unvanquished_64.dds")
-crunch("build/test/png-to-all/unvanquished_64.ktx", "build/test/ktx-to-all/unvanquished_64.ktx")
-crunch("build/test/png-to-all/unvanquished_64.ktx", "build/test/ktx-to-all/unvanquished_64.jpg")
+all_format_list = merge_list(
+    lossless_format_list,
+    dxt_format_list,
+    transparent_format_list,
+    opaque_format_list,
+    lossy_format_list,
+)
 
-mkdir("build/test/jpg-to-all")
-crunch("build/test/png-to-all/unvanquished_64.jpg", "build/test/jpg-to-all/unvanquished_64.tga")
-crunch("build/test/png-to-all/unvanquished_64.jpg", "build/test/jpg-to-all/unvanquished_64.bmp")
-crunch("build/test/png-to-all/unvanquished_64.jpg", "build/test/jpg-to-all/unvanquished_64.png")
-crunch("build/test/png-to-all/unvanquished_64.jpg", "build/test/jpg-to-all/unvanquished_64.crn")
-crunch("build/test/png-to-all/unvanquished_64.jpg", "build/test/jpg-to-all/unvanquished_64.dds")
-crunch("build/test/png-to-all/unvanquished_64.jpg", "build/test/jpg-to-all/unvanquished_64.ktx")
-crunch("build/test/png-to-all/unvanquished_64.jpg", "build/test/jpg-to-all/unvanquished_64.jpg")
+for in_format in start_from(all_format_list, "png"):
+    if in_format == "png":
+        in_dir = "test"
+    else:
+        in_dir = "build/test/crunch-icon-png-to-all"
 
-mkdir("build/test/tga-to-png")
-crunch("test/raw-bottom-left.tga", "build/test/tga-to-png/raw-bottom-left.png", clone="tga_png")
-crunch("test/raw-bottom-right.tga", "build/test/tga-to-png/raw-bottom-right.png", clone="tga_png")
-crunch("test/raw-top-left.tga", "build/test/tga-to-png/raw-top-left.png", clone="tga_png")
-crunch("test/raw-top-right.tga", "build/test/tga-to-png/raw-top-right.png", clone="tga_png")
-crunch("test/rle-bottom-left.tga", "build/test/tga-to-png/rle-bottom-left.png", clone="tga_png")
-crunch("test/rle-bottom-right.tga", "build/test/tga-to-png/rle-bottom-right.png", clone="tga_png")
-crunch("test/rle-top-left.tga", "build/test/tga-to-png/rle-top-left.png", clone="tga_png")
-crunch("test/rle-top-right.tga", "build/test/tga-to-png/rle-top-right.png", clone="tga_png")
+    out_dir = f"build/test/crunch-icon-{in_format}-to-all"
 
-mkdir("build/test/tga-to-crn")
-crunch("test/raw-bottom-left.tga", "build/test/tga-to-crn/raw-bottom-left.crn", clone="tga_crn")
-crunch("test/raw-bottom-right.tga", "build/test/tga-to-crn/raw-bottom-right.crn", clone="tga_crn")
-crunch("test/raw-top-left.tga", "build/test/tga-to-crn/raw-top-left.crn", clone="tga_crn")
-crunch("test/raw-top-right.tga", "build/test/tga-to-crn/raw-top-right.crn", clone="tga_crn")
-crunch("test/rle-bottom-left.tga", "build/test/tga-to-crn/rle-bottom-left.crn", clone="tga_crn")
-crunch("test/rle-bottom-right.tga", "build/test/tga-to-crn/rle-bottom-right.crn", clone="tga_crn")
-crunch("test/rle-top-left.tga", "build/test/tga-to-crn/rle-top-left.crn", clone="tga_crn")
-crunch("test/rle-top-right.tga", "build/test/tga-to-crn/rle-top-right.crn", clone="tga_crn")
+    mkdir(out_dir)
 
-mkdir("build/test/png-to-png")
-crunch("test/test-colormap1-alpha1.png", "build/test/png-to-png/test-colormap1-alpha1.png")
-crunch("test/test-colormap2-alpha1.png", "build/test/png-to-png/test-colormap2-alpha1.png")
-crunch("test/test-colormap4-alpha1.png", "build/test/png-to-png/test-colormap4-alpha1.png")
-crunch("test/test-colormap8-alpha1.png", "build/test/png-to-png/test-colormap8-alpha1.png")
-crunch("test/test-grayscale1-alpha1.png", "build/test/png-to-png/test-grayscale1-alpha1.png")
-crunch("test/test-grayscale1-alpha8.png", "build/test/png-to-png/test-grayscale1-alpha8.png")
-crunch("test/test-grayscale8-alpha1.png", "build/test/png-to-png/test-grayscale8-alpha1.png")
-crunch("test/test-rgb8-alpha8.png", "build/test/png-to-png/test-rgb8-alpha8.png")
+    for out_format in all_format_list:
+        sample_name = "sample-icon-unvanquished-64x64"
 
-mkdir("build/test/png-to-crn")
-crunch("test/test-colormap1-alpha1.png", "build/test/png-to-crn/test-colormap1-alpha1.crn")
-crunch("test/test-colormap2-alpha1.png", "build/test/png-to-crn/test-colormap2-alpha1.crn")
-crunch("test/test-colormap4-alpha1.png", "build/test/png-to-crn/test-colormap4-alpha1.crn")
-crunch("test/test-colormap8-alpha1.png", "build/test/png-to-crn/test-colormap8-alpha1.crn")
-crunch("test/test-grayscale1-alpha1.png", "build/test/png-to-crn/test-grayscale1-alpha1.crn")
-crunch("test/test-grayscale1-alpha8.png", "build/test/png-to-crn/test-grayscale1-alpha8.crn")
-crunch("test/test-grayscale8-alpha1.png", "build/test/png-to-crn/test-grayscale8-alpha1.crn")
-crunch("test/test-rgb8-alpha8.png", "build/test/png-to-crn/test-rgb8-alpha8.crn")
+        in_path = f"{in_dir}/{sample_name}.{in_format}"
 
-mkdir("build/test/bmp-to-crn")
-crunch("test/sample-default.bmp", "build/test/bmp-to-crn/sample-default.crn", "bmp_crn")
-crunch("test/sample-vertical-flip.bmp", "build/test/bmp-to-crn/sample-vertical-flip.crn", "bmp_crn")
+        out_path = f"{out_dir}/{sample_name}.{out_format}"
 
-mkdir("build/test/jpg-to-crn")
-crunch("test/black.jpg", "build/test/jpg-to-crn/black.crn")
+        if in_format in lossless_format_list:
+            clone_name = f"icon-png-to-{out_format}"
+        elif in_format == out_format and out_format in ["dds", "ktx"]:
+            clone_name = f"icon-png-to-{out_format}"
+        elif in_format == "crn" and out_format == "dds":
+            clone_name = f"icon-{in_format}-to-{out_format}"
+        else:
+            clone_name = None
 
-mkdir("build/test/example1-dds")
-example(1, "test/unvanquished_64.png", None, options=["i"])
-example(1, "test/unvanquished_64.png", "build/test/example1-dds/unvanquished_64.dds", clone="dds", options=["c"])
+        crunch(in_path, out_path, clone_name)
 
-mkdir("build/test/example1-crn")
-example(1, "test/unvanquished_64.png", "build/test/example1-crn/unvanquished_64.crn", clone="crn", options=["c", "-crn"])
-example(1, "build/test/example1-crn/unvanquished_64.crn", "build/test/example1-crn/unvanquished_64.dds", clone="crn_dds", options=["d"])
+collection_dict_list = [
+    {
+        "name": "orientation",
+        "format": "tga",
+        "clone": True,
+        "samples": [
+            "sample-flat-bottom-left",
+            "sample-flat-bottom-right",
+            "sample-flat-top-left",
+            "sample-flat-top-right",
+            "sample-rle-bottom-left",
+            "sample-rle-bottom-right",
+            "sample-rle-top-left",
+            "sample-rle-top-right",
+        ],
+    },
+    {
+        "name": "orientation",
+        "format": "bmp",
+        "clone": True,
+        "samples": [
+            "sample-default",
+            "sample-vertical-flip",
+        ],
+    },
+    {
+        "name": "transparency",
+        "format": "png",
+        "clone": False,
+        "samples": [
+            "sample-colormap1-alpha1",
+            "sample-colormap2-alpha1",
+            "sample-colormap4-alpha1",
+            "sample-colormap8-alpha1",
+            "sample-grayscale1-alpha1",
+            "sample-grayscale1-alpha8",
+            "sample-grayscale8-alpha1",
+            "sample-rgb8-alpha8",
+        ],
+    },
+    {
+        "name": "format",
+        "clone": False,
+        "format": "jpg",
+        "samples": [
+            "sample-black-64x64",
+        ],
+    },
+]
 
-mkdir("build/test/example2-dds")
-example(2, "build/test/example1-crn/unvanquished_64.crn", "build/test/example2-dds/unvanquished_64.dds", clone="crn_dds")
+for collection in collection_dict_list:
+    collection_name = collection["name"]
+    in_format = collection["format"]
+    is_clone = collection["clone"]
+    sample_name_list = collection["samples"]
 
-mkdir("build/test/example3-dds")
-example(3, "test/unvanquished_64.png", "build/test/example3-dds/unvanquished_64.dds")
+    out_dir = f"build/test/crunch-{collection_name}-{in_format}-to-all"
+
+    mkdir(out_dir)
+
+    for sample_name in sample_name_list:
+        for out_format in all_format_list:
+            in_path = f"test/{sample_name}.{in_format}"
+
+            out_path = f"{out_dir}/{sample_name}.{out_format}"
+
+            if is_clone:
+                clone_name = f"{collection_name}-{in_format}-to-{out_format}"
+            else:
+                clone_name = None
+
+            crunch(in_path, out_path, clone_name)
+
+example(1, "test/sample-icon-unvanquished-64x64.png", None, None, options=["i"])
+
+mkdir("build/test/example1-icon-png-to-dds")
+example(1, "test/sample-icon-unvanquished-64x64.png", "build/test/example1-icon-png-to-dds/sample-icon-unvanquished-64x64.dds", "icon-png-to-dds", options=["c"])
+
+mkdir("build/test/example1-icon-png-to-crn")
+example(1, "test/sample-icon-unvanquished-64x64.png", "build/test/example1-icon-png-to-crn/sample-icon-unvanquished-64x64.crn", "icon-png-to-crn", options=["c", "-crn"])
+
+mkdir("build/test/example1-icon-crn-to-dds")
+example(1, "build/test/example1-icon-png-to-crn/sample-icon-unvanquished-64x64.crn", "build/test/example1-icon-crn-to-dds/sample-icon-unvanquished-64x64.dds", "icon-crn-to-dds", options=["d"])
+
+mkdir("build/test/example2-icon-crn-to-dds")
+example(2, "build/test/example1-icon-png-to-crn/sample-icon-unvanquished-64x64.crn", "build/test/example2-icon-crn-to-dds/sample-icon-unvanquished-64x64.dds", "icon-crn-to-dds")
+
+mkdir("build/test/example3-icon-png-to-dds")
+example(3, "test/sample-icon-unvanquished-64x64.png", "build/test/example3-icon-png-to-dds/sample-icon-unvanquished-64x64.dds", None)
 
 print_success("All tests executed")
 
@@ -406,12 +484,12 @@ if recording:
     files_verification = False
     record_sums()
 
-clones_verified = verify_clones(clones_verification)
+clones_verified, clones_failed = verify_clones(clones_verification)
 
-files_verified = verify_files(files_verification)
+files_verified, files_failed = verify_files(files_verification)
 
 print_clones_results(clones_verification)
 
 print_files_results(files_verification)
 
-print_end_results(clones_verification, clones_verified, files_verification, files_verified)
+print_end_results(clones_verification, clones_verified, clones_failed, files_verification, files_verified, files_failed)
