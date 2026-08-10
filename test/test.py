@@ -106,7 +106,7 @@ def crunch(input_path, output_path, clone=None, options=[]):
 
     if input_path:
         converted_input_path = convert_path(input_path)
-        command_list += ["-noTitle", "-helperThreads", "3", "-nostats", "-noprogress", "-file", converted_input_path]
+        command_list += ["-noTitle", "-helperThreads", "3", "-nostats", "-noprogress", "-noNormalDetection", "-file", converted_input_path]
 
     if output_path:
         converted_output_path = convert_path(output_path)
