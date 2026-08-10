@@ -530,6 +530,120 @@ for encoding in [
                             mkdir(out_dir)
                             crunch(in_path, out_path, clone_name)
 
+for sample_name in [
+    "sample-normal-ej01-floortrim02-128x128",
+]:
+    layout_dict_list = [
+        {
+            "name": "default",
+            "option": [],
+        },
+        {
+            "name": "dxn",
+            "option": ["-dxn"],
+        },
+    ]
+
+    for layout in layout_dict_list:
+        layout_name = layout["name"]
+        layout_option = layout["option"]
+
+        normal_dict_list = [
+            {
+                "name": "original",
+                "option": [],
+            },
+            {
+                "name": "renormalize",
+                "option": ["-renormalize", "-rtopmip"],
+            },
+        ]
+
+        for normal in normal_dict_list:
+            normal_name = normal["name"]
+            normal_option = normal["option"]
+
+            for out_format in all_format_list:
+                if out_format not in dxt_format_list and layout_name == "dxn":
+                    continue
+
+                in_format = "png"
+                in_path = f"test/{sample_name}.{in_format}"
+
+                if layout_name == "dxn":
+                    out_dir_format = "dxt"
+                else:
+                    out_dir_format = "all"
+
+                out_dir = f"build/test/crunch-normal-{normal_name}-{layout_name}-{in_format}-to-{out_dir_format}"
+                out_path = f"{out_dir}/{sample_name}.{out_format}"
+
+                option_list = []
+                option_list.extend(normal_option)
+                option_list.extend(layout_option)
+
+                mkdir(out_dir)
+                crunch(in_path, out_path, None, options=option_list)
+
+        endian_dict_list = [
+            {
+                "name": "little-to-big",
+                "option": ["-ktxBigEndian"]
+            },
+            {
+                "name": "big-to-little",
+                "option": [],
+            },
+        ]
+
+for in_format in all_format_list:
+    mkdir("build/test/crunch-endian-original-default-little-to-big")
+
+    crunch(
+        f"build/test/crunch-normal-original-default-png-to-all/sample-normal-ej01-floortrim02-128x128.{in_format}",
+        f"build/test/crunch-endian-original-default-little-to-big/sample-normal-ej01-floortrim02-128x128-default-from-{in_format}.ktx",
+        None,
+        options=["-ktxBigEndian"],
+    )
+
+    if in_format in dxt_format_list:
+        crunch(
+            f"build/test/crunch-normal-original-dxn-png-to-dxt/sample-normal-ej01-floortrim02-128x128.{in_format}",
+            f"build/test/crunch-endian-original-default-little-to-big/sample-normal-ej01-floortrim02-128x128-dxn-from-{in_format}.ktx",
+            None,
+            options=["-ktxBigEndian", "-dxn"],
+        )
+
+    crunch(
+        f"build/test/crunch-icon-png-to-all/sample-icon-unvanquished-64x64.{in_format}",
+        f"build/test/crunch-endian-original-default-little-to-big/sample-icon-unvanquished-64x64-from-{in_format}.ktx",
+        None,
+        options=["-ktxBigEndian"],
+    )
+
+    mkdir("build/test/crunch-endian-original-default-big-to-little")
+
+    for out_format in all_format_list:
+        crunch(
+            f"build/test/crunch-endian-original-default-little-to-big/sample-normal-ej01-floortrim02-128x128-default-from-{in_format}.ktx",
+            f"build/test/crunch-endian-original-default-big-to-little/sample-normal-ej01-floortrim02-128x128-default-from-ktx.{out_format}",
+            None,
+        )
+
+        if in_format in dxt_format_list:
+            crunch(
+                f"build/test/crunch-endian-original-default-little-to-big/sample-normal-ej01-floortrim02-128x128-dxn-from-{in_format}.ktx",
+                f"build/test/crunch-endian-original-default-big-to-little/sample-normal-ej01-floortrim02-128x128-dxn-from-ktx.{out_format}",
+                None,
+                options=["-dxn"],
+            )
+
+        crunch(
+            f"build/test/crunch-endian-original-default-little-to-big/sample-icon-unvanquished-64x64-from-{in_format}.ktx",
+            f"build/test/crunch-endian-original-default-big-to-little/sample-icon-unvanquished-64x64-from-ktx.{out_format}",
+            None,
+        )
+
 example(1, "test/sample-icon-unvanquished-64x64.png", None, None, options=["i"])
 
 mkdir("build/test/example1-icon-png-to-dds")
