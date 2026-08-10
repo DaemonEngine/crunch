@@ -157,7 +157,8 @@ def record_sums():
     print_success("All test results recorded")
 
 def verify_clones(verification):
-    all_verified = True
+    clones_verified = 0
+    clones_failed = 0
 
     if verification:
         for file_clone in clone_knowledge.keys():
@@ -174,17 +175,29 @@ def verify_clones(verification):
 
                     if verified:
                         print_success("Clone {}'s checksum {} matches known one".format(file_path, known_sum))
+                        clones_verified += 1
+
+                        # Count the first clone as verified once the second one is found and is verified.
+                        if len(clone_knowledge[file_clone]["files"].keys()) == 1:
+                            clones_verified += 1
                     else:
                         print_warning("Clone {}'s checksum {} doesn't match known one {}".format(file_path, file_sum, known_sum))
-                        all_verified = False
+                        clones_failed += 1
+
+                        # Count the first clone as failed once the second one is found and is failed.
+                        if len(clone_knowledge[file_clone]["files"].keys()) == 1:
+                            clones_verified += 1
 
                 else:
                     clone_knowledge[file_clone]["known_sum"] = file_sum
 
-    return all_verified
+                    # Do not count the first clone as verified or failed until a second clone is seen and verified.
+
+    return clones_verified, clones_failed
 
 def verify_files(verification):
-    all_verified = True
+    files_verified = 0
+    files_failed = 0
 
     if verification:
         database_file = open(database_path, "r")
@@ -202,7 +215,7 @@ def verify_files(verification):
 
             if "known_sum" not in file_knowledge[file_path].keys():
                 print_warning(f"Missing recorded sum for {file_path}")
-                all_verified = False
+                files_failed += 1
                 continue
 
             known_sum = file_knowledge[file_path]["known_sum"]
@@ -211,11 +224,12 @@ def verify_files(verification):
 
             if verified:
                 print_success("File {}'s checksum {} matches known one".format(file_path, known_sum))
+                files_verified += 1
             else:
                 print_warning("File {}'s checksum {} doesn't match known one {}".format(file_path, file_sum, known_sum))
-                all_verified = False
+                files_verified += 1
 
-    return all_verified
+    return files_verified, files_failed
 
 def print_clones_results(verification):
     if verification:
@@ -258,23 +272,28 @@ def print_files_results(verification):
         short_sum = file_knowledge[file_path]["file_sum"][0:10]
         print("{:<3} {} {}".format(verified_string, short_sum, file_path))
 
-def print_end_results(clones_verification, clones_verified, files_verification, files_verified):
+def print_end_results(clones_verification, clones_verified, clones_failed, files_verification, files_verified, files_failed):
     if clones_verification:
-        if clones_verified:
-            print_success("All clones verified")
+        clones_total = clones_verified + clones_failed
+        if not clones_failed:
+            print_success(f"All clones verified (total: {clones_total})")
         else:
-            print_warning("Some clones were not verified")
+            print_warning(f"Some clones were not verified (verified: {clones_verified}, failed: {clones_failed}, total: {clones_total})")
 
     if files_verification:
-        if files_verified:
-            print_success("All files verified")
+        files_total = files_verified + files_failed
+        if not files_failed:
+            print_success(f"All files verified (total: {files_total})")
         else:
-            print_warning("Some files were not verified")
+            print_warning(f"Some files were not verified (verified: {files_verified}, failed: {files_failed}, total: {files_total})")
 
-    if clones_verified and files_verified:
-       print_success("All tests passed")
+    tests_verified = clones_verified + files_verified
+    tests_failed = clones_failed + files_failed
+    tests_total = tests_verified + tests_failed
+    if not tests_failed:
+       print_success(f"All tests passed (total: {tests_total})")
     else:
-       print_error("Some tests failed")
+       print_error(f"Some tests failed (verified: {tests_verified}, failed: {tests_failed}, total: {tests_total})")
 
 crunch(None, None, None, options=["--help"])
 
@@ -461,12 +480,12 @@ if recording:
     files_verification = False
     record_sums()
 
-clones_verified = verify_clones(clones_verification)
+clones_verified, clones_failed = verify_clones(clones_verification)
 
-files_verified = verify_files(files_verification)
+files_verified, files_failed = verify_files(files_verification)
 
 print_clones_results(clones_verification)
 
 print_files_results(files_verification)
 
-print_end_results(clones_verification, clones_verified, files_verification, files_verified)
+print_end_results(clones_verification, clones_verified, clones_failed, files_verification, files_verified, files_failed)
