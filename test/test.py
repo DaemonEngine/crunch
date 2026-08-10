@@ -276,7 +276,7 @@ def print_end_results(clones_verification, clones_verified, files_verification, 
     else:
        print_error("Some tests failed")
 
-crunch(None, None, options=["--help"])
+crunch(None, None, None, options=["--help"])
 
 def merge_list(*lists):
     return list(dict.fromkeys(chain.from_iterable(lists)))
@@ -354,7 +354,7 @@ for in_format in start_from(all_format_list, "png"):
         else:
             clone_name = None
 
-        crunch(in_path, out_path, clone=clone_name)
+        crunch(in_path, out_path, clone_name)
 
 collection_dict_list = [
     {
@@ -427,24 +427,24 @@ for collection in collection_dict_list:
             else:
                 clone_name = None
 
-            crunch(in_path, out_path, clone=clone_name)
+            crunch(in_path, out_path, clone_name)
 
-example(1, "test/unvanquished_64.png", None, options=["i"])
+example(1, "test/unvanquished_64.png", None, None, options=["i"])
 
 mkdir("build/test/example1-icon-png-to-dds")
-example(1, "test/unvanquished_64.png", "build/test/example1-icon-png-to-dds/unvanquished_64.dds", clone="icon-png-to-dds", options=["c"])
+example(1, "test/unvanquished_64.png", "build/test/example1-icon-png-to-dds/unvanquished_64.dds", "icon-png-to-dds", options=["c"])
 
 mkdir("build/test/example1-icon-png-to-crn")
-example(1, "test/unvanquished_64.png", "build/test/example1-icon-png-to-crn/unvanquished_64.crn", clone="icon-png-to-crn", options=["c", "-crn"])
+example(1, "test/unvanquished_64.png", "build/test/example1-icon-png-to-crn/unvanquished_64.crn", "icon-png-to-crn", options=["c", "-crn"])
 
 mkdir("build/test/example1-icon-crn-to-dds")
-example(1, "build/test/example1-icon-png-to-crn/unvanquished_64.crn", "build/test/example1-icon-crn-to-dds/unvanquished_64.dds", clone="icon-crn-to-dds", options=["d"])
+example(1, "build/test/example1-icon-png-to-crn/unvanquished_64.crn", "build/test/example1-icon-crn-to-dds/unvanquished_64.dds", "icon-crn-to-dds", options=["d"])
 
 mkdir("build/test/example2-icon-crn-to-dds")
-example(2, "build/test/example1-icon-png-to-crn/unvanquished_64.crn", "build/test/example2-icon-crn-to-dds/unvanquished_64.dds", clone="icon-crn-to-dds")
+example(2, "build/test/example1-icon-png-to-crn/unvanquished_64.crn", "build/test/example2-icon-crn-to-dds/unvanquished_64.dds", "icon-crn-to-dds")
 
 mkdir("build/test/example3-icon-png-to-dds")
-example(3, "test/unvanquished_64.png", "build/test/example3-icon-png-to-dds/unvanquished_64.dds")
+example(3, "test/unvanquished_64.png", "build/test/example3-icon-png-to-dds/unvanquished_64.dds", None)
 
 print_success("All tests executed")
 
