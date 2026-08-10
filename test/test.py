@@ -99,7 +99,7 @@ def add_clone(clone, file_path):
 
     clone_knowledge[clone]["files"][file_path] = False
 
-def crunch(input_path, output_path, clone=None, options=[]):
+def crunch(input_path, output_path, clone, options=[]):
     executable_path = get_executable_path("crunch")
     command_list = [executable_path] + options
 
@@ -115,7 +115,7 @@ def crunch(input_path, output_path, clone=None, options=[]):
 
     run(command_list)
 
-def example(num, input_path, output_path, clone=None, options=[]):
+def example(num, input_path, output_path, clone, options=[]):
     executable_path = get_executable_path("example" + str(num))
     command_list = [executable_path]
 
