@@ -89,17 +89,17 @@ def get_executable_path(executable_name):
 
     return os.path.join(build_dir, executable_name)
 
-def add_clone(clone, file_path):
-    if not clone:
+def add_clone(clone_name, file_path):
+    if not clone_name:
         return
 
-    if clone not in clone_knowledge.keys():
-        clone_knowledge[clone] = {}
-        clone_knowledge[clone]["files"] = OrderedDict()
+    if clone_name not in clone_knowledge.keys():
+        clone_knowledge[clone_name] = {}
+        clone_knowledge[clone_name]["files"] = OrderedDict()
 
-    clone_knowledge[clone]["files"][file_path] = False
+    clone_knowledge[clone_name]["files"][file_path] = False
 
-def crunch(input_path, output_path, clone, options=[]):
+def crunch(input_path, output_path, clone_name, options=[]):
     executable_path = get_executable_path("crunch")
     command_list = [executable_path] + options
 
@@ -111,11 +111,11 @@ def crunch(input_path, output_path, clone, options=[]):
         converted_output_path = convert_path(output_path)
         command_list += ["-out", converted_output_path]
         file_knowledge[output_path] = {"converted_path": converted_output_path}
-        add_clone(clone, output_path)
+        add_clone(clone_name, output_path)
 
     run(command_list)
 
-def example(num, input_path, output_path, clone, options=[]):
+def example(num, input_path, output_path, clone_name, options=[]):
     executable_path = get_executable_path("example" + str(num))
     command_list = [executable_path]
 
@@ -133,7 +133,7 @@ def example(num, input_path, output_path, clone, options=[]):
         converted_output_path = convert_path(output_path)
         command_list += ["-out", converted_output_path]
         file_knowledge[output_path] = {"converted_path": converted_output_path}
-        add_clone(clone, output_path)
+        add_clone(clone_name, output_path)
 
     run(command_list)
 
