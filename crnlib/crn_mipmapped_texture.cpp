@@ -2653,6 +2653,10 @@ bool mipmapped_texture::read_regular_image(data_stream_serializer& serializer) {
     return false;
   }
 
+  // Ignore alpha channel when it exists but is fully opaque.
+  const bool has_alpha = image_utils::has_alpha(*pImg);
+  pImg->set_component_valid(3, has_alpha);
+
   mip_level* pLevel = crnlib_new<mip_level>();
   pLevel->assign(pImg);
 
