@@ -795,9 +795,19 @@ void crn_comp::optimize_color() {
     }
   }
   crnlib::vector<optimize_color_params::unpacked_endpoint> unpacked_endpoints(n);
+
   for (uint16 i = 0; i < n; i++) {
-    unpacked_endpoints[i].low.m_u32 = m_has_etc_color_blocks ? m_color_endpoints[i] & 0xFFFFFF : dxt1_block::unpack_color(m_color_endpoints[i] & 0xFFFF, true).m_u32;
-    unpacked_endpoints[i].high.m_u32 = m_has_etc_color_blocks ? m_color_endpoints[i] >> 24 : dxt1_block::unpack_color(m_color_endpoints[i] >> 16, true).m_u32;
+    uint32 endpoint = m_color_endpoints[i];
+
+    if (m_has_etc_color_blocks) {
+      unpacked_endpoints[i].low.set_rgba_u32(endpoint & 0xFFFFFF);
+      unpacked_endpoints[i].high.set_rgba_u32(endpoint >> 24);
+    } else {
+      unpacked_endpoints[i].low =
+        dxt1_block::unpack_color(endpoint & 0xFFFF, true);
+      unpacked_endpoints[i].high =
+        dxt1_block::unpack_color(endpoint >> 16, true);
+    }
   }
 
   optimize_color_params::result remapping_trial[4];

@@ -168,6 +168,8 @@ class crunch {
 
     console::message("\nOutput pixel format options:");
     console::printf("-usesourceformat - Use input file's format for output format (when possible).");
+    console::printf("-ktxBigEndian - Write KTX files using big-endian byte order (default=little-endian).");
+    console::printf("-ktxNativeEndian - Write KTX files using the native CPU byte order.");
     console::message("\nAll supported texture formats (Note: .CRN only supports DXTn pixel formats):");
     for (uint32 i = 0; i < pixel_format_helpers::get_num_formats(); i++) {
       pixel_format fmt = pixel_format_helpers::get_pixel_format_by_index(i);
@@ -242,6 +244,8 @@ class crunch {
             {"forceprimaryencoding", 0, false},
             {"usetransparentindicesforblack", 0, false},
             {"usesourceformat", 0, false},
+            {"ktxBigEndian", 0, false},
+            {"ktxNativeEndian", 0, false},
 
             {"rescalemode", 1, false},
             {"rescale", 2, false},
@@ -872,6 +876,12 @@ class crunch {
       comp_params.set_flag(cCRNCompFlagUseTransparentIndicesForBlack, m_params.get_value_as_bool("usetransparentindicesforblack"));
     else
       comp_params.set_flag(cCRNCompFlagUseTransparentIndicesForBlack, false);
+
+    if (m_params.get_value_as_bool("ktxBigendian")) {
+      comp_params.m_ktx_endianness = cCRNKTXBigEndian;
+    } else if (m_params.get_value_as_bool("ktxNativeEndian")) {
+      comp_params.m_ktx_endianness = cCRNKTXNativeEndian;
+    }
 
     return true;
   }

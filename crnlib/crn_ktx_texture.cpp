@@ -279,24 +279,51 @@ bool ktx_texture::compute_pixel_info() {
 bool ktx_texture::read_from_stream(data_stream_serializer& serializer) {
   clear();
 
-  // Read header
-  if (serializer.read(&m_header, 1, sizeof(m_header)) != sizeof(ktx_header))
+  // Read the identifier first. It is endian-independent.
+  if (serializer.read(m_header.m_identifier, 1, sizeof(m_header.m_identifier)) != sizeof(m_header.m_identifier))
     return false;
 
-  // Check header
+  // Check identifier.
   if (memcmp(s_ktx_file_id, m_header.m_identifier, sizeof(m_header.m_identifier)))
     return false;
 
-  if ((m_header.m_endianness != KTX_OPPOSITE_ENDIAN) && (m_header.m_endianness != KTX_ENDIAN))
+  // Read the KTX endianness marker as raw bytes. We cannot interpret it
+  // until we know the file's byte order.
+  uint8 endianness_bytes[4];
+  if (serializer.read(endianness_bytes, 1, sizeof(endianness_bytes)) != sizeof(endianness_bytes))
     return false;
 
-  m_opposite_endianness = (m_header.m_endianness == KTX_OPPOSITE_ENDIAN);
-  if (m_opposite_endianness) {
-    m_header.endian_swap();
+  static const uint8 little_endian_bytes[] = { 0x01, 0x02, 0x03, 0x04 };
+  static const uint8 big_endian_bytes[]    = { 0x04, 0x03, 0x02, 0x01 };
 
-    if ((m_header.m_glTypeSize != sizeof(uint8)) && (m_header.m_glTypeSize != sizeof(uint16)) && (m_header.m_glTypeSize != sizeof(uint32)))
-      return false;
+  if (!memcmp(endianness_bytes, little_endian_bytes, sizeof(little_endian_bytes))) {
+    // File is little-endian.
+    m_opposite_endianness = !c_crnlib_little_endian_platform;
+    m_header.m_endianness = KTX_ENDIAN;
+    serializer.set_little_endian(true);
+  } else if (!memcmp(endianness_bytes, big_endian_bytes, sizeof(big_endian_bytes))) {
+    // File is big-endian.
+    m_opposite_endianness = c_crnlib_little_endian_platform;
+    m_header.m_endianness = KTX_OPPOSITE_ENDIAN;
+    serializer.set_little_endian(false);
+  } else {
+    return false;
   }
+
+  // Read the remaining header fields using the file's byte order.
+  if (!serializer.read_object(m_header.m_glType) ||
+      !serializer.read_object(m_header.m_glTypeSize) ||
+      !serializer.read_object(m_header.m_glFormat) ||
+      !serializer.read_object(m_header.m_glInternalFormat) ||
+      !serializer.read_object(m_header.m_glBaseInternalFormat) ||
+      !serializer.read_object(m_header.m_pixelWidth) ||
+      !serializer.read_object(m_header.m_pixelHeight) ||
+      !serializer.read_object(m_header.m_pixelDepth) ||
+      !serializer.read_object(m_header.m_numberOfArrayElements) ||
+      !serializer.read_object(m_header.m_numberOfFaces) ||
+      !serializer.read_object(m_header.m_numberOfMipmapLevels) ||
+      !serializer.read_object(m_header.m_bytesOfKeyValueData))
+    return false;
 
   if (!check_header())
     return false;
@@ -313,13 +340,10 @@ bool ktx_texture::read_from_stream(data_stream_serializer& serializer) {
       return false;
 
     uint32 key_value_byte_size;
-    if (serializer.read(&key_value_byte_size, 1, sizeof(uint32)) != sizeof(uint32))
+    if (!serializer.read_object(key_value_byte_size))
       return false;
 
     num_key_value_bytes_remaining -= sizeof(uint32);
-
-    if (m_opposite_endianness)
-      key_value_byte_size = utils::swap32(key_value_byte_size);
 
     if (key_value_byte_size > num_key_value_bytes_remaining)
       return false;
@@ -426,11 +450,8 @@ bool ktx_texture::read_from_stream(data_stream_serializer& serializer) {
     if (!has_valid_image_size_fields)
       image_size = mip_depth * mip_row_blocks * mip_col_blocks * m_bytes_per_block * get_array_size() * get_num_faces();
     else {
-      if (serializer.read(&image_size, 1, sizeof(image_size)) != sizeof(image_size))
+      if (!serializer.read_object(image_size))
         return false;
-
-      if (m_opposite_endianness)
-        image_size = utils::swap32(image_size);
     }
 
     if (!image_size)
@@ -501,13 +522,16 @@ bool ktx_texture::read_from_stream(data_stream_serializer& serializer) {
 }
 
 bool ktx_texture::write_to_stream(data_stream_serializer& serializer, bool no_keyvalue_data) {
+  serializer.set_little_endian(!m_big_endian);
+
   if (!consistency_check()) {
     CRNLIB_ASSERT(0);
     return false;
   }
 
   memcpy(m_header.m_identifier, s_ktx_file_id, sizeof(m_header.m_identifier));
-  m_header.m_endianness = m_opposite_endianness ? KTX_OPPOSITE_ENDIAN : KTX_ENDIAN;
+
+  m_header.m_endianness = KTX_ENDIAN;
 
   if (m_block_dim == 1) {
     m_header.m_glTypeSize = get_ogl_type_size(m_header.m_glType);
@@ -522,13 +546,22 @@ bool ktx_texture::write_to_stream(data_stream_serializer& serializer, bool no_ke
       m_header.m_bytesOfKeyValueData += sizeof(uint32) + ((m_key_values[i].size() + 3) & ~3);
   }
 
-  if (m_opposite_endianness)
-    m_header.endian_swap();
+  bool success = true;
 
-  bool success = (serializer.write(&m_header, sizeof(m_header), 1) == 1);
-
-  if (m_opposite_endianness)
-    m_header.endian_swap();
+  success &= serializer.write_chars((const char*)m_header.m_identifier, sizeof(m_header.m_identifier));
+  success &= serializer.write_value(m_header.m_endianness);
+  success &= serializer.write_value(m_header.m_glType);
+  success &= serializer.write_value(m_header.m_glTypeSize);
+  success &= serializer.write_value(m_header.m_glFormat);
+  success &= serializer.write_value(m_header.m_glInternalFormat);
+  success &= serializer.write_value(m_header.m_glBaseInternalFormat);
+  success &= serializer.write_value(m_header.m_pixelWidth);
+  success &= serializer.write_value(m_header.m_pixelHeight);
+  success &= serializer.write_value(m_header.m_pixelDepth);
+  success &= serializer.write_value(m_header.m_numberOfArrayElements);
+  success &= serializer.write_value(m_header.m_numberOfFaces);
+  success &= serializer.write_value(m_header.m_numberOfMipmapLevels);
+  success &= serializer.write_value(m_header.m_bytesOfKeyValueData);
 
   if (!success)
     return success;
@@ -540,14 +573,8 @@ bool ktx_texture::write_to_stream(data_stream_serializer& serializer, bool no_ke
     for (uint i = 0; i < m_key_values.size(); i++) {
       uint32 key_value_size = m_key_values[i].size();
 
-      if (m_opposite_endianness)
-        key_value_size = utils::swap32(key_value_size);
-
-      success = (serializer.write(&key_value_size, sizeof(key_value_size), 1) == 1);
+      success = serializer.write_value(key_value_size);
       total_key_value_bytes += sizeof(key_value_size);
-
-      if (m_opposite_endianness)
-        key_value_size = utils::swap32(key_value_size);
 
       if (!success)
         return false;
@@ -584,13 +611,7 @@ bool ktx_texture::write_to_stream(data_stream_serializer& serializer, bool no_ke
     if (!image_size)
       return false;
 
-    if (m_opposite_endianness)
-      image_size = utils::swap32(image_size);
-
-    success = (serializer.write(&image_size, sizeof(image_size), 1) == 1);
-
-    if (m_opposite_endianness)
-      image_size = utils::swap32(image_size);
+    success = serializer.write_value(image_size);
 
     if (!success)
       return false;

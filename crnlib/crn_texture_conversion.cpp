@@ -447,6 +447,12 @@ static bool convert_and_write_normal_texture(mipmapped_texture& work_tex, conver
     console::info("Texture format conversion took %3.3fs", t);
   }
 
+  const crn_comp_params* pCompParams = NULL;
+
+  if (params.m_dst_file_type == texture_file_types::cFormatKTX) {
+    pCompParams = &comp_params;
+  }
+
   if (params.m_write_mipmaps_to_multiple_files) {
     for (uint f = 0; f < work_tex.get_num_faces(); f++) {
       for (uint l = 0; l < work_tex.get_num_levels(); l++) {
@@ -469,14 +475,14 @@ static bool convert_and_write_normal_texture(mipmapped_texture& work_tex, conver
 
         console::info("Writing texture face %u mip level %u to file %s", f, l, filename.get_ptr());
 
-        if (!new_tex.write_to_file(filename.get_ptr(), params.m_dst_file_type, NULL, NULL, NULL))
+        if (!new_tex.write_to_file(filename.get_ptr(), params.m_dst_file_type, pCompParams, NULL, NULL))
           return convert_error(params, "Failed writing output file!");
       }
     }
   } else {
     console::message("Writing texture to file: \"%s\"", params.m_dst_filename.get_ptr());
 
-    if (!work_tex.write_to_file(params.m_dst_filename.get_ptr(), params.m_dst_file_type, NULL, NULL, NULL))
+    if (!work_tex.write_to_file(params.m_dst_filename.get_ptr(), params.m_dst_file_type, pCompParams, NULL, NULL))
       return convert_error(params, "Failed writing output file!");
 
     if (!params.m_no_stats) {

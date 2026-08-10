@@ -1278,23 +1278,26 @@ struct dxt1_block {
     utils::zero_this(this);
   }
 
-  // These methods assume the in-memory rep is in LE byte order.
-  inline uint32 get_low_color() const {
-    return m_low_color[0] | (m_low_color[1] << 8U);
+  inline uint16 get_low_color() const {
+    return static_cast<uint16>(
+      static_cast<uint16>(m_low_color[0]) |
+      (static_cast<uint16>(m_low_color[1]) << 8U));
   }
-
-  inline uint32 get_high_color() const {
-    return m_high_color[0] | (m_high_color[1] << 8U);
+  
+  inline uint16 get_high_color() const {
+    return static_cast<uint16>(
+      static_cast<uint16>(m_high_color[0]) |
+      (static_cast<uint16>(m_high_color[1]) << 8U));
   }
-
+  
   inline void set_low_color(uint16 c) {
-    m_low_color[0] = static_cast<uint8>(c & 0xFF);
-    m_low_color[1] = static_cast<uint8>((c >> 8) & 0xFF);
+    m_low_color[0] = static_cast<uint8>(c);
+    m_low_color[1] = static_cast<uint8>(c >> 8);
   }
-
+  
   inline void set_high_color(uint16 c) {
-    m_high_color[0] = static_cast<uint8>(c & 0xFF);
-    m_high_color[1] = static_cast<uint8>((c >> 8) & 0xFF);
+    m_high_color[0] = static_cast<uint8>(c);
+    m_high_color[1] = static_cast<uint8>(c >> 8);
   }
 
   inline uint32 get_selector(uint32 x, uint32 y) const {
@@ -1364,11 +1367,18 @@ struct dxt5_block {
     m_endpoints[1] = static_cast<uint8>(i);
   }
 
-  uint32 get_endpoints_as_word() const { return m_endpoints[0] | (m_endpoints[1] << 8); }
-
-  uint32 get_selectors_as_word(uint32 index) {
+  uint16 get_endpoints_as_word() const {
+    return static_cast<uint16>(
+      static_cast<uint16>(m_endpoints[0]) |
+      (static_cast<uint16>(m_endpoints[1]) << 8));
+  }
+  
+  uint16 get_selectors_as_word(uint index) const {
     CRND_ASSERT(index < 3);
-    return m_selectors[index * 2] | (m_selectors[index * 2 + 1] << 8);
+  
+    return static_cast<uint16>(
+      static_cast<uint16>(m_selectors[index * 2]) |
+      (static_cast<uint16>(m_selectors[index * 2 + 1]) << 8));
   }
 
   inline uint32 get_selector(uint32 x, uint32 y) const {
@@ -3406,8 +3416,20 @@ class crn_unpacker {
           }
           uint32 color_selector_index = m_codec.decode(m_selector_delta_dm[0]);
           if (visible) {
-            pData[0] = m_color_endpoints[color_endpoint_index];
-            pData[1] = m_color_selectors[color_selector_index];
+            uint32 endpoint = m_color_endpoints[color_endpoint_index];
+            uint32 selector = m_color_selectors[color_selector_index];
+
+            uint8* pBytes = reinterpret_cast<uint8*>(pData);
+
+            pBytes[0] = static_cast<uint8>(endpoint);
+            pBytes[1] = static_cast<uint8>(endpoint >> 8);
+            pBytes[2] = static_cast<uint8>(endpoint >> 16);
+            pBytes[3] = static_cast<uint8>(endpoint >> 24);
+
+            pBytes[4] = static_cast<uint8>(selector);
+            pBytes[5] = static_cast<uint8>(selector >> 8);
+            pBytes[6] = static_cast<uint8>(selector >> 16);
+            pBytes[7] = static_cast<uint8>(selector >> 24);
           }
         }
       }
@@ -3467,10 +3489,33 @@ class crn_unpacker {
           uint32 alpha0_selector_index = m_codec.decode(m_selector_delta_dm[1]);
           if (visible) {
             const uint16* pAlpha0_selectors = &m_alpha_selectors[alpha0_selector_index * 3];
-            pData[0] = m_alpha_endpoints[alpha0_endpoint_index] | (pAlpha0_selectors[0] << 16);
-            pData[1] = pAlpha0_selectors[1] | (pAlpha0_selectors[2] << 16);
-            pData[2] = m_color_endpoints[color_endpoint_index];
-            pData[3] = m_color_selectors[color_selector_index];
+
+            uint32 block0 = m_alpha_endpoints[alpha0_endpoint_index] | (pAlpha0_selectors[0] << 16);
+            uint32 block1 = pAlpha0_selectors[1] | (pAlpha0_selectors[2] << 16);
+            uint32 block2 = m_color_endpoints[color_endpoint_index];
+            uint32 block3 = m_color_selectors[color_selector_index];
+
+            uint8* pBytes = reinterpret_cast<uint8*>(pData);
+
+            pBytes[0]  = static_cast<uint8>(block0);
+            pBytes[1]  = static_cast<uint8>(block0 >> 8);
+            pBytes[2]  = static_cast<uint8>(block0 >> 16);
+            pBytes[3]  = static_cast<uint8>(block0 >> 24);
+
+            pBytes[4]  = static_cast<uint8>(block1);
+            pBytes[5]  = static_cast<uint8>(block1 >> 8);
+            pBytes[6]  = static_cast<uint8>(block1 >> 16);
+            pBytes[7]  = static_cast<uint8>(block1 >> 24);
+
+            pBytes[8]  = static_cast<uint8>(block2);
+            pBytes[9]  = static_cast<uint8>(block2 >> 8);
+            pBytes[10] = static_cast<uint8>(block2 >> 16);
+            pBytes[11] = static_cast<uint8>(block2 >> 24);
+
+            pBytes[12] = static_cast<uint8>(block3);
+            pBytes[13] = static_cast<uint8>(block3 >> 8);
+            pBytes[14] = static_cast<uint8>(block3 >> 16);
+            pBytes[15] = static_cast<uint8>(block3 >> 24);
           }
         }
       }
@@ -3530,10 +3575,33 @@ class crn_unpacker {
           if (visible) {
             const uint16* pAlpha0_selectors = &m_alpha_selectors[alpha0_selector_index * 3];
             const uint16* pAlpha1_selectors = &m_alpha_selectors[alpha1_selector_index * 3];
-            pData[0] = m_alpha_endpoints[alpha0_endpoint_index] | (pAlpha0_selectors[0] << 16);
-            pData[1] = pAlpha0_selectors[1] | (pAlpha0_selectors[2] << 16);
-            pData[2] = m_alpha_endpoints[alpha1_endpoint_index] | (pAlpha1_selectors[0] << 16);
-            pData[3] = pAlpha1_selectors[1] | (pAlpha1_selectors[2] << 16);
+
+            uint32 block0 = m_alpha_endpoints[alpha0_endpoint_index] | (pAlpha0_selectors[0] << 16);
+            uint32 block1 = pAlpha0_selectors[1] | (pAlpha0_selectors[2] << 16);
+            uint32 block2 = m_alpha_endpoints[alpha1_endpoint_index] | (pAlpha1_selectors[0] << 16);
+            uint32 block3 = pAlpha1_selectors[1] | (pAlpha1_selectors[2] << 16);
+
+            uint8* pBytes = reinterpret_cast<uint8*>(pData);
+
+            pBytes[0]  = static_cast<uint8>(block0);
+            pBytes[1]  = static_cast<uint8>(block0 >> 8);
+            pBytes[2]  = static_cast<uint8>(block0 >> 16);
+            pBytes[3]  = static_cast<uint8>(block0 >> 24);
+
+            pBytes[4]  = static_cast<uint8>(block1);
+            pBytes[5]  = static_cast<uint8>(block1 >> 8);
+            pBytes[6]  = static_cast<uint8>(block1 >> 16);
+            pBytes[7]  = static_cast<uint8>(block1 >> 24);
+
+            pBytes[8]  = static_cast<uint8>(block2);
+            pBytes[9]  = static_cast<uint8>(block2 >> 8);
+            pBytes[10] = static_cast<uint8>(block2 >> 16);
+            pBytes[11] = static_cast<uint8>(block2 >> 24);
+
+            pBytes[12] = static_cast<uint8>(block3);
+            pBytes[13] = static_cast<uint8>(block3 >> 8);
+            pBytes[14] = static_cast<uint8>(block3 >> 16);
+            pBytes[15] = static_cast<uint8>(block3 >> 24);
           }
         }
       }

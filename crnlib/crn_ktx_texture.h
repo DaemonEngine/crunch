@@ -165,6 +165,7 @@ class ktx_texture {
     m_block_dim = rhs.m_block_dim;
     m_bytes_per_block = rhs.m_bytes_per_block;
     m_opposite_endianness = rhs.m_opposite_endianness;
+    m_big_endian = rhs.m_big_endian;
 
     return *this;
   }
@@ -178,6 +179,7 @@ class ktx_texture {
     m_bytes_per_block = 0;
 
     m_opposite_endianness = false;
+    m_big_endian = false;
   }
 
   // High level methods
@@ -215,6 +217,7 @@ class ktx_texture {
 
   bool get_opposite_endianness() const { return m_opposite_endianness; }
   void set_opposite_endianness(bool flag) { m_opposite_endianness = flag; }
+  void set_big_endian(bool flag) { m_big_endian = flag; }
 
   uint32 get_block_dim() const { return m_block_dim; }
   uint32 get_bytes_per_block() const { return m_bytes_per_block; }
@@ -282,6 +285,7 @@ class ktx_texture {
   uint32 m_bytes_per_block;
 
   bool m_opposite_endianness;
+  bool m_big_endian;
 
   bool compute_pixel_info();
 };

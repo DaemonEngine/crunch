@@ -616,7 +616,7 @@ void dxt_hc::determine_color_endpoint_codebook_task_etc(uint64 data, void*) {
       for (int c = 0; c < 3; c++)
         endpoint.c[c] = results.m_block_color_unscaled.c[c] << 3 | results.m_block_color_unscaled.c[c] >> 2;
       endpoint.c[3] = results.m_block_inten_table;
-      cluster.first_endpoint = endpoint.m_u32;
+      cluster.first_endpoint = endpoint.get_rgba_u32();
       for (uint8 d0 = delta[endpoint.c[3]][0], d1 = delta[endpoint.c[3]][1], c = 0; c < 3; c++) {
         uint8 q = endpoint.c[c];
         cluster.color_values[0].c[c] = q <= d1 ? 0 : q - d1;

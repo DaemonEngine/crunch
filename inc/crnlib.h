@@ -186,6 +186,14 @@ enum crn_dxt_compressor_type {
   cCRNDXTCompressorForceDWORD = 0xFFFFFFFF
 };
 
+// KTX endianness.
+enum crn_ktx_endianness {
+    cCRNKTXLittleEndian,
+    cCRNKTXBigEndian,
+    cCRNKTXNativeEndian,
+    cCRNKTXForceDWORD = 0xFFFFFFFF
+};
+
 // Progress callback function.
 // Processing will stop prematurely (and fail) if the callback returns false.
 // phase_index, total_phases - high level progress
@@ -216,6 +224,7 @@ struct crn_comp_params {
     m_dxt1a_alpha_threshold = 128;
     m_dxt_quality = cCRNDXTQualityUber;
     m_dxt_compressor_type = cCRNDXTCompressorCRN;
+    m_ktx_endianness = cCRNKTXLittleEndian;
     m_alpha_component = 3;
 
     m_crn_adaptive_tile_color_psnr_derating = 2.0f;
@@ -332,6 +341,9 @@ struct crn_comp_params {
   crn_uint32 m_dxt1a_alpha_threshold;
   crn_dxt_quality m_dxt_quality;
   crn_dxt_compressor_type m_dxt_compressor_type;
+
+  // KTX endianness parameters.
+  crn_ktx_endianness m_ktx_endianness;
 
   // Alpha channel's component. Defaults to 3.
   crn_uint32 m_alpha_component;

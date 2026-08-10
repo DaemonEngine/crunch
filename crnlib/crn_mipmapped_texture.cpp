@@ -1553,7 +1553,7 @@ bool mipmapped_texture::read_ktx(data_stream_serializer& serializer) {
   return true;
 }
 
-bool mipmapped_texture::write_ktx(data_stream_serializer& serializer) const {
+bool mipmapped_texture::write_ktx(data_stream_serializer& serializer, crn_ktx_endianness ktx_endianness) const {
   if (!m_width) {
     set_last_error("Nothing to write");
     return false;
@@ -1661,6 +1661,32 @@ bool mipmapped_texture::write_ktx(data_stream_serializer& serializer) const {
     success = kt.init_2D(get_width(), get_height(), get_num_levels(), ogl_internal_fmt, ogl_fmt, ogl_type);
   if (!success)
     return false;
+
+  bool ktx_big_endian = false;
+
+  switch (ktx_endianness) {
+    case cCRNKTXLittleEndian:
+      ktx_big_endian = false;
+      break;
+  
+    case cCRNKTXBigEndian:
+      ktx_big_endian = true;
+      break;
+  
+    case cCRNKTXNativeEndian:
+      ktx_big_endian = !c_crnlib_little_endian_platform;
+      break;
+  
+    default:
+      CRNLIB_ASSERT(0);
+      return false;
+  }
+
+  const bool host_big_endian = !c_crnlib_little_endian_platform;
+  const bool opposite_endianness = (ktx_big_endian != host_big_endian);
+
+  kt.set_opposite_endianness(opposite_endianness);
+  kt.set_big_endian(ktx_big_endian);
 
   dynamic_string fourcc_str(cVarArg, "%c%c%c%c", m_format & 0xFF, (m_format >> 8) & 0xFF, (m_format >> 16) & 0xFF, (m_format >> 24) & 0xFF);
   kt.add_key_value("CRNLIB_FOURCC", fourcc_str.get_ptr());
@@ -2809,7 +2835,7 @@ bool mipmapped_texture::read_crn(data_stream_serializer& serializer) {
 bool mipmapped_texture::write_to_file(
     const char* pFilename,
     texture_file_types::format file_format,
-    crn_comp_params* pComp_params,
+    const crn_comp_params* pComp_params,
     uint32* pActual_quality_level, float* pActual_bitrate,
     uint32 image_write_flags) {
   if (pActual_quality_level)
@@ -2840,7 +2866,7 @@ bool mipmapped_texture::write_to_file(
   } else if (!texture_file_types::supports_mipmaps(file_format)) {
     success = write_regular_image(pFilename, image_write_flags);
   } else {
-    if (pComp_params) {
+    if (pComp_params && (file_format != texture_file_types::cFormatKTX)) {
       console::warning("mipmapped_texture::write_to_file: Ignoring CRN compression parameters (currently unsupported for this file type).");
     }
 
@@ -2857,7 +2883,13 @@ bool mipmapped_texture::write_to_file(
         break;
       }
       case texture_file_types::cFormatKTX: {
-        success = write_ktx(serializer);
+        crn_ktx_endianness ktx_endianness = cCRNKTXLittleEndian;
+
+        if (pComp_params) {
+          ktx_endianness = pComp_params->m_ktx_endianness;
+        }
+
+        success = write_ktx(serializer, ktx_endianness);
         break;
       }
       default: {

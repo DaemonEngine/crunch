@@ -187,7 +187,7 @@ class mipmapped_texture {
   bool write_dds(data_stream_serializer& serializer) const;
 
   bool read_ktx(data_stream_serializer& serializer);
-  bool write_ktx(data_stream_serializer& serializer) const;
+  bool write_ktx(data_stream_serializer& serializer, crn_ktx_endianness ktx_endianness) const;
 
   bool read_crn(data_stream_serializer& serializer);
   bool read_crn_from_memory(const void* pData, uint data_size, const char* pFilename);
@@ -199,7 +199,7 @@ class mipmapped_texture {
   bool write_to_file(
       const char* pFilename,
       texture_file_types::format file_format = texture_file_types::cFormatInvalid,
-      crn_comp_params* pComp_params = NULL,
+      const crn_comp_params* pComp_params = NULL,
       uint32* pActual_quality_level = NULL, float* pActual_bitrate = NULL,
       uint32 image_write_flags = 0);
 
